@@ -12,9 +12,13 @@ What can I really do with news?
 
 ## Issues
 
-- request timeout on 98point6 search
 - fear of getting blocked by Google
 - bs4 page extractor is maybe 80% reliable
+
+### Technical issues
+
+- Unable to install textpipe, either via pip or pipenv
+- Somehow command-line pipenv started pulling from the .venv that VSCode created so I had to point to that.
 
 ## TODO
 
@@ -26,3 +30,9 @@ What can I really do with news?
     - S6/Palia: Steam, Switch, Epic games, Daybreak Studios, CEOs
     - 98point6: CEO, Bright.md, a few others
     - Pomelo: Funding amount (sorta), investors maybe
+
+# User research questions
+
+- What types of things do you research before applying to a company?
+- What types of things do you research before a full loop?
+- What do you investigate after receiving an offer but before accepting it?
