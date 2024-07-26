@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "07d3d869fd9432959ccb11ab557a379c68e7b1dc3309b37e1fb562eef32f5981"
+            "sha256": "6a349e206d050be5ad1b8a102d76413c626bb27a8062688973f4a6bc36f35c53"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -598,20 +598,20 @@
         },
         "langchain-core": {
             "hashes": [
-                "sha256:ac8165f283d8f5214576ffc38387106ef0de7eb8d2c52576d06e8dd3285294b0",
-                "sha256:ef0b4184b37e356a27182514aedcc8c41ffacbd6348a801bc775c1ce1f608637"
+                "sha256:9444fc082d21ef075d925590a684a73fe1f9688a3d90087580ec929751be55e7",
+                "sha256:f2e3fa200b124e8c45d270da9bf836bed9c09532612c96ff3225e59b9a232f5a"
             ],
             "markers": "python_version < '4.0' and python_full_version >= '3.8.1'",
-            "version": "==0.2.23"
+            "version": "==0.2.24"
         },
         "langchain-openai": {
             "hashes": [
-                "sha256:30bef5574ecbbbb91b8025b2dc5a1bd81fd62157d3ad1a35d820141f31c5b443",
-                "sha256:c5d70ddecdcb93e146f376bdbadbb6ec69de9ac0f402cd5b83de50b655ba85ee"
+                "sha256:3bf342bb302d1444f4abafdf01c467dbd9b248497e1133808c4bae70396c79b3",
+                "sha256:a7a739f1469d54cd988865420e7fc21b50fb93727b2e6da5ad30273fc61ecf19"
             ],
             "index": "pypi",
             "markers": "python_version < '4.0' and python_full_version >= '3.8.1'",
-            "version": "==0.1.17"
+            "version": "==0.1.19"
         },
         "langchain-text-splitters": {
             "hashes": [
@@ -737,6 +737,15 @@
             ],
             "markers": "python_version >= '3.7'",
             "version": "==1.2.0"
+        },
+        "markdown": {
+            "hashes": [
+                "sha256:48f276f4d8cfb8ce6527c8f79e2ee29708508bf4d40aa410fbc3b4ee832c850f",
+                "sha256:ed4f41f6daecbeeb96e576ce414c41d2d876daa9a16cb35fa8ed8c2ddfad0224"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.8'",
+            "version": "==3.6"
         },
         "markdown-it-py": {
             "hashes": [
