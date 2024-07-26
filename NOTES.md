@@ -1,38 +1,67 @@
-# Notes
+# News pipeline
 
-## News pipeline
+## Design issues
 
-What can I really do with news?
+- What can I really do with news? For most companies there isn't a ton of information in these articles.
+    - Very useful: Product reviews, layoffs
+    - Borderline: Fundraising, acquisition, partnerships
+- Tons of near-duplicate articles
 
-- Identify any history of layoffs?
-- Identify any history of fundraising?
-- Cluster news:
-    - Group articles that are about the same things
-    - Identify the article clusters into threads like business deals/collaboration, fundraising, scandal, layoffs, application/product update?
+## Technical issues
 
-## Issues
+- Many news sites block the requests
 
-- fear of getting blocked by Google
-- bs4 page extractor is maybe 80% reliable
+### Concerns
 
-### Technical issues
+- The text extractor doesn't look very good. I tried setting up textpipe but I couldn't get it installed
+- Worried about being blocked by Google
 
-- Unable to install textpipe, either via pip or pipenv
-- Somehow command-line pipenv started pulling from the .venv that VSCode created so I had to point to that.
+# Reddit pipeline
+
+## Issues I've had so far
+
+- Threads with too many comments
+- "One user says"
+- Only positive comments
+
+## Worries (issues without evidence)
+
+- Context length
+- I only took the post and top-level comments, not anything underneath those comments
+- I didn't consider the scores, though I probably should
 
 ## TODO
 
-- nicely formatted HTML output so I can read the sources if I want to, etc
+- Summary for purpose / engineer the prompt to give a better summary
+- Keep it evidence-based. Ideas: extract quotes, cite user names
+- Summary of summaries
+- Include information about date and time
 
-## Things that I like
+### Ideas / experiments
+
+- Use LLM to optimize the query for Reddit to get the things I want
+- Do something like TextGrad to revise the prompt
+- Try doing summary-of-summaries
+- Try doing a more flattened version like thegigabrain
+
+# General
+
+## User research questions
+
+I should ask friends about their job searches and what they look for.
+
+- What types of things do you research before applying to a company?
+- What types of things do you research before a full loop?
+- What do you investigate after receiving an offer but before accepting it?
+
+## TODO
+
+- nicely formatted HTML output so I can read the sources if I want to, etc. I saw one demo used Streamlit to do that
+
+## Experimental notes
 
 - NER summarization gets some useful info:
     - S6/Palia: Steam, Switch, Epic games, Daybreak Studios, CEOs
     - 98point6: CEO, Bright.md, a few others
     - Pomelo: Funding amount (sorta), investors maybe
 
-# User research questions
-
-- What types of things do you research before applying to a company?
-- What types of things do you research before a full loop?
-- What do you investigate after receiving an offer but before accepting it?
