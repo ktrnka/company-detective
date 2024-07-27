@@ -65,3 +65,63 @@ I should ask friends about their job searches and what they look for.
     - 98point6: CEO, Bright.md, a few others
     - Pomelo: Funding amount (sorta), investors maybe
 
+
+## Key questions to answer from the various searches
+
+- About current employees
+    - Are people nice?
+    - Are people productive?
+    - Emotional maturity of employees
+- Benefits
+    - Compensation
+    - Hours
+    - Work-life balance
+- Culture
+    - Is the overall culture inherited from another company?
+    - Hints of discimination?
+- Org
+    - Who calls the shots? Top-down? Organic?
+    - Product-focused?
+    - Exec structure
+    - Is the company growing or shrinking? Growing quickly or steadily?
+    - Where is hiring/growth mainly happening, relative to the current staffing?
+- Product
+    - User sentiment about the product? Is it improving or worsening?
+    - Key strengths and weaknesses compared to alternatives?
+    - User retention?
+- Startups
+    - What's the runway like?
+    - When was the last fundraise, and what amount?
+
+
+### Questions on my mind from a prospective employee
+
+- Coworkers
+    - Reasonable diversity?
+    - Reasonable communicators / collaborators?
+    - Anti-PhD sentiment?
+- Culture
+    - 
+- Productivity
+    - General
+        - If all-remote, how good is communication / collab? What about roadmap alignment?
+    - Product-focused
+        - How are sprints / projects evaluated before starting them? What about after project completion?
+        - What is the planning process like?
+        - Continuous learning / improvement?
+        - Alignment with user feedback
+    - Engineering-foocused
+        - How often is code deployed?
+        - How much re-work is done relating to bugs and such?
+        - ML-specific: What's the bottleneck in updating models? What's the bottleneck in adding a new model?
+        - Retrospectives or continuous process improvement?
+        - Learning from incidents?
+- Priorities
+    - Is ML an actual priority?
+        - Number of roles by type
+        - What things are blocking ML work?
+    - Is engineering a priority?
+- Compensation / package
+    - General comp by role
+    - Benefits: PTO, healthcare
+    - Stock options and vesting
