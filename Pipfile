@@ -13,6 +13,8 @@ python-dotenv = "*"
 praw = "*"
 markdown = "*"
 Jinja2 = "*"
+loguru = "*"
+scrapfly-sdk = {extras = ["all"]}
 
 [dev-packages]
 jupyter = "*"
