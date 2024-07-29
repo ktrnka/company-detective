@@ -1,31 +1,5 @@
-<h1>{self.submission.title} by {self.submission.author} on {utc_to_date(self.submission.created_utc)}</h1>
-<a href="{self.submission.url}">{self.submission.url}</a>
+{% extends "base_summary.html" %}
 
-{summary_content.thread_summary}
-
-<h2>User Experience</h2>
-
-<h3>Strengths</h3>
-
-{claims_to_html(summary_content.user_experience_strengths)}
-
-<h3>Weaknesses</h3>
-
-{claims_to_html(summary_content.user_experience_weaknesses)}
-
-<h2>Employee Experience</h2>
-
-<h3>Strengths</h3>
-
-{claims_to_html(summary_content.employee_experience_strengths)}
-
-<h3>Weaknesses</h3>
-
-{claims_to_html(summary_content.employee_experience_weaknesses)}
-
-<h2>Investor Perspective</h2>
-
-{claims_to_html(summary_content.investor_perspective)}
-
-<h2>Original Thread</h2>
-<p>{markdown.markdown(self.text)}</p>
+{% block header %}
+{{result.submission.title}} (thread id: {{result.submission.id}})
+{% endblock %}

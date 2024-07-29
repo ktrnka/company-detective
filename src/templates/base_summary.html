@@ -1,0 +1,46 @@
+{% macro render_claims(claims) -%}
+    {% if claims %}
+    <ul>
+        {% for claim in claims %}
+        <li>"{{ claim.quote }}" (source: {{claim.comment_id}})</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% endmacro %}
+
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+<h1>{% block header %}Header{% endblock %}</h1>
+
+<p>
+{{result.summary_result.thread_summary}}
+</p>
+
+<h2>User Experience</h2>
+
+<h3>Strengths</h3>
+
+{{ render_claims(result.summary_result.user_experience_strengths) }}
+
+<h3>Weaknesses</h3>
+
+{{ render_claims(result.summary_result.user_experience_weaknesses) }}
+
+<h2>Employee Experience</h2>
+
+<h3>Strengths</h3>
+{{ render_claims(result.summary_result.employee_experience_strengths) }}
+
+<h3>Weaknesses</h3>
+{{ render_claims(result.summary_result.employee_experience_weaknesses) }}
+
+<h2>Investor Perspective</h2>
+{{ render_claims(result.summary_result.investor_perspective) }}
+
+</body>
+</html>
+

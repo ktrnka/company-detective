@@ -150,34 +150,33 @@ aggregation_prompt = ChatPromptTemplate.from_messages(
 )
 
 
-def wrap_html(content: str):
-    return f"""
-<html>
-<body>
-    {content}
-</body>
-</html>
-"""
-
-
-def claims_to_html(claims: Optional[List[Claim]]) -> str:
-    if not claims:
-        return ""
-
-    return (
-        "<ul>"
-        + "\n".join(
-            f'<li>"{claim.quote}" (source: {claim.comment_id})</li>' for claim in claims
-        )
-        + "</ul>"
-    )
-
-
 class Evaluation(NamedTuple):
     claims_made: int
     quotes_in_source: int
     comment_ids_in_source: int
 
+def evaluate_claims(result: AIMessage, text: str) -> Evaluation:
+    claims_made = 0
+    quotes_in_source = 0
+    comment_ids_in_source = 0
+
+    for claim in chain(
+        result.user_experience_strengths or [],
+        result.user_experience_weaknesses or [],
+        result.employee_experience_strengths or [],
+        result.employee_experience_weaknesses or [],
+        result.investor_perspective or [],
+    ):
+        claims_made += 1
+
+        # NOTE: I reviewed one that had 4/12 quotes and 12/12 comment_ids and found that the quotes were correct but some slightly changed the case or cut out a ... or added a "The" at the beginning. I should re-assess on other documents though.
+        if claim.quote in text:
+            quotes_in_source += 1
+
+        if claim.comment_id in text:
+            comment_ids_in_source += 1
+
+    return Evaluation(claims_made, quotes_in_source, comment_ids_in_source)
 
 class ThreadSummaryResult(NamedTuple):
     # inputs
@@ -188,74 +187,19 @@ class ThreadSummaryResult(NamedTuple):
     summary_result: AIMessage
 
     def evaluate(self) -> Evaluation:
-        claims_made = 0
-        quotes_in_source = 0
-        comment_ids_in_source = 0
-
-        for claim in chain(
-            self.summary_result.user_experience_strengths or [],
-            self.summary_result.user_experience_weaknesses or [],
-            self.summary_result.employee_experience_strengths or [],
-            self.summary_result.employee_experience_weaknesses or [],
-            self.summary_result.investor_perspective or [],
-        ):
-
-            claims_made += 1
-
-            # NOTE: I reviewed one that had 4/12 quotes and 12/12 comment_ids and found that the quotes were correct but some slightly changed the case or cut out a ... or added a "The" at the beginning. I should re-assess on other documents though.
-            if claim.quote in self.text:
-                quotes_in_source += 1
-
-            if claim.comment_id in self.text:
-                comment_ids_in_source += 1
-
-        return Evaluation(claims_made, quotes_in_source, comment_ids_in_source)
+        return evaluate_claims(self.summary_result, self.text)
 
     def to_markdown(self):
         template = templates.get_template("thread_summary.md")
         return template.render(
-            submission=self.submission,
-            summary_result=self.summary_result,
+            result=self,
         )
 
     def to_html(self):
-        summary_content = self.summary_result
-
-        # Note: This was refactored to work properly with the structured output format
-
-        return f"""
-<h1>{self.submission.title} by {self.submission.author} on {utc_to_date(self.submission.created_utc)}</h1>
-<a href="{self.submission.url}">{self.submission.url}</a>
-
-{summary_content.thread_summary}
-
-<h2>User Experience</h2>
-
-<h3>Strengths</h3>
-
-{claims_to_html(summary_content.user_experience_strengths)}
-
-<h3>Weaknesses</h3>
-
-{claims_to_html(summary_content.user_experience_weaknesses)}
-
-<h2>Employee Experience</h2>
-
-<h3>Strengths</h3>
-
-{claims_to_html(summary_content.employee_experience_strengths)}
-
-<h3>Weaknesses</h3>
-
-{claims_to_html(summary_content.employee_experience_weaknesses)}
-
-<h2>Investor Perspective</h2>
-
-{claims_to_html(summary_content.investor_perspective)}
-
-<h2>Original Thread</h2>
-<p>{markdown.markdown(self.text)}</p>
-        """
+        template = templates.get_template("thread_summary.html")
+        return template.render(
+            result=self,
+        )
 
 
 class AggregatedSummaryResult(NamedTuple):
@@ -268,27 +212,7 @@ class AggregatedSummaryResult(NamedTuple):
     summary_result: AIMessage
 
     def evaluate(self) -> Evaluation:
-        claims_made = 0
-        quotes_in_source = 0
-        comment_ids_in_source = 0
-
-        for claim in chain(
-            self.summary_result.user_experience_strengths or [],
-            self.summary_result.user_experience_weaknesses or [],
-            self.summary_result.employee_experience_strengths or [],
-            self.summary_result.employee_experience_weaknesses or [],
-            self.summary_result.investor_perspective or [],
-        ):
-
-            claims_made += 1
-
-            if claim.quote in self.aggregation_prompt_context:
-                quotes_in_source += 1
-
-            if claim.comment_id in self.aggregation_prompt_context:
-                comment_ids_in_source += 1
-
-        return Evaluation(claims_made, quotes_in_source, comment_ids_in_source)
+        return evaluate_claims(self.summary_result, self.aggregation_prompt_context)
 
     def to_markdown(self):
         template = templates.get_template("thread_group_summary.md")
@@ -297,41 +221,10 @@ class AggregatedSummaryResult(NamedTuple):
         )
 
     def to_html(self):
-        summary_content = self.summary_result
-
-        # Note: This was refactored to work properly with the structured output format
-
-        return f"""
-<h1>{self.target.company} / {self.target.product}</h1>
-
-{summary_content.thread_summary}
-
-<h2>User Experience</h2>
-
-<h3>Strengths</h3>
-
-{claims_to_html(summary_content.user_experience_strengths)}
-
-<h3>Weaknesses</h3>
-
-{claims_to_html(summary_content.user_experience_weaknesses)}
-
-<h2>Employee Experience</h2>
-
-<h3>Strengths</h3>
-
-{claims_to_html(summary_content.employee_experience_strengths)}
-
-<h3>Weaknesses</h3>
-
-{claims_to_html(summary_content.employee_experience_weaknesses)}
-
-<h2>Investor Perspective</h2>
-
-{claims_to_html(summary_content.investor_perspective)}
-        """
-
-
+        template = templates.get_template("thread_group_summary.html")
+        return template.render(
+            result=self,
+        )
 
 
 def summarize_submission(
@@ -387,7 +280,7 @@ def summarize_summaries(
         summary_result=result,
     )
 
-
+# TODO: Remove or replace this
 def summarize_prompt(prompt: ChatPromptTemplate) -> str:
     template = templates.get_template("prompt.html")
     return template.render(prompt=prompt)
