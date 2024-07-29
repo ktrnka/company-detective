@@ -208,10 +208,11 @@ class ThreadSummaryResult(NamedTuple):
             result=self,
         )
 
-    def to_html(self):
+    def to_html(self, permalinks=None):
         template = templates.get_template("thread_summary.html")
         return template.render(
             result=self,
+            permalinks=permalinks,
         )
 
 
@@ -234,10 +235,11 @@ class AggregatedSummaryResult(NamedTuple):
             result=self,
         )
 
-    def to_html(self):
+    def to_html(self, permalinks=None):
         template = templates.get_template("thread_group_summary.html")
         return template.render(
             result=self,
+            permalinks=permalinks,
         )
 
 

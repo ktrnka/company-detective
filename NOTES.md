@@ -16,33 +16,44 @@
 - The text extractor doesn't look very good. I tried setting up textpipe but I couldn't get it installed
 - Worried about being blocked by Google
 
-# Reddit pipeline
+# Reddit pipeline (last updated 7/29)
 
-## Issues I've had so far
+## Current issues
 
-- Threads with too many comments
-- "One user says"
-- Only positive comments
+- Rad AI
+    - There isn't enough Reddit information to be useful. Most results are not actually about Rad AI at all but get represented as about Omni, though I found one comment plugging Omni.
+- Singularity 6 / Palia
+    - There's so much data that each search returns drastically different content. If we search for Palia, it's great game feedback. If we search for Singularity 6 or the combined one it has more info on acquisition
+- Instacart
+    - It mixes the feedback from the people ordering food vs the gig workers, and it's really mixing them in different sections.
+
+- Context length is a problem sometimes
+- Getting the facets to be distinct is challenging at times
+- I want to prefer evidence-based claims but fall back to opinions when none are available
+    - Good
+        - Patch 177 made income much easier
+        - I like the range of romance options with Palian characters
+        - Singularity 6 raised $XX in YYYY
+    - Meh
+        - Palia is boring
+        - I like the characters in Palia
 
 ## Worries (issues without evidence)
 
-- Context length
-- I only took the post and top-level comments, not anything underneath those comments
-- I didn't consider the scores, though I probably should
 
 ## TODO
 
-- Summary for purpose / engineer the prompt to give a better summary
-- Keep it evidence-based. Ideas: extract quotes, cite user names
-- Summary of summaries
-- Include information about date and time
+- Incorporate the date into summarization somehow
+- Experiment with scores in summarization
 
 ### Ideas / experiments
 
 - Use LLM to optimize the query for Reddit to get the things I want
 - Do something like TextGrad to revise the prompt
-- Try doing summary-of-summaries
+    - I tried a lightweight version of this but it adjusted the prompt too much to focus on the non-variables
+- Summary-of-summaries: This worked well
 - Try doing a more flattened version like thegigabrain
+    - I could theoretically do this but the LangChain docs/tutorials don't work anymore with their map-reduce style, which would be ideal
 
 # General
 

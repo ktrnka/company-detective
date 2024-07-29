@@ -1,8 +1,16 @@
+{% macro render_link(comment_id) %}
+{% if permalinks %}
+<a href="https://reddit.com/{{ permalinks[comment_id] }}">{{ comment_id }}</a>
+{% else %}
+{{ comment_id }}
+{% endif %}
+{% endmacro %}
+
 {% macro render_claims(claims) -%}
     {% if claims %}
     <ul>
         {% for claim in claims %}
-        <li>"{{ claim.quote }}" (source: {{claim.comment_id}})</li>
+        <li>"{{ claim.quote }}" (source: {{ render_link(claim.comment_id) }})</li>
         {% endfor %}
     </ul>
     {% endif %}
