@@ -76,7 +76,7 @@ investor_perspective (list of Claim objects): Key information about the COMPANY 
 Each Claim object should match this format:
 
 Claim Object:
-quote (string): A short quote from the source representing the key claim.
+quote (string): A short quote from the source representing the statement of experience, fact, or opinion about the COMPANY or PRODUCT.
 comment_id (string): The comment ID of the quote.
 """
 
@@ -92,7 +92,7 @@ thread_summary_prompt = ChatPromptTemplate.from_messages(
             """
             Please read the following Reddit thread and write an evididence-based summary of the key points relating to the COMPANY and PRODUCT specified.
             The summary should begin with a brief 1-2 sentence summary of the thread.
-            Then it should three sections summarizing key facts and opinions from different perspectives:
+            Then it should three sections summarizing key facts and opinions about the COMPANY or PRODUCT from different perspectives:
             1. User experience perspective: The key strengths and weaknesses of the PRODUCT from the perspective of current users.
             2. Prospective employee perspective: The key strengths and weaknesses of the COMPANY from the perspective of employees. For example this could include information about the benefits, company culture, work-life balance, or other relevant information.
             3. Prospective investor perspective: Any key information about the COMPANY from the perspective of a prospective investor, such as fundraising, valuation, layoffs, partnerships, or other information indicating that the company is improving or worsening. 
@@ -108,8 +108,7 @@ thread_summary_prompt = ChatPromptTemplate.from_messages(
         (
             "human",
             """
-            COMPANY: {company}
-            PRODUCT: {product}
+            Only include information about the COMPANY {company} and PRODUCT {product}. Do not extract information about other companies or products.
             
             Reddit thread: 
             {text}
@@ -190,6 +189,18 @@ class ThreadSummaryResult(NamedTuple):
 
     def evaluate(self) -> Evaluation:
         return evaluate_claims(self.summary_result, self.text)
+    
+    def is_under_max_hallucinations(self, max_allowable_hallucinations: int, debug=False) -> bool:
+        """
+        Check for hallucinations using the comment_id evaluation, which seems pretty reliable.
+        """
+        evaluation = self.evaluate()
+        is_ok = evaluation.claims_made - evaluation.comment_ids_in_source <= max_allowable_hallucinations
+
+        if debug and not is_ok:
+            print(f"Filtering {self.submission.title} with evaluation {evaluation}")
+
+        return is_ok
 
     def to_markdown(self):
         template = templates.get_template("thread_summary.md")
@@ -205,6 +216,7 @@ class ThreadSummaryResult(NamedTuple):
 
 
 class AggregatedSummaryResult(NamedTuple):
+
     # inputs
     target: CompanyProduct
     summaries: List[ThreadSummary]
