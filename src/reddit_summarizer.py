@@ -382,17 +382,6 @@ def summarize_summaries(
     )
 
 
-def summarize_prompt(prompt):
-    return f"""
-<h1>Prompt</h1>
-
-<h2>System prompt</h2>
-<pre>
-{prompt.messages[0].prompt.template}
-</pre>
-
-<h2>Prompt</h2>
-<pre>
-{prompt.messages[1].prompt.template}
-</pre>
-    """
+def summarize_prompt(prompt: ChatPromptTemplate) -> str:
+    template = templates.get_template("prompt.html")
+    return template.render(prompt=prompt)
