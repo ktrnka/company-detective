@@ -7,7 +7,14 @@ from itertools import chain
 import hashlib
 import os
 
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+
 from core import CompanyProduct
+import jinja2
+import praw
+
+templates = jinja2.FileSystemLoader("templates")
 
 class Claim(BaseModel):
     """A claim made in a Reddit thread"""
@@ -67,8 +74,77 @@ comment_id (string): The comment ID of the quote.
 """
 
 
+# See also
+# https://www.reddit.com/r/ChatGPT/comments/11twe7z/prompt_to_summarize/
+# https://www.reddit.com/r/ChatGPT/comments/13na8yp/highly_effective_prompt_for_summarizing_gpt4/
 
+thread_summary_prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """
+            Please read the following Reddit thread and write an evididence-based summary of the key points relating to the COMPANY and PRODUCT specified.
+            The summary should begin with a brief 1-2 sentence summary of the thread.
+            Then it should three sections summarizing key facts and opinions from different perspectives:
+            1. User experience perspective: The key strengths and weaknesses of the PRODUCT from the perspective of current users.
+            2. Prospective employee perspective: The key strengths and weaknesses of the COMPANY from the perspective of employees. For example this could include information about the benefits, company culture, work-life balance, or other relevant information.
+            3. Prospective investor perspective: Any key information about the COMPANY from the perspective of a prospective investor, such as fundraising, valuation, layoffs, partnerships, or other information indicating that the company is improving or worsening. 
 
+            Provide a clear and concise summary of the key points, avoiding unnecessary details.
+            Do not make speculations, simply summarize the key facts and opinions stated in the thread.
+            
+            Limit the response to 5000 tokens.
+            Format the results as Json in the following format:
+            {json_instructions}
+            """,
+        ),
+        (
+            "human", 
+            """
+            COMPANY: {company}
+            PRODUCT: {product}
+            
+            Reddit thread: 
+            {text}
+            """
+            ),
+    ]
+)
+
+aggregation_prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """
+            Please read the following summaries of Reddit threads and write a comprehensive summary of the key points relating to the COMPANY and PRODUCT specified.
+
+            The summary should begin with an overview paragraph.
+
+            Then it should three sections summarizing key facts and opinions from different perspectives:
+            1. User experience perspective: The key strengths and weaknesses of the PRODUCT from the perspective of current users.
+            2. Prospective employee perspective: The key strengths and weaknesses of the COMPANY from the perspective of employees. For example this could include information about the benefits, company culture, work-life balance, or other relevant information. 
+            3. Prospective investor perspective: Any key information about the COMPANY from the perspective of a prospective investor, such as fundraising, valuation, layoffs, partnerships, or other information indicating that the company is improving or worsening. 
+
+            Do not make speculations, simply summarize the key facts and opinions stated in the thread.
+            Limit the response to 5000 tokens.
+            Format the results as Json in the following format:
+            {json_instructions}
+            """,
+        ),
+        (
+            "human", 
+            """
+            COMPANY: {company}
+            PRODUCT: {product}
+            
+            Summaries: 
+            {text}
+            """
+            ),
+    ]
+)
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 def wrap_html(content: str):
     return f"""
@@ -334,8 +410,6 @@ def summarize_summaries(
     )
 
 
-
-
 def summarize_prompt(prompt):
     return f"""
 <h1>Prompt</h1>
@@ -350,10 +424,6 @@ def summarize_prompt(prompt):
 {prompt.messages[1].prompt.template}
 </pre>
     """
-
-
-
-
 
 
 def short_evaluation(target: CompanyProduct, num_threads=2):
@@ -414,5 +484,3 @@ Note: This only evaluates the evaluation stage, not the mapping stage.
         f.write(html_result)
 
     print(f"Results for {target} saved to {filename}")
-
-

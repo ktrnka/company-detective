@@ -1,0 +1,53 @@
+<h1>{self.target.company} / {self.target.product}</h1>
+
+{summary_content.thread_summary}
+
+<h2>User Experience</h2>
+
+<h3>Strengths</h3>
+
+{claims_to_html(summary_content.user_experience_strengths)}
+
+<h3>Weaknesses</h3>
+
+{claims_to_html(summary_content.user_experience_weaknesses)}
+
+<h2>Employee Experience</h2>
+
+<h3>Strengths</h3>
+
+{claims_to_html(summary_content.employee_experience_strengths)}
+
+<h3>Weaknesses</h3>
+
+{claims_to_html(summary_content.employee_experience_weaknesses)}
+
+<h2>Investor Perspective</h2>
+
+{claims_to_html(summary_content.investor_perspective)}
+
+<hr/>
+
+<h1>Debugging the aggregation</h1>
+
+<h2>Hallucination evaluation</h2>
+Note: This only evaluates the evaluation stage, not the mapping stage.
+{aggregation_result.evaluate()}
+
+<h2>Aggregation prompt</h2>
+{summarize_prompt(aggregation_prompt)}
+
+<h2>Aggregation input (converted markdown to HTML)</h2>
+{markdown.markdown(aggregation_result.aggregation_prompt_context)}
+
+<hr/>
+
+<h1>Debugging the mapping</h1>
+
+<h2>Mapping prompt</h2>
+
+{summarize_prompt(thread_summary_prompt)}
+
+
+<h2>Individual summaries</h2>
+{result_htmls}
