@@ -1,8 +1,13 @@
-# Output schema
 from typing import Optional, List
-
 from langchain_core.pydantic_v1 import BaseModel, Field
+from typing import NamedTuple
+from langchain_core.messages.ai import AIMessage
+import markdown
+from itertools import chain
+import hashlib
+import os
 
+from core import CompanyProduct
 
 class Claim(BaseModel):
     """A claim made in a Reddit thread"""
@@ -62,10 +67,7 @@ comment_id (string): The comment ID of the quote.
 """
 
 
-from typing import NamedTuple
-from langchain_core.messages.ai import AIMessage
-import markdown
-from itertools import chain
+
 
 
 def wrap_html(content: str):
@@ -357,8 +359,7 @@ def summarize_prompt(prompt):
 
 display(HTML(summarize_prompt(thread_summary_prompt)))
 
-import hashlib
-import os
+
 
 
 def short_evaluation(target: CompanyProduct, num_threads=2):
