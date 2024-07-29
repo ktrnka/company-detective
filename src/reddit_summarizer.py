@@ -7,8 +7,11 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 class Claim(BaseModel):
     """A claim made in a Reddit thread"""
 
-    quote: str = Field(description="A short quote from the source representing the key claim")
+    quote: str = Field(
+        description="A short quote from the source representing the key claim"
+    )
     comment_id: str = Field(description="The comment ID of the quote")
+
 
 class ThreadSummary(BaseModel):
     """A structured summary of a Reddit thread or threads about a company or product"""
@@ -16,22 +19,28 @@ class ThreadSummary(BaseModel):
     thread_summary: str = Field(description="An overview of the content")
 
     user_experience_strengths: Optional[List[Claim]] = Field(
-        default=None, description="Key positive themes in user feedback about the product"
+        default=None,
+        description="Key positive themes in user feedback about the product",
     )
     user_experience_weaknesses: Optional[List[Claim]] = Field(
-        default=None, description="Key negative themes in user feedback about the product"
+        default=None,
+        description="Key negative themes in user feedback about the product",
     )
 
     employee_experience_strengths: Optional[List[Claim]] = Field(
-        default=None, description="The key strengths of the company from the employee perspective"
+        default=None,
+        description="The key strengths of the company from the employee perspective",
     )
     employee_experience_weaknesses: Optional[List[Claim]] = Field(
-        default=None, description="The key weaknesses of the company from the employee perspective"
+        default=None,
+        description="The key weaknesses of the company from the employee perspective",
     )
 
     investor_perspective: Optional[List[Claim]] = Field(
-        default=None, description="Key information about the company from the perspective of a prospective investor"
+        default=None,
+        description="Key information about the company from the perspective of a prospective investor",
     )
+
 
 json_instructions = """
 The JSON object should have these top-level keys:
@@ -57,6 +66,8 @@ from typing import NamedTuple
 from langchain_core.messages.ai import AIMessage
 import markdown
 from itertools import chain
+
+
 def wrap_html(content: str):
     return f"""
 <html>
@@ -66,16 +77,25 @@ def wrap_html(content: str):
 </html>
 """
 
+
 def claims_to_html(claims: Optional[List[Claim]]) -> str:
     if not claims:
         return ""
 
-    return "<ul>" + "\n".join(f'<li>"{claim.quote}" (source: {claim.comment_id})</li>' for claim in claims) + "</ul>"
+    return (
+        "<ul>"
+        + "\n".join(
+            f'<li>"{claim.quote}" (source: {claim.comment_id})</li>' for claim in claims
+        )
+        + "</ul>"
+    )
+
 
 class Evaluation(NamedTuple):
     claims_made: int
     quotes_in_source: int
     comment_ids_in_source: int
+
 
 class ThreadResult(NamedTuple):
     submission: praw.models.Submission
@@ -96,7 +116,7 @@ class ThreadResult(NamedTuple):
         ):
 
             claims_made += 1
-            
+
             # NOTE: I reviewed one that had 4/12 quotes and 12/12 comment_ids and found that the quotes were correct but some slightly changed the case or cut out a ... or added a "The" at the beginning. I should re-assess on other documents though.
             if claim.quote in self.text:
                 quotes_in_source += 1
@@ -144,7 +164,8 @@ class ThreadResult(NamedTuple):
 <h2>Original Thread</h2>
 <p>{markdown.markdown(self.text)}</p>
         """
-    
+
+
 class AggregationResult(NamedTuple):
     # inputs
     target: CompanyProduct
@@ -168,7 +189,7 @@ class AggregationResult(NamedTuple):
         ):
 
             claims_made += 1
-            
+
             if claim.quote in self.aggregation_prompt_context:
                 quotes_in_source += 1
 
@@ -213,26 +234,41 @@ class AggregationResult(NamedTuple):
         """
 
 
-def summarize_thread(target: CompanyProduct, url: str, text_max_chars=40000) -> ThreadResult:
+def summarize_thread(
+    target: CompanyProduct, url: str, text_max_chars=40000
+) -> ThreadResult:
     submission = reddit.submission(url=url)
     text = format_reddit_thread(submission)
 
     if len(text) > text_max_chars:
         print(f"Text too long: {len(text)} > {text_max_chars}. Truncating.")
         text = text[:text_max_chars]
-    
-    runnable = thread_summary_prompt | llm.with_structured_output(schema=ThreadSummary, method="json_mode")
-    summary_result = runnable.invoke({"text": text, "company": target.company, "product": target.product, "json_instructions": json_instructions})
+
+    runnable = thread_summary_prompt | llm.with_structured_output(
+        schema=ThreadSummary, method="json_mode"
+    )
+    summary_result = runnable.invoke(
+        {
+            "text": text,
+            "company": target.company,
+            "product": target.product,
+            "json_instructions": json_instructions,
+        }
+    )
     return ThreadResult(submission=submission, text=text, summary_result=summary_result)
+
 
 def claims_to_markdown(claims: Optional[List[Claim]]) -> str:
     if not claims:
         return "Not applicable"
 
-    return "\n".join(f'- "{claim.quote}" (source: {claim.comment_id})' for claim in claims)
+    return "\n".join(
+        f'- "{claim.quote}" (source: {claim.comment_id})' for claim in claims
+    )
+
 
 def summary_to_markdown(summary_result: ThreadResult, debug=False) -> str:
-    text =  f"""
+    text = f"""
 # Summary: {summary_result.submission.title} (thread id: {summary_result.submission.id})
 
 {summary_result.summary_result.thread_summary}
@@ -272,16 +308,34 @@ def summary_to_markdown(summary_result: ThreadResult, debug=False) -> str:
 
     return text
 
-def summarize_summaries(target: CompanyProduct, summaries: List[ThreadResult]) -> AggregationResult:
+
+def summarize_summaries(
+    target: CompanyProduct, summaries: List[ThreadResult]
+) -> AggregationResult:
     text = "\n\n".join(summary_to_markdown(result) for result in summaries)
 
     runnable = aggregation_prompt | llm.with_structured_output(schema=ThreadSummary)
-    result = runnable.invoke({"text": text, "company": target.company, "product": target.product, "json_instructions": json_instructions})
+    result = runnable.invoke(
+        {
+            "text": text,
+            "company": target.company,
+            "product": target.product,
+            "json_instructions": json_instructions,
+        }
+    )
 
-    return AggregationResult(target=target, summaries=summaries, aggregation_prompt_context=text, summary_result=result)
+    return AggregationResult(
+        target=target,
+        summaries=summaries,
+        aggregation_prompt_context=text,
+        summary_result=result,
+    )
 
 
-summary_result = summarize_thread(CompanyProduct("Singularity 6", "Palia"), "https://www.reddit.com/r/MMORPG/comments/1bz2e0z/palia_developers_singularity_6_axes_35_of_staff/")
+summary_result = summarize_thread(
+    CompanyProduct("Singularity 6", "Palia"),
+    "https://www.reddit.com/r/MMORPG/comments/1bz2e0z/palia_developers_singularity_6_axes_35_of_staff/",
+)
 summary_result
 
 
@@ -300,10 +354,12 @@ def summarize_prompt(prompt):
 </pre>
     """
 
+
 display(HTML(summarize_prompt(thread_summary_prompt)))
 
 import hashlib
 import os
+
 
 def short_evaluation(target: CompanyProduct, num_threads=2):
     # This is cached so it should be quick
@@ -311,7 +367,7 @@ def short_evaluation(target: CompanyProduct, num_threads=2):
 
     # The ID of the test is the last 4 chars of the sha of the url list
     test_id = hashlib.sha256("".join(thread_urls).encode()).hexdigest()[-4:]
-    
+
     folder = f"evaluation/test_{test_id}"
     os.makedirs(folder, exist_ok=True)
 
@@ -322,8 +378,9 @@ def short_evaluation(target: CompanyProduct, num_threads=2):
     aggregation_result = summarize_summaries(target, results)
 
     # make a unified page
-    result_htmls = "\n".join(r.to_html() for r in results)    
-    html_result = wrap_html(f"""
+    result_htmls = "\n".join(r.to_html() for r in results)
+    html_result = wrap_html(
+        f"""
 {aggregation_result.to_html()}
 
 <hr/>
@@ -351,7 +408,8 @@ Note: This only evaluates the evaluation stage, not the mapping stage.
 
 <h2>Individual summaries</h2>
 {result_htmls}
-""")
+"""
+    )
 
     # Create the filename using the current timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -361,5 +419,6 @@ Note: This only evaluates the evaluation stage, not the mapping stage.
         f.write(html_result)
 
     print(f"Results for {target} saved to {filename}")
+
 
 short_evaluation(CompanyProduct.same("98point6"), 5)
