@@ -3,6 +3,13 @@ from dotenv import load_dotenv
 import os
 from datetime import datetime
 from praw.models import MoreComments, Submission, Comment
+from googlesearch import search
+from functools import lru_cache
+from typing import Iterable
+import re
+
+from core import CompanyProduct
+
 
 def init() -> praw.Reddit:
     load_dotenv()
@@ -15,12 +22,20 @@ def init() -> praw.Reddit:
 
 
 DATE_FORMAT = "%Y-%m-%d"
+
+
 def utc_to_date(utc: float):
     return datetime.utcfromtimestamp(utc).strftime(DATE_FORMAT)
 
+
 def include_comment(comment: Comment):
     """Decide whether to include a comment in the output"""
-    return not isinstance(comment, MoreComments) and not comment.stickied and comment.score > 0
+    return (
+        not isinstance(comment, MoreComments)
+        and not comment.stickied
+        and comment.score > 0
+    )
+
 
 def comment_forest_to_markdown(comment: Comment, level=1, parent_id=None, max_depth=4):
     """
@@ -33,9 +48,13 @@ def comment_forest_to_markdown(comment: Comment, level=1, parent_id=None, max_de
     text = f"{'#' * level} Comment {comment.id} by {comment.author} on {utc_to_date(comment.created_utc)} [{comment.score:+d} votes]{parent_header}:\n"
     text += f"{comment.body}\n\n"
 
-    text += "\n\n".join(comment_forest_to_markdown(reply, level + 1, parent_id=comment.id) for reply in comment.replies)
+    text += "\n\n".join(
+        comment_forest_to_markdown(reply, level + 1, parent_id=comment.id)
+        for reply in comment.replies
+    )
 
     return text
+
 
 def submission_to_markdown(submission: Submission, pagination_limit=10) -> str:
     """
@@ -48,6 +67,45 @@ def submission_to_markdown(submission: Submission, pagination_limit=10) -> str:
 {submission.selftext}
 
 """
-    
-    text += "\n\n".join(comment_forest_to_markdown(reply, 2, parent_id=submission.id) for reply in submission.comments)
+
+    text += "\n\n".join(
+        comment_forest_to_markdown(reply, 2, parent_id=submission.id)
+        for reply in submission.comments
+    )
     return text
+
+
+def test_submission():
+    """Test that we can connect to Reddit, pull a thread, and format it"""
+    reddit_client = init()
+
+    submission = reddit_client.submission(
+        url="https://www.reddit.com/r/ChatGPT/comments/11twe7z/prompt_to_summarize/"
+    )
+    print(submission_to_markdown(submission))
+
+
+REDDIT_COMMENTS_URL_PATTERN = re.compile(r".*/comments/.+")
+
+
+@lru_cache(1000)
+def find_submission_urls(
+    target: CompanyProduct, results_per_page=10, num_results=10, pause_seconds=2
+) -> Iterable[str]:
+    query = f'site:reddit.com "{target.company}""'
+    if target.product != target.company:
+        query += f' "{target.product}"'
+
+    return list(
+        url
+        for url in search(
+            query, num=results_per_page, stop=num_results, pause=pause_seconds
+        )
+        if REDDIT_COMMENTS_URL_PATTERN.match(url)
+    )
+
+
+def test_search():
+    """Test that we can issue a Google search against Reddit and get some results"""
+    for url in find_submission_urls(CompanyProduct("Singularity 6", "Palia"), num_results=20):
+        print(url)
