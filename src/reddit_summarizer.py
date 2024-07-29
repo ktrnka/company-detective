@@ -18,6 +18,7 @@ templates = jinja2.Environment(
 )
 # template = env.get_template("thread_summary.md")
 
+
 class Claim(BaseModel):
     """A claim made in a Reddit thread"""
 
@@ -101,15 +102,15 @@ thread_summary_prompt = ChatPromptTemplate.from_messages(
             """,
         ),
         (
-            "human", 
+            "human",
             """
             COMPANY: {company}
             PRODUCT: {product}
             
             Reddit thread: 
             {text}
-            """
-            ),
+            """,
+        ),
     ]
 )
 
@@ -134,19 +135,20 @@ aggregation_prompt = ChatPromptTemplate.from_messages(
             """,
         ),
         (
-            "human", 
+            "human",
             """
             COMPANY: {company}
             PRODUCT: {product}
             
             Summaries: 
             {text}
-            """
-            ),
+            """,
+        ),
     ]
 )
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
 
 def wrap_html(content: str):
     return f"""
@@ -208,6 +210,13 @@ class ThreadSummaryResult(NamedTuple):
                 comment_ids_in_source += 1
 
         return Evaluation(claims_made, quotes_in_source, comment_ids_in_source)
+
+    def to_markdown(self):
+        template = templates.get_template("thread_summary.md")
+        return template.render(
+            submission=self.submission,
+            summary_result=self.summary_result,
+        )
 
     def to_html(self):
         summary_content = self.summary_result
@@ -320,6 +329,7 @@ class AggregatedSummaryResult(NamedTuple):
 from praw.models import Submission
 import reddit
 
+
 def summarize_submission(
     target: CompanyProduct, submission: Submission, text_max_chars=40000
 ) -> ThreadSummaryResult:
@@ -344,64 +354,15 @@ def summarize_submission(
             "json_instructions": json_instructions,
         }
     )
-    return ThreadSummaryResult(submission=submission, text=text, summary_result=summary_result)
-
-
-def claims_to_markdown(claims: Optional[List[Claim]]) -> str:
-    if not claims:
-        return "Not applicable"
-
-    return "\n".join(
-        f'- "{claim.quote}" (source: {claim.comment_id})' for claim in claims
+    return ThreadSummaryResult(
+        submission=submission, text=text, summary_result=summary_result
     )
 
 
-def summary_to_markdown(summary_result: ThreadSummary, debug=False) -> str:
-    text = f"""
-# Summary: {summary_result.submission.title} (thread id: {summary_result.submission.id})
-
-{summary_result.summary_result.thread_summary}
-
-## User Experience
-
-### Strengths
-
-{claims_to_markdown(summary_result.summary_result.user_experience_strengths)}
-
-### Weaknesses
-
-{claims_to_markdown(summary_result.summary_result.user_experience_weaknesses)}
-
-## Employee Experience
-
-### Strengths
-
-{claims_to_markdown(summary_result.summary_result.employee_experience_strengths)}
-
-### Weaknesses
-
-{claims_to_markdown(summary_result.summary_result.employee_experience_weaknesses)}
-
-## Investor Perspective
-
-{claims_to_markdown(summary_result.summary_result.investor_perspective)}
-    """
-
-    if debug:
-        text += f"""
-## Debug
-
-### Original Thread
-{summary_result.text}
-        """
-
-    return text
-
-
 def summarize_summaries(
-    target: CompanyProduct, summaries: List[ThreadSummary]
+    target: CompanyProduct, summaries: List[ThreadSummaryResult]
 ) -> AggregatedSummaryResult:
-    text = "\n\n".join(summary_to_markdown(result) for result in summaries)
+    text = "\n\n".join(result.to_markdown() for result in summaries)
 
     runnable = aggregation_prompt | llm.with_structured_output(schema=ThreadSummary)
     result = runnable.invoke(
@@ -435,4 +396,3 @@ def summarize_prompt(prompt):
 {prompt.messages[1].prompt.template}
 </pre>
     """
-
