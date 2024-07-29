@@ -12,11 +12,13 @@ from core import CompanyProduct
 import jinja2
 import praw
 
+from praw.models import Submission
+import reddit
+
+# templates to convert summaries to markdown and html
 templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),
-    # autoescape=select_autoescape()
 )
-# template = env.get_template("thread_summary.md")
 
 
 class Claim(BaseModel):
@@ -146,8 +148,6 @@ aggregation_prompt = ChatPromptTemplate.from_messages(
         ),
     ]
 )
-
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 
 def wrap_html(content: str):
@@ -290,6 +290,12 @@ class AggregatedSummaryResult(NamedTuple):
 
         return Evaluation(claims_made, quotes_in_source, comment_ids_in_source)
 
+    def to_markdown(self):
+        template = templates.get_template("thread_group_summary.md")
+        return template.render(
+            result=self,
+        )
+
     def to_html(self):
         summary_content = self.summary_result
 
@@ -326,8 +332,6 @@ class AggregatedSummaryResult(NamedTuple):
         """
 
 
-from praw.models import Submission
-import reddit
 
 
 def summarize_submission(
@@ -343,6 +347,7 @@ def summarize_submission(
         print(f"Text too long: {len(text)} > {text_max_chars}. Truncating.")
         text = text[:text_max_chars]
 
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     runnable = thread_summary_prompt | llm.with_structured_output(
         schema=ThreadSummary, method="json_mode"
     )
@@ -364,6 +369,7 @@ def summarize_summaries(
 ) -> AggregatedSummaryResult:
     text = "\n\n".join(result.to_markdown() for result in summaries)
 
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     runnable = aggregation_prompt | llm.with_structured_output(schema=ThreadSummary)
     result = runnable.invoke(
         {
