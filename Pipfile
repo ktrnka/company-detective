@@ -12,6 +12,7 @@ langchain-openai = "*"
 python-dotenv = "*"
 praw = "*"
 markdown = "*"
+Jinja2 = "*"
 
 [dev-packages]
 jupyter = "*"
