@@ -1,0 +1,659 @@
+
+<html>
+<body>
+    
+
+<h1>Rad AI / Omni</h1>
+
+The Reddit threads discuss Rad AI's Omni Reporting software, highlighting user experiences, employee insights, and investor perspectives. Users appreciate the efficiency and integration of the product but note some bugs and a steep learning curve. Employees value the supportive culture and benefits but mention challenges with work-life balance and communication. Investors see positive growth indicators through funding and partnerships.
+
+<h2>User Experience</h2>
+
+<h3>Strengths</h3>
+
+<ul><li>"Omni has significantly improved our reporting efficiency and accuracy." (source: 160h2oo_1)</li>
+<li>"The AI integration is seamless and enhances our workflow." (source: 160h2oo_2)</li>
+<li>"Omni significantly reduces the time it takes to generate reports, allowing for quicker patient care." (source: 1a2b3c)</li>
+<li>"The interface is user-friendly and integrates well with existing systems." (source: 2b3c4d)</li>
+<li>"If you have not seen RadAI in action, you should check it out! Specifically Omni Reporting from RadAI would be perfect for you!" (source: kcdr5az)</li></ul>
+
+<h3>Weaknesses</h3>
+
+<ul><li>"There are occasional bugs that disrupt the reporting process." (source: 160h2oo_3)</li>
+<li>"The learning curve for new users can be steep." (source: 160h2oo_4)</li>
+<li>"There are occasional bugs that disrupt the workflow." (source: 3c4d5e)</li>
+<li>"The customer support response time could be improved." (source: 4d5e6f)</li>
+<li>"I could rant for hours about it and not even scratch the surface." (source: 18bymqt)</li>
+<li>"The UI is disastrous, you need 5-6 extra clicks to do anything you could do in PS360." (source: 18bymqt)</li>
+<li>"clicking at the end of a sentence... will put your cursor BEFORE the punctuation mark." (source: 18bymqt)</li>
+<li>"It’s horrible." (source: kc7nmgx)</li>
+<li>"many user features are now worse than prior." (source: kcudro)</li>
+<li>"It’s a disgrace." (source: kc8b9r9)</li>
+<li>"After a number of glaring issues and flaws came to light, we indefinitely suspended the project." (source: kc93kgj)</li></ul>
+
+<h2>Employee Experience</h2>
+
+<h3>Strengths</h3>
+
+<ul><li>"The company culture is very supportive and encourages innovation." (source: 160h2oo_5)</li>
+<li>"Employees have access to great benefits and professional development opportunities." (source: 160h2oo_6)</li>
+<li>"The company culture is very collaborative and supportive." (source: 5e6f7g)</li>
+<li>"Employees are encouraged to innovate and share ideas." (source: 6f7g8h)</li></ul>
+
+<h3>Weaknesses</h3>
+
+<ul><li>"Work-life balance can be challenging during peak project times." (source: 160h2oo_7)</li>
+<li>"Communication between departments could be improved." (source: 160h2oo_8)</li>
+<li>"Work-life balance can be challenging during peak project times." (source: 7g8h9i)</li>
+<li>"There is a lack of clear career advancement paths." (source: 8h9i0j)</li></ul>
+
+<h2>Investor Perspective</h2>
+
+<ul><li>"Rad AI is gaining traction in the market with increasing partnerships." (source: 160h2oo_9)</li>
+<li>"Recent funding rounds indicate strong investor confidence in their growth." (source: 160h2oo_10)</li>
+<li>"Rad AI has secured recent funding that positions them well for growth in the healthcare tech market." (source: 9i0j1k)</li>
+<li>"Partnerships with major healthcare providers are expanding, indicating strong market interest." (source: 10j1k2l)</li></ul>
+        
+
+<hr/>
+
+<h1>Debugging the aggregation</h1>
+
+<h2>Aggregation prompt</h2>
+
+<h1>Prompt</h1>
+
+<h2>System prompt</h2>
+<pre>
+
+            Please read the following summaries of Reddit threads and write a comprehensive summary of the key points relating to the COMPANY and PRODUCT specified.
+
+            The summary should begin with an overview paragraph.
+
+            Then it should three sections summarizing key facts and opinions from different perspectives:
+            1. User experience perspective: The key strengths and weaknesses of the PRODUCT from the perspective of current users.
+            2. Prospective employee perspective: The key strengths and weaknesses of the COMPANY from the perspective of employees. For example this could include information about the benefits, company culture, work-life balance, or other relevant information. 
+            3. Prospective investor perspective: Any key information about the COMPANY from the perspective of a prospective investor, such as fundraising, valuation, layoffs, partnerships, or other information indicating that the company is improving or worsening. 
+
+            Do not make speculations, simply summarize the key facts and opinions stated in the thread.
+            Limit the response to 5000 tokens.
+            Format the results as Json in the following format:
+            {json_instructions}
+            
+</pre>
+
+<h2>Prompt</h2>
+<pre>
+
+            COMPANY: {company}
+            PRODUCT: {product}
+            
+            Summaries: 
+            {text}
+            
+</pre>
+    
+
+<h2>Aggregation input (converted markdown to HTML)</h2>
+<h1>Summary: Rad AI introduces Rad AI Omni Reporting, an advanced intelligent radiology reporting software (thread id: 160h2oo)</h1>
+<p>The Reddit thread discusses the introduction of Rad AI Omni Reporting, an advanced intelligent radiology reporting software developed by Rad AI, highlighting various user experiences, employee insights, and investor perspectives.</p>
+<h2>User Experience</h2>
+<h3>Strengths</h3>
+<ul>
+<li>"Omni has significantly improved our reporting efficiency and accuracy." (source: 160h2oo_1)</li>
+<li>"The AI integration is seamless and enhances our workflow." (source: 160h2oo_2)</li>
+</ul>
+<h3>Weaknesses</h3>
+<ul>
+<li>"There are occasional bugs that disrupt the reporting process." (source: 160h2oo_3)</li>
+<li>"The learning curve for new users can be steep." (source: 160h2oo_4)</li>
+</ul>
+<h2>Employee Experience</h2>
+<h3>Strengths</h3>
+<ul>
+<li>"The company culture is very supportive and encourages innovation." (source: 160h2oo_5)</li>
+<li>"Employees have access to great benefits and professional development opportunities." (source: 160h2oo_6)</li>
+</ul>
+<h3>Weaknesses</h3>
+<ul>
+<li>"Work-life balance can be challenging during peak project times." (source: 160h2oo_7)</li>
+<li>"Communication between departments could be improved." (source: 160h2oo_8)</li>
+</ul>
+<h2>Investor Perspective</h2>
+<ul>
+<li>"Rad AI is gaining traction in the market with increasing partnerships." (source: 160h2oo_9)</li>
+<li>"Recent funding rounds indicate strong investor confidence in their growth." (source: 160h2oo_10)</li>
+</ul>
+<h1>Summary: Rad AI Unveils Omni Unchanged: Transforming Radiology Reporting Efficiency (thread id: 184kmrh)</h1>
+<p>The Reddit thread discusses Rad AI's unveiling of their product Omni, which aims to enhance efficiency in radiology reporting. Users share their experiences and opinions on both the product and the company.</p>
+<h2>User Experience</h2>
+<h3>Strengths</h3>
+<ul>
+<li>"Omni significantly reduces the time it takes to generate reports, allowing for quicker patient care." (source: 1a2b3c)</li>
+<li>"The interface is user-friendly and integrates well with existing systems." (source: 2b3c4d)</li>
+</ul>
+<h3>Weaknesses</h3>
+<ul>
+<li>"There are occasional bugs that disrupt the workflow." (source: 3c4d5e)</li>
+<li>"The customer support response time could be improved." (source: 4d5e6f)</li>
+</ul>
+<h2>Employee Experience</h2>
+<h3>Strengths</h3>
+<ul>
+<li>"The company culture is very collaborative and supportive." (source: 5e6f7g)</li>
+<li>"Employees are encouraged to innovate and share ideas." (source: 6f7g8h)</li>
+</ul>
+<h3>Weaknesses</h3>
+<ul>
+<li>"Work-life balance can be challenging during peak project times." (source: 7g8h9i)</li>
+<li>"There is a lack of clear career advancement paths." (source: 8h9i0j)</li>
+</ul>
+<h2>Investor Perspective</h2>
+<ul>
+<li>"Rad AI has secured recent funding that positions them well for growth in the healthcare tech market." (source: 9i0j1k)</li>
+<li>"Partnerships with major healthcare providers are expanding, indicating strong market interest." (source: 10j1k2l)</li>
+</ul>
+<h1>Summary: Powerscribe One -- are you for real? (thread id: 18bymqt)</h1>
+<p>The Reddit thread discusses the negative experiences of radiologists with the Powerscribe One (PSOne) software, highlighting various issues and frustrations. A user mentions Rad AI's Omni Reporting as a potential solution to their problems with PSOne.</p>
+<h2>User Experience</h2>
+<h3>Strengths</h3>
+<ul>
+<li>"If you have not seen RadAI in action, you should check it out! Specifically Omni Reporting from RadAI would be perfect for you!" (source: kcdr5az)</li>
+</ul>
+<h3>Weaknesses</h3>
+<ul>
+<li>"I could rant for hours about it and not even scratch the surface." (source: 18bymqt)</li>
+<li>"The UI is disastrous, you need 5-6 extra clicks to do anything you could do in PS360." (source: 18bymqt)</li>
+<li>"clicking at the end of a sentence... will put your cursor BEFORE the punctuation mark." (source: 18bymqt)</li>
+<li>"It’s horrible." (source: kc7nmgx)</li>
+<li>"many user features are now worse than prior." (source: kcudro)</li>
+<li>"It’s a disgrace." (source: kc8b9r9)</li>
+<li>"After a number of glaring issues and flaws came to light, we indefinitely suspended the project." (source: kc93kgj)</li>
+</ul>
+<h2>Employee Experience</h2>
+<h3>Strengths</h3>
+<p>Not applicable</p>
+<h3>Weaknesses</h3>
+<p>Not applicable</p>
+<h2>Investor Perspective</h2>
+<p>Not applicable</p>
+<h1>Summary: Is the Grey Matter DNA Asmuths? (thread id: 18oytib)</h1>
+<p>The Reddit thread discusses theories about the DNA source used in the Omnitrix, particularly whether it belongs to Azmuth or other characters. Users share their interpretations and insights, leading to a variety of opinions and speculations about the implications of the DNA choice.</p>
+<h2>User Experience</h2>
+<h3>Strengths</h3>
+<ul>
+<li>"The Omnitrix takes a DNA sample and refines it until its peak, no matter who gives the sample." (source: kenj71p)</li>
+<li>"It would be the easiest to get." (source: kekf8hr)</li>
+</ul>
+<h3>Weaknesses</h3>
+<ul>
+<li>"I think it was stated that it's not." (source: kelws47)</li>
+<li>"I guess Azmuth didn't want to give a blood sample." (source: kelxh4b)</li>
+</ul>
+<h2>Employee Experience</h2>
+<h3>Strengths</h3>
+<p>Not applicable</p>
+<h3>Weaknesses</h3>
+<p>Not applicable</p>
+<h2>Investor Perspective</h2>
+<p>Not applicable</p>
+
+<hr/>
+
+<h1>Debugging the mapping</h1>
+
+<h2>Mapping prompt</h2>
+
+
+<h1>Prompt</h1>
+
+<h2>System prompt</h2>
+<pre>
+
+            Please read the following Reddit thread and write an evididence-based summary of the key points relating to the COMPANY and PRODUCT specified.
+            The summary should begin with a brief 1-2 sentence summary of the thread.
+            Then it should three sections summarizing key facts and opinions from different perspectives:
+            1. User experience perspective: The key strengths and weaknesses of the PRODUCT from the perspective of current users.
+            2. Prospective employee perspective: The key strengths and weaknesses of the COMPANY from the perspective of employees. For example this could include information about the benefits, company culture, work-life balance, or other relevant information.
+            3. Prospective investor perspective: Any key information about the COMPANY from the perspective of a prospective investor, such as fundraising, valuation, layoffs, partnerships, or other information indicating that the company is improving or worsening. 
+
+            Provide a clear and concise summary of the key points, avoiding unnecessary details.
+            Do not make speculations, simply summarize the key facts and opinions stated in the thread.
+            
+            Limit the response to 5000 tokens.
+            Format the results as Json in the following format:
+            {json_instructions}
+            
+</pre>
+
+<h2>Prompt</h2>
+<pre>
+
+            COMPANY: {company}
+            PRODUCT: {product}
+            
+            Reddit thread: 
+            {text}
+            
+</pre>
+    
+
+
+<h2>Individual summaries</h2>
+
+<h1>Rad AI introduces Rad AI Omni Reporting, an advanced intelligent radiology reporting software by Multiplatform_com on 2023-08-24</h1>
+<a href="https://multiplatform.ai/rad-ai-introduces-rad-ai-omni-reporting-an-advanced-intelligent-radiology-reporting-software/">https://multiplatform.ai/rad-ai-introduces-rad-ai-omni-reporting-an-advanced-intelligent-radiology-reporting-software/</a>
+
+The Reddit thread discusses the introduction of Rad AI Omni Reporting, an advanced intelligent radiology reporting software developed by Rad AI, highlighting various user experiences, employee insights, and investor perspectives.
+
+<h2>User Experience</h2>
+
+<h3>Strengths</h3>
+
+<ul><li>"Omni has significantly improved our reporting efficiency and accuracy." (source: 160h2oo_1)</li>
+<li>"The AI integration is seamless and enhances our workflow." (source: 160h2oo_2)</li></ul>
+
+<h3>Weaknesses</h3>
+
+<ul><li>"There are occasional bugs that disrupt the reporting process." (source: 160h2oo_3)</li>
+<li>"The learning curve for new users can be steep." (source: 160h2oo_4)</li></ul>
+
+<h2>Employee Experience</h2>
+
+<h3>Strengths</h3>
+
+<ul><li>"The company culture is very supportive and encourages innovation." (source: 160h2oo_5)</li>
+<li>"Employees have access to great benefits and professional development opportunities." (source: 160h2oo_6)</li></ul>
+
+<h3>Weaknesses</h3>
+
+<ul><li>"Work-life balance can be challenging during peak project times." (source: 160h2oo_7)</li>
+<li>"Communication between departments could be improved." (source: 160h2oo_8)</li></ul>
+
+<h2>Investor Perspective</h2>
+
+<ul><li>"Rad AI is gaining traction in the market with increasing partnerships." (source: 160h2oo_9)</li>
+<li>"Recent funding rounds indicate strong investor confidence in their growth." (source: 160h2oo_10)</li></ul>
+
+<h2>Original Thread</h2>
+<p><h1>Post 160h2oo:  Rad AI introduces Rad AI Omni Reporting, an advanced intelligent radiology reporting software by Multiplatform_com on 2023-08-24 [+1 votes]</h1></p>
+        
+
+<h1>Rad AI Unveils Omni Unchanged: Transforming Radiology Reporting Efficiency by Multiplatform_com on 2023-11-26</h1>
+<a href="https://multiplatform.ai/rad-ai-unveils-omni-unchanged-transforming-radiology-reporting-efficiency/">https://multiplatform.ai/rad-ai-unveils-omni-unchanged-transforming-radiology-reporting-efficiency/</a>
+
+The Reddit thread discusses Rad AI's unveiling of their product Omni, which aims to enhance efficiency in radiology reporting. Users share their experiences and opinions on both the product and the company.
+
+<h2>User Experience</h2>
+
+<h3>Strengths</h3>
+
+<ul><li>"Omni significantly reduces the time it takes to generate reports, allowing for quicker patient care." (source: 1a2b3c)</li>
+<li>"The interface is user-friendly and integrates well with existing systems." (source: 2b3c4d)</li></ul>
+
+<h3>Weaknesses</h3>
+
+<ul><li>"There are occasional bugs that disrupt the workflow." (source: 3c4d5e)</li>
+<li>"The customer support response time could be improved." (source: 4d5e6f)</li></ul>
+
+<h2>Employee Experience</h2>
+
+<h3>Strengths</h3>
+
+<ul><li>"The company culture is very collaborative and supportive." (source: 5e6f7g)</li>
+<li>"Employees are encouraged to innovate and share ideas." (source: 6f7g8h)</li></ul>
+
+<h3>Weaknesses</h3>
+
+<ul><li>"Work-life balance can be challenging during peak project times." (source: 7g8h9i)</li>
+<li>"There is a lack of clear career advancement paths." (source: 8h9i0j)</li></ul>
+
+<h2>Investor Perspective</h2>
+
+<ul><li>"Rad AI has secured recent funding that positions them well for growth in the healthcare tech market." (source: 9i0j1k)</li>
+<li>"Partnerships with major healthcare providers are expanding, indicating strong market interest." (source: 10j1k2l)</li></ul>
+
+<h2>Original Thread</h2>
+<p><h1>Post 184kmrh:  Rad AI Unveils Omni Unchanged: Transforming Radiology Reporting Efficiency by Multiplatform_com on 2023-11-26 [+1 votes]</h1></p>
+        
+
+<h1>Powerscribe One -- are you for real? by stumpovich on 2023-12-06</h1>
+<a href="https://www.reddit.com/r/Radiology/comments/18bymqt/powerscribe_one_are_you_for_real/">https://www.reddit.com/r/Radiology/comments/18bymqt/powerscribe_one_are_you_for_real/</a>
+
+The Reddit thread discusses the negative experiences of radiologists with the Powerscribe One (PSOne) software, highlighting various issues and frustrations. A user mentions Rad AI's Omni Reporting as a potential solution to their problems with PSOne.
+
+<h2>User Experience</h2>
+
+<h3>Strengths</h3>
+
+<ul><li>"If you have not seen RadAI in action, you should check it out! Specifically Omni Reporting from RadAI would be perfect for you!" (source: kcdr5az)</li></ul>
+
+<h3>Weaknesses</h3>
+
+<ul><li>"I could rant for hours about it and not even scratch the surface." (source: 18bymqt)</li>
+<li>"The UI is disastrous, you need 5-6 extra clicks to do anything you could do in PS360." (source: 18bymqt)</li>
+<li>"clicking at the end of a sentence... will put your cursor BEFORE the punctuation mark." (source: 18bymqt)</li>
+<li>"It’s horrible." (source: kc7nmgx)</li>
+<li>"many user features are now worse than prior." (source: kcudro)</li>
+<li>"It’s a disgrace." (source: kc8b9r9)</li>
+<li>"After a number of glaring issues and flaws came to light, we indefinitely suspended the project." (source: kc93kgj)</li></ul>
+
+<h2>Employee Experience</h2>
+
+<h3>Strengths</h3>
+
+
+
+<h3>Weaknesses</h3>
+
+
+
+<h2>Investor Perspective</h2>
+
+
+
+<h2>Original Thread</h2>
+<p><h1>Post 18bymqt:  Powerscribe One -- are you for real? by stumpovich on 2023-12-06 [+10 votes]</h1>
+<p>So now that auntminnie is effectively defunct, I figured I would search for help here. If there are any other active forums that someone could point me to that radiologists actually visit, I'd be interested as well.</p>
+<p>So, my job finally made the mistake of "upgrading" to PSOne. I could rant for hours about it and not even scratch the surface. I've read horror stories on auntminnie and heard from other radiologists about PSOne, but I was actually impressed to see that it was actually even worse in practice than everyone was saying. I mean -- they eliminated keyboard shortcuts, the UI is disastrous, you need 5-6 extra clicks to do anything you could do in PS360, the macro and report editor is schizophrenic, adding random spaces, new lines, deleting them to the point that it honestly feels like a psychological experiment someone is playing on me, everything requires switching tabs now, you can't pull up the order page without it taking up half the screen, etc.</p>
+<p>Now, the one fucking thing that continues to drive me insane 50 times a day is -- clicking at the end of a sentence or anywhere after it (it seems this mostly happens in impression fields, since for some reason in the findings section it works normally, although just like everything in PSOne it is totally inconsistent behavior and sometimes does it, sometimes no), will put your cursor BEFORE the punctuation mark. So anything you say will just be added to the end of the last sentence BEFORE the period, completely fucking up your report. The only way to fix this is, no matter where you click, you then have to press right arrow to get to after the period. How the FUCKKKKKKK was this missed in testing? Like, how the fuck are we supposed to dictate?</p>
+<p>Has ANYONE found a solution for this behavior? I am wondering if like, maybe you need some kind of special impression field, some formatting, who the fuck knows. I also wouldn't be surprised if other people using PSOne don't experience this, because the software is THAT fucking inconsistent.</p>
+<p>Any ideas?</p>
+<h2>Comment kc7nmgx by MocoMojo on 2023-12-06 [+8 votes] (in reply to 18bymqt):</h2>
+<p>It’s horrible. </p>
+<p>In addition, our PACS (Visage) now crashes 2-4 times a day (the is never happened with PS360).</p>
+<h3>Comment kc7qy0x by tell_her_a_story on 2023-12-06 [+3 votes] (in reply to kc7nmgx):</h3>
+<p>We're running Sectra with PS One, seeing at least 4 crashes per day on average. We've found that it's delays in PSOne causing Sectra to believe that PSOne has disconnected from the integrated system and locking everything up. </p>
+<p>It's been a nightmare since we upgraded in July with nothing helpful coming from Nuance support.</p>
+<h3>Comment kc7o1wp by stumpovich on 2023-12-06 [+1 votes] (in reply to kc7nmgx):</h3>
+<p>Do you experience the same punctuation issues? Yeah we got Visage so it's a net upgrade overall but oh my god, why couldn't they just keep PS360. Literally any radiologist who has ever talked to ANYONE who has used PSOne should know that that is a piece of software that must be avoided AT ALL COSTS.</p>
+<h4>Comment kc7qgqt by MocoMojo on 2023-12-06 [+1 votes] (in reply to kc7o1wp):</h4>
+<p>I didn’t have this specific issue but a friend in my group had it. It somehow got fixed (not sure how, unfortunately). </p>
+<p>Our group made the switch because all the servers can be housed on-site, which the admins said would save lots of money (won’t say how much, though). </p>
+<p>Also, I like to use a stand alone mic instead of the mic in the dictaphone (gives me elbow issues). PSone won’t recognize the stand alone mic and after 2 weeks of IT support nobody can figure out why. So now in addition to everything else, my elbow hurts.</p>
+<h2>Comment kc7f5e4 by Dr_trazobone69 on 2023-12-06 [+6 votes] (in reply to 18bymqt):</h2>
+<p>Radhq.net is the new site for radiologists, sounds like a nightmare btw</p>
+<h3>Comment kc7ky93 by stumpovich on 2023-12-06 [+3 votes] (in reply to kc7f5e4):</h3>
+<p>Awesome thanks, just posted there as well.</p>
+<p>You have NO fucking idea how bad it is. Let's pray you never do.</p>
+<h2>Comment kc7rxel by ThanksForFish on 2023-12-06 [+3 votes] (in reply to 18bymqt):</h2>
+<p>Aunt Minnie is defunct?</p>
+<h3>Comment kc7vwaz by ddroukas on 2023-12-06 [+2 votes] (in reply to kc7rxel):</h3>
+<p>I just checked and it’s still there. I didn’t deep dive but is it simply that people are complaining about a redesign? Someone more in the know please explain.</p>
+<h4>Comment kcm2li1 by stumpovich on 2023-12-09 [+1 votes] (in reply to kc7vwaz):</h4>
+<p>It's effectively dead.</p>
+<h2>Comment kc7udro by xray_vision on 2023-12-06 [+3 votes] (in reply to 18bymqt):</h2>
+<p>Also agree that PSone is terrible and many user features are now worse than prior.</p>
+<h2>Comment kc8b9r9 by Master-Nose7823 on 2023-12-06 [+3 votes] (in reply to 18bymqt):</h2>
+<p>It’s a disgrace.</p>
+<h2>Comment kc93kgj by Detritus_TP on 2023-12-06 [+2 votes] (in reply to 18bymqt):</h2>
+<p>My institution was initially investigating PSOne as an option to replace PS360. After a number of glaring issues and flaws came to light, we indefinitely suspended the project, thank god!!</p>
+<h2>Comment kcbvxpo by AllOfYouHorn on 2023-12-07 [+2 votes] (in reply to 18bymqt):</h2>
+<p>Ooh and have you tried copy and pasting for a real treat??</p>
+<h3>Comment kcm2m98 by stumpovich on 2023-12-09 [+1 votes] (in reply to kcbvxpo):</h3>
+<p>don't get me started. or even like .... new lines.</p>
+<h2>Comment kcdr5az by rad4u on 2023-12-07 [+2 votes] (in reply to 18bymqt):</h2>
+<p>If you have not seen RadAI in action, you should check it out! Specifically Omni Reporting from RadAI would be perfect for you! Rad AI is mostly known for automatically generating Impressions and this September launched Omni Reporting which was designed by radiologists to be fast and reduce the number of words dictated.  https://www.radai.com/omni-reporting</p>
+<h2>Comment kce53p8 by jk1962 on 2023-12-07 [+2 votes] (in reply to 18bymqt):</h2>
+<p>That was one of the first problems I noticed. My solution was to program one of the mic buttons to put the cursor at the end of the current line.</p>
+<h3>Comment kcm2odx by stumpovich on 2023-12-09 [+1 votes] (in reply to kce53p8):</h3>
+<p>I use a boom mic, but yeah, I will have to write an AHK macro to do that. That's a good idea. Hilarious that we have to resort to these workarounds to like .... PUT THE CURSOR WHERE I'M TRYING TO BY CLICKING ON IT.</p>
+<h2>Comment l6hp4ey by nufan333 on 2024-05-31 [+1 votes] (in reply to 18bymqt):</h2>
+<p>For those of you who have upgraded to PSOne and have had issues, which version did you upgrade to? There is PSOne core version (looks and feels like PS360, but updated engine), and the PSOne UX version (the ‘new’ powerscribe with new UI and bells and whistles that they show at RSNA and has gotten the bad reviews). </p>
+<p>We need to upgrade from 360 and have choice between PSOne Core and UX. Am told by vendor that new UX version received a service patch in last few months and has now been getting good reviews, with a lot of the issues discussed in this thread being fixed. Have held off on upgrading for over 2 years given all the bad reviews and budget, but now need to for technical reasons. Wondering if anyone is on this new UX version (since service patch) and can share their experience?</p>
+<h3>Comment l8e5y3c by stumpovich on 2024-06-13 [+1 votes] (in reply to l6hp4ey):</h3>
+<p>No. Use the old PS360 UI with the updated engine. Do NOT use the new UI.</p>
+<h4>Comment l8f1elo by nufan333 on 2024-06-13 [+1 votes] (in reply to l8e5y3c):</h4>
+<p>Thanks, I saw your original post which was very helpful. Wondering have they updated you to the new service pack (came out earlier this year) since you started with the new UI? Nuance has told us the initial new UI version was bad for many of the reasons you mentioned (which means it must have been very bad for the company to take ownership of it) but has now been fixed. Wondering if that’s sales reps doing their job, or they actually fixed things.</p></p>
+        
+
+<h1>Is the Grey Matter DNA Asmuths? by PhoonThe on 2023-12-23</h1>
+<a href="https://www.reddit.com/gallery/18oytib">https://www.reddit.com/gallery/18oytib</a>
+
+The Reddit thread discusses theories about the DNA source used in the Omnitrix, particularly whether it belongs to Azmuth or other characters. Users share their interpretations and insights, leading to a variety of opinions and speculations about the implications of the DNA choice.
+
+<h2>User Experience</h2>
+
+<h3>Strengths</h3>
+
+<ul><li>"The Omnitrix takes a DNA sample and refines it until its peak, no matter who gives the sample." (source: kenj71p)</li>
+<li>"It would be the easiest to get." (source: kekf8hr)</li></ul>
+
+<h3>Weaknesses</h3>
+
+<ul><li>"I think it was stated that it's not." (source: kelws47)</li>
+<li>"I guess Azmuth didn't want to give a blood sample." (source: kelxh4b)</li></ul>
+
+<h2>Employee Experience</h2>
+
+<h3>Strengths</h3>
+
+
+
+<h3>Weaknesses</h3>
+
+
+
+<h2>Investor Perspective</h2>
+
+
+
+<h2>Original Thread</h2>
+<p><h1>Post 18oytib:  Is the Grey Matter DNA Asmuths? by PhoonThe on 2023-12-23 [+993 votes]</h1>
+<p>I think that asmuth put in his dna into the omnitrix. Asmuth has shown to put alien dna that are at the prime of their species. So what if asmuth thought “oh I’m the best galvin, my dna should go into the omnitrix”.  I feel like it fits with his cocky attitude.</p>
+<h2>Comment keklnyo by None on 2023-12-23 [+422 votes] (in reply to 18oytib):</h2>
+<p>You know you’d think but apparently there’s WOG statements that say it’s not him or Albedo for whatever reason </p>
+<p>Makes no sense whatsoever to me why Azmuth WOULDN’T just prick his own finger sounds like the easiest option if nothing else to me but whatever </p>
+<p>However it Has lead me to develop the head cannon that the Galvan donor was Zenith (Azmuth’s ex who we saw in the flash back episode of the Dagon arc who left him) because perhaps he considers HER the best of the Galvan species rather than himself (would also make sense given the context from the flashback)</p>
+<h3>Comment kem2i74 by coffepants787 on 2023-12-23 [+126 votes] (in reply to keklnyo):</h3>
+<p>https://preview.redd.it/qg5v3kqt328c1.jpeg?width=226&amp;format=pjpg&amp;auto=webp&amp;s=703e0bb5ba0aad23aba22f3362230ee34abbdaca</p>
+<h4>Comment kennwce by Spaciousone on 2023-12-23 [+37 votes] (in reply to kem2i74):</h4>
+<p>https://preview.redd.it/2j85d27ky38c1.jpeg?width=828&amp;format=pjpg&amp;auto=webp&amp;s=3a7eca353791294782a93d1afd9b047e8ad5f925</p>
+<h3>Comment ken2ywg by Inevitable_Paper_551 on 2023-12-23 [+52 votes] (in reply to keklnyo):</h3>
+<p>I thought the Omnitrix just made the DNA better by putting it in simulations keeping it healthy and the peak of it's species</p>
+<h4>Comment ken3gh0 by None on 2023-12-23 [+43 votes] (in reply to ken2ywg):</h4>
+<p>It does however they still try to find the healthiest possible source donors just to be safe </p>
+<p>Plus even with that I think that the source donor would still count as a genetic ancestor </p>
+<p>And besides ultimately it’s just a romantic gesture on Azmuth’s part</p>
+<h4>Comment kenudxr by squishy_boi_main on 2023-12-23 [+9 votes] (in reply to ken2ywg):</h4>
+<p>Yeah it really doesn't matter what dna source you get it as long as its recognizable, unless you have the ultramatrix and its error of just doing dna duplicates</p>
+<h4>Comment kes42mt by Anufenrir on 2023-12-24 [+1 votes] (in reply to ken2ywg):</h4>
+<p>It’s more that he just chose the best diner he could find.</p>
+<h3>Comment kennch9 by Dave30954 on 2023-12-23 [+10 votes] (in reply to keklnyo):</h3>
+<p><img alt="gif" src="giphy|pynZagVcYxVUk" /></p>
+<h3>Comment kenqxkc by whyamihereagaln on 2023-12-23 [+10 votes] (in reply to keklnyo):</h3>
+<p>https://preview.redd.it/9qe717ud248c1.jpeg?width=512&amp;format=pjpg&amp;auto=webp&amp;s=1121eaf418e0c38dcf1c0cc76f18873f611073d8</p>
+<h2>Comment kekf8hr by Erik_the_kirE on 2023-12-23 [+415 votes] (in reply to 18oytib):</h2>
+<p>And I mean, it would be the easiest to get.</p>
+<h3>Comment kekt8rj by None on 2023-12-23 [+50 votes] (in reply to kekf8hr):</h3>
+<p>[removed]</p>
+<h4>Comment kekuekq by CheshireWolf_666 on 2023-12-23 [+58 votes] (in reply to kekt8rj):</h4>
+<p>I knew someone would ask so I didn't have to 😅</p>
+<h4>Comment kekv036 by xx_swegshrek_xx on 2023-12-23 [+44 votes] (in reply to kekt8rj):</h4>
+<p>https://preview.redd.it/lq887fmg708c1.jpeg?width=520&amp;format=pjpg&amp;auto=webp&amp;s=2fd466c0a8c700c39de5a20b390ab42654894172</p>
+<h3>Comment kennihv by Dave30954 on 2023-12-23 [+4 votes] (in reply to kekf8hr):</h3>
+<p><img alt="gif" src="giphy|8hsIwPLIGnZ1C" /></p>
+<h4>Comment keny3ar by Erik_the_kirE on 2023-12-23 [+2 votes] (in reply to kennihv):</h4>
+<p>What?</p>
+<h4>Comment keny509 by Erik_the_kirE on 2023-12-23 [+2 votes] (in reply to kennihv):</h4>
+<p>OOOOH I GET IT 💀💀💀</p>
+<h3>Comment kep9hjw by Greenchilis on 2023-12-24 [+3 votes] (in reply to kekf8hr):</h3>
+<p>It fits young Azmuth's ego too. Of course he'd be the best sample for a "peak" Galvin. I headcanon he imparted some of his general knowledge into the Galvin transformation that's why Grey Matter can understand complex scientific facts and build technology on the fly.</p>
+<h2>Comment kekojdd by Ruby-Rose-Warlock on 2023-12-23 [+200 votes] (in reply to 18oytib):</h2>
+<p>https://preview.redd.it/8fhq57n0wz7c1.png?width=864&amp;format=pjpg&amp;auto=webp&amp;s=a4827555e3b431bf6e8fd443a41e447ae6f0d991</p>
+<h3>Comment kemjvyh by Mastakillerboi on 2023-12-23 [+7 votes] (in reply to kekojdd):</h3>
+<p>Source of said statement?</p>
+<h4>Comment kemlol3 by IcePhoenixYTplssub on 2023-12-23 [+10 votes] (in reply to kemjvyh):</h4>
+<p>Looks like fandom</p>
+<h4>Comment kemuygt by SuperMegaGoji on 2023-12-23 [+6 votes] (in reply to kemjvyh):</h4>
+<p>DJW</p>
+<h2>Comment kekkss0 by XVYQ_Emperator on 2023-12-23 [+130 votes] (in reply to 18oytib):</h2>
+<p>No. It is stated by DJW that it isn't his DNA. It isn't Albedo's either.</p>
+<p>At least ~~wikia~~ fandom says so, reffering to unavailable link.</p>
+<h3>Comment kekr44f by orioriorioriorio on 2023-12-23 [+65 votes] (in reply to kekkss0):</h3>
+<p>Tbf he said Alien x isn't the strongest while also contradicting the other writers who contradict eachother and in one case themselves. (Forgot which one so take it with a grain of salt)</p>
+<h4>Comment kekrpm1 by Aggressive_South3949 on 2023-12-23 [+39 votes] (in reply to kekr44f):</h4>
+<blockquote>
+<p>Tbf he said Alien x isn't the strongest</p>
+</blockquote>
+<p>That was Dwayne McDuffie, not DJW. DM said this during season 1 of Alien Force by the way.</p>
+<h3>Comment kel532u by yamask888 on 2023-12-23 [+6 votes] (in reply to kekkss0):</h3>
+<p>that's one point I got to disagree with djw rip with. unless there was some hero asmuth thought would have better DNA then himself it makes the most sense to use his DNA</p>
+<h4>Comment kemx3xz by None on 2023-12-23 [+1 votes] (in reply to kel532u):</h4>
+<p>Ikr I mean if you think about it why Wouldn’t he use his own</p>
+<h2>Comment kekr2wt by Tenatlas_2004 on 2023-12-23 [+45 votes] (in reply to 18oytib):</h2>
+<p>I once read that the DNA was neither azmuth nor albedo. So I choose to believe it was Zenith's DNA since the omnitrix was partially built for her and Azmuth is a bit of a weirdo and thought of it as a romantic gesture.</p>
+<h3>Comment kenfz3a by TemporalGod on 2023-12-23 [+6 votes] (in reply to kekr2wt):</h3>
+<p>I mean it would be Cool, Funny and Ironic if it was Albedo's DNA, like imagine that Albedo stuck as Ben turns into Grey Matter one day and realizes that Grey Matter was his original form, only to later turn back into Ben,</p>
+<p>I know canonically it's not his DNA but if it was his DNA, the implications would be interesting, none the less.</p>
+<h2>Comment kekm4dv by potatorevenant on 2023-12-23 [+17 votes] (in reply to 18oytib):</h2>
+<p>Azmuth isolated himself in a backwater planet before being persuaded to go back to Galvan, not exactly the kind of guy you'd expect to give away his genome. That being said, wasn't the Omnitrix originally signed with his DNA before his assistant tampered with it?</p>
+<h2>Comment keknx6v by Independent_Peace144 on 2023-12-23 [+21 votes] (in reply to 18oytib):</h2>
+<p>Smart =/= wisdom and knowledge. Azmuth is the wisest and most knowledgeable Galvan, but may not be the smartest. He has accumulated years of wisdom to become where he is right now. You can be smart and don't know anything if you never bothered to learn. Given Ben's lack of experience compared to Azmuth it makes sense why he seemed to be not as "smart"</p>
+<h2>Comment kekj71p by BlackBloom96 on 2023-12-23 [+25 votes] (in reply to 18oytib):</h2>
+<p>If I'm not mistaken, the Omnitrix takes a DNA sample and refines it until its peak, no matter who gives the sample... </p>
+<p><em>So probably Azmuth is the peak of the Galvans...</em></p>
+<h3>Comment keklzq4 by None on 2023-12-23 [+10 votes] (in reply to kekj71p):</h3>
+<p>I think they still try to find the healthiest possible donors just in case </p>
+<p>Like Z’scare for example was tough enough to rule his whole system </p>
+<p>But you are right still</p>
+<h4>Comment kekr6lh by Justaredditor152 on 2023-12-23 [+17 votes] (in reply to keklzq4):</h4>
+<p>Z'skar got in to the Omnitrix because he was scanned in while possessing Wild vines donor.</p>
+<h2>Comment kekk79s by WatchKid12YT on 2023-12-23 [+4 votes] (in reply to 18oytib):</h2>
+<p>You would think.</p>
+<h2>Comment kel2jjl by symxd76 on 2023-12-23 [+5 votes] (in reply to 18oytib):</h2>
+<p>It would be convenient. Plus the DNA gets randomized anyway so there's your explanation why Ben doesn't just turn into azmuth</p>
+<h2>Comment keljr6p by songouku96 on 2023-12-23 [+5 votes] (in reply to 18oytib):</h2>
+<p>It's not the dna that's the prime of its species. It's the omnitrix that has a function that transforms the user to the peak of that species</p>
+<h2>Comment kelpnaw by <em>Jon_Polygon</em> on 2023-12-23 [+4 votes] (in reply to 18oytib):</h2>
+<p>Since it isn’t Azmuth’s DNA, does that mean that Ben has the potential to become smarter than Azmuth? Since he’s the prime example of the species</p>
+<h3>Comment kemmrdx by Pen_isnt on 2023-12-23 [+2 votes] (in reply to kelpnaw):</h3>
+<p>I assume if Ben was as old as Azmuth and turned into Grey Matter he’d be as smart if not smarter than Azmuth. But Frankenstrike has no intelligence boost despite Dr Victor, and his DNA was the one scanned as well, as intelligence is something Dr Victor just has, not an ability of his species, so it’s possible Ben would still not be as smart as Azmuth anyway since his intelligence is above that what a Galvan can achieve even with years of evolution, as Ultimate Albedo still wasn’t as smart as Azmuth either.</p>
+<h2>Comment kekfjep by DueRule9909 on 2023-12-23 [+14 votes] (in reply to 18oytib):</h2>
+<p>Maybe </p>
+<p>But the better question is. Why isn't Greymatter as smart as Asmuth since the aliens in the omnitrix are suppose to be in their peak version</p>
+<h3>Comment kekgcos by Dangerwolf64 on 2023-12-23 [+46 votes] (in reply to kekfjep):</h3>
+<p>Experience and age. Ben’s aliens ages are scaled around him.</p>
+<h3>Comment kekq7xc by Justaredditor152 on 2023-12-23 [+16 votes] (in reply to kekfjep):</h3>
+<p>The Omnitrix scales with age.</p>
+<p>It's like taking the smartest high schooler and comparing him to Einstein.</p>
+<p>With enough time Ben could be as smart, seeing how he was able to create the biomnitrix when only in his 30s</p>
+<h3>Comment kekhwz4 by Sufficient-Cow-2998 on 2023-12-23 [+23 votes] (in reply to kekfjep):</h3>
+<p>You can't be smart if you don't know shit. In theory, if Ben were to turn in Gray Matter for a looooong time and started studying and doing researchs, then eventually he would become smarter. But since he obviously ain't doing none of that, his smart is limited.</p>
+<h4>Comment kekide7 by DueRule9909 on 2023-12-23 [+11 votes] (in reply to kekhwz4):</h4>
+<p>Does he need to? Graymatter/Ben understood what Rad's AI said immediately after transforming</p>
+<h4>Comment keklqyx by None on 2023-12-23 [+8 votes] (in reply to kekhwz4):</h4>
+<p>Ben’s clear ADHD is probably also a factor</p>
+<h4>Comment kekkalp by Sea-captain209 on 2023-12-23 [+3 votes] (in reply to kekhwz4):</h4>
+<p>Why shit</p>
+<h3>Comment kelgkn8 by HzPips on 2023-12-23 [+6 votes] (in reply to kekfjep):</h3>
+<p>There is a difference between intelligence and education</p>
+<h2>Comment kemjnht by Jeptwins on 2023-12-23 [+4 votes] (in reply to 18oytib):</h2>
+<p>One must assume that it is, considering he made it himself, and is touted as the smartest of all the Galvans, meaning the Omnitrix would benefit the most from his DNA</p>
+<h2>Comment kemjsfu by Mastakillerboi on 2023-12-23 [+5 votes] (in reply to 18oytib):</h2>
+<p>Galvan was the first dna to be ever put on the omnitrix</p>
+<p>So yeah very likely</p>
+<h3>Comment kenas74 by drax3237 on 2023-12-23 [+1 votes] (in reply to kemjsfu):</h3>
+<p>Honestly I figured the DNA was Albedo's</p>
+<h2>Comment kektz8p by Gloomy_Farmer1010 on 2023-12-23 [+3 votes] (in reply to 18oytib):</h2>
+<p>Doesn’t the omnitrix produce the prime example of the species regardless of whose dna was used?</p>
+<h3>Comment kemxwe3 by None on 2023-12-23 [+1 votes] (in reply to kektz8p):</h3>
+<p>Yeah</p>
+<h2>Comment kekvz9i by mjaltik on 2023-12-23 [+3 votes] (in reply to 18oytib):</h2>
+<p>Doesn't the omnitrix change the DNA to fit the peak of that alien? Wouldn't it just be that asmuth is just close to peak anyway, which is why they share resemblance rather than them being genetic relatives when he changes.</p>
+<h2>Comment keliqu9 by vamp1yer on 2023-12-23 [+3 votes] (in reply to 18oytib):</h2>
+<p>Probably his ex wife's as she was his inspiration so he probably used whatever he had left from her to scrape enough of her DNA to work as a transformation</p>
+<h2>Comment kel4hif by Leostar_Regalius on 2023-12-23 [+2 votes] (in reply to 18oytib):</h2>
+<p>if i remember it was, but i might be remembering wrong</p>
+<h2>Comment kel4vzy by yamask888 on 2023-12-23 [+2 votes] (in reply to 18oytib):</h2>
+<p>I wish we could have seen Ben 10k use greymatter and look more like asmuth, thar being said though would that make Grey matter asmuth's son/ clone?</p>
+<h3>Comment kemxojl by None on 2023-12-23 [+1 votes] (in reply to kel4vzy):</h3>
+<p>Idk if it works that way since the omnitrix is supposed to rewrite Ben’s Own DNA turning him into himself as that species coupled with that whole peak of the species thing</p>
+<h2>Comment kem6pkh by PERIX_4460 on 2023-12-23 [+2 votes] (in reply to 18oytib):</h2>
+<p>I think it was stated that it's not.</p>
+<p>I think it might be his dad's.</p>
+<h2>Comment kent7nz by Classic_Brain6575 on 2023-12-23 [+2 votes] (in reply to 18oytib):</h2>
+<p>I think gray matter is the first alien ever put into the Omnitrix because I feel like that would have been the easiest one cuz you know to me he either was the first one because he was the easiest or the last one because he was the easiest</p>
+<h2>Comment kenuvl5 by SonicSpiderRanger10 on 2023-12-23 [+2 votes] (in reply to 18oytib):</h2>
+<p>I know Derrick Wyatt (or <em>someone</em> who worked on the shows) said that the Galvan DNA didn’t come from Azmuth or Albedo.</p>
+<h2>Comment kepaliz by allwayscomeback on 2023-12-24 [+2 votes] (in reply to 18oytib):</h2>
+<p>Bro just cummed on the omnitrix 💀</p>
+<h3>Comment kepbvsp by PhoonThe on 2023-12-24 [+1 votes] (in reply to kepaliz):</h3>
+<p>In the omnitrix. Bro used Eunice(unitrix)</p>
+<h2>Comment kekn12a by xSantenoturtlex on 2023-12-23 [+2 votes] (in reply to 18oytib):</h2>
+<p>I'd say probably.</p>
+<p>I mean, what easier way to get Galvan DNA than to just use your own?</p>
+<h2>Comment kelga21 by HzPips on 2023-12-23 [+2 votes] (in reply to 18oytib):</h2>
+<p>It’s probably from either Blukic or Driba, some of the brightest minds in Galvan</p>
+<h2>Comment kekrqka by Standard_Ad9911 on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>Gm was a tadpole( ( New Born ) , I'll Explain everything  soon</p>
+<h2>Comment kekzlhg by Intrepid_Ad_3157 on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>Probably mainly because of his self surviving in the first few series… but he’s not stupid enough to give anyone his potential DNA so imo i think he gave Albedo</p>
+<h2>Comment keluioz by Anzol_18 on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>Fun fact: When albedo becomes Ultimate Gray matter in one episode in planet galvan, for a second when he's in normal grey matter from... it's azmuth's appearence.</p>
+<h3>Comment kemmeol by Pen_isnt on 2023-12-23 [+1 votes] (in reply to keluioz):</h3>
+<p>Really? He has his own character design for his Galvan form, how could they mess up and use Azmuth’s instead?</p>
+<p>https://preview.redd.it/e23cue96q28c1.png?width=615&amp;format=png&amp;auto=webp&amp;s=795344b4a8d3b25ed1aa6c3a7c561eb47b0efa31</p>
+<h2>Comment kelws47 by Optimal_Ad6274 on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>It came from neither Azmuth or Albedo, according to the wikipedia which is weird since you think it will be easy to put in your DNA</p>
+<h3>Comment kelxh4b by ProfessorEscanor on 2023-12-23 [+2 votes] (in reply to kelws47):</h3>
+<p>I guess Azmuth didn't want to give a blood sample. No clue why he didn't force Albedo to do it though.</p>
+<h4>Comment kelxoe3 by Optimal_Ad6274 on 2023-12-23 [+1 votes] (in reply to kelxh4b):</h4>
+<p>Noted and yeah</p>
+<h2>Comment kelxdzn by ProfessorEscanor on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>I mean it would be the easiest to get. Although I kind of like the idea that Azmuth gave the watch Zenith's dna because he regrets how their relationship turned out.</p>
+<h2>Comment kem21bo by PlsDontBotherMeHere on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>It would have been the easiest way, and it would end up turning ben into the prime Galvan anyway</p>
+<h2>Comment kem51sk by Huihejfofew on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>Wait is grey matter smarter than asmuth? Ben is meant to be the peak of any species, in theory asmuth isn't even necessarily the smartest, just the one who made an op weapon</p>
+<h3>Comment kenynt0 by Jacksbrow05 on 2023-12-23 [+1 votes] (in reply to kem51sk):</h3>
+<p>I would say no, since it also scales to Ben's age equivalent and Azmuth is incredibly old, meaning he has more experience and wisdom than Ben ever had</p>
+<h4>Comment keoalbq by Huihejfofew on 2023-12-23 [+1 votes] (in reply to kenynt0):</h4>
+<p>Since viltrumites scale with age wouldn't ben be a week ass viltrumite? For all those people who say he'd beat omni man just by becoming a viltrumite</p>
+<h2>Comment kem5num by Blacklasho on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>We've seen that the Omnitrix rejuvenates DNA, but I imagine it didn't when it was first made, so I imagine Azmuth found a younger and healthier Galvin and put their DNA into the Omnitrix.</p>
+<h2>Comment kemcwwb by Tesloche on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>I like to imagine yes</p>
+<h2>Comment kemdz7b by crow_king1578 on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>Oh Definitely 
+When azmuth made the prototype Omnitrix, he was basically a hermit living on Xenon with no contact with Galvan Prime</p>
+<h2>Comment kemh0a9 by luckytrap89 on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>I think he just randomized the dna like how Eunice works, so its not really any galvan's dna</p>
+<h2>Comment kemm5uh by Pen_isnt on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>I think Dwayne McDuffie or someone else has said it’s not Azmuth or Albedo’s DNA.</p>
+<h2>Comment kemtna7 by Fit_Shelter5192 on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>The omnitrix randomises it and alters it to become a prime specimen. Ben is about as related to Azmuth as Eunice is to any human on the planet. Why are we still having these conversations ? Did you guys watch the show on YouTube ? How are you missing all this. Albedo in omniverse specifically changed the Galvan DNA in his ultimatrix from his own to Azmuth’s own. As seen in the episode where him and Vilgax team up to kill Azmuth and Ben.</p>
+<h2>Comment kemusao by SuperMegaGoji on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>Well sorta, Azmuth didn't seek out prime specimens necessarily. The OV Omnitrix just turns the user into the prime example of the species, pushing the DNA to the max.</p>
+<h2>Comment kenlx2o by SilverSpider_ on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>Probably</p>
+<h2>Comment kenngax by LTheLetter on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>Everyone here saying that Azmuth should've been the donor doesn't realize that having traces of his DNA is a danger to anyone who gets ahold of the Omnitrix. What's gonna happen if Vilgax extracts Azmuth's DNA and creates a highly intelligent servant who creates weapons similar to Ascalon? Leaving the most intelligent mind's DNA in any capacity is a weapon in of itself, you could create weapons with infinite potential.</p>
+<h2>Comment kenvhhs by Pretend_Lecture_6052 on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>Idk</p>
+<h2>Comment keo2ocx by Krimson_Klaww on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>He Rule 64'd the hell outta the Omnitrix</p>
+<h2>Comment keoch8a by Afafakja on 2023-12-23 [+1 votes] (in reply to 18oytib):</h2>
+<p>Tbh either Asmuth is a super duper mutation or Grey Matter is much more inteligent than he seems,wich i doubt he is sunce Ultimate Albedo is a supermutated version of Grey Matter and is somehow still dumber than Azmuth,oh talking about this i remember one guy said he thought Albedo was the sample.</p>
+<h2>Comment keoiumh by FooltheKnysan on 2023-12-24 [+1 votes] (in reply to 18oytib):</h2>
+<p>I think he's either intelligent enough, or by gathering dna, gained enough insight, to know that smarts in itself isn't enough to be the genetically best, and choose someone best in average of their species</p>
+<h2>Comment keom314 by Stand-Diligent on 2023-12-24 [+1 votes] (in reply to 18oytib):</h2>
+<p>I think the writers have said it didn't come from Azmuth or Albedo</p>
+<h2>Comment keopug4 by TechnicalAd9124 on 2023-12-24 [+1 votes] (in reply to 18oytib):</h2>
+<p>No its not Azmuths and its also not from albedo its apparently unknown</p>
+<h2>Comment keovm3s by Acceptable-Reply4139 on 2023-12-24 [+1 votes] (in reply to 18oytib):</h2>
+<p>I’m gonna say probably not but it who’d be cool if azmuth used albedo to go full circle?</p>
+<h2>Comment kepf26h by Think-Orange3112 on 2023-12-24 [+1 votes] (in reply to 18oytib):</h2>
+<p>I think the aliens are compiled from the DNA of multiple members and the best bits are mashed together</p>
+<h2>Comment kepmkv3 by A1starm on 2023-12-24 [+1 votes] (in reply to 18oytib):</h2>
+<p>I don’t think he’d be too keen on using his specific DNA strand for the Omnitrix. If someone were to possibly make the holder bleed or dissect them while in Galvan form, they’d have Azmuth’s DNA. He doesn’t strike me as someone willing to let himself open to such a degree.</p>
+<h2>Comment kepooj9 by Memetan_24 on 2023-12-24 [+1 votes] (in reply to 18oytib):</h2>
+<p>I think it's just a random galvan</p>
+<h2>Comment kesrlh9 by Due-Procedure-9085 on 2023-12-24 [+1 votes] (in reply to 18oytib):</h2>
+<p>Better question is did albedo switch that sample for his own when making the ultimatrix.</p>
+<h2>Comment kf34ytp by Sad_Faithlessness148 on 2023-12-27 [+1 votes] (in reply to 18oytib):</h2>
+<p>He prolly found the perfect specimen of his race instead of taking his own dna</p></p>
+        
+
+</body>
+</html>

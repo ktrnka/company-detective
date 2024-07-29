@@ -1,0 +1,269 @@
+
+<html>
+<body>
+    
+
+<h1>98point6 / 98point6</h1>
+
+Users on Reddit are discussing their experiences with 98point6, an online medical service. One user shares a positive experience with the service, highlighting the affordability and convenience of getting a prescription online. Another user mentions that 98point6 did not prescribe the needed antibiotics for their ear and sinus infections. The second thread discusses users' experiences with the 98point6 primary care program, particularly in relation to depression treatment.
+
+<h2>User Experience</h2>
+
+<h3>Strengths</h3>
+
+<ul><li>"$20 got me an awesome appointment with a nice doctor and a prescription for a medication I could afford that solved my issue."</li> (source: bg7ip2)
+<li>"Helped me get paxlovid for covid more quickly than I otherwise would have been able to. Win win."</li> (source: idl52u3)
+<li>"I really appreciate the accessibility of it. I have only used it for physical health issues."</li> (source: gkwtoqb)</ul>
+
+<h3>Weaknesses</h3>
+
+<ul><li>"All three times they did not prescribe the needed antibiotic to get better. I had an ear infection, my husband had an ear infection, then I had a sinus infection."</li> (source: hrmpl3t)
+<li>"Total garbage, they rarely prescribe any meds online and tell you to go to a clinic."</li> (source: joi8dqm)</ul>
+
+<h2>Employee Experience</h2>
+
+<h3>Strengths</h3>
+
+
+
+<h3>Weaknesses</h3>
+
+
+
+<h2>Investor Perspective</h2>
+
+
+        
+
+<hr/>
+
+<h1>Debugging the aggregation</h1>
+
+<h2>Aggregation prompt</h2>
+
+<h1>Prompt</h1>
+
+<h2>System prompt</h2>
+<pre>
+
+            Please read the following summaries of Reddit threads and form an comprehensive aggregation and deduplication of the points from each summary.
+
+            The summary should begin with an overview paragraph.
+
+            Then it should three sections summarizing key facts and opinions from different perspectives:
+            1. User experience perspective: The key strengths and weaknesses of the PRODUCT from the perspective of current users. If there is no information from current users, say "Not applicable".
+            2. Prospective employee perspective: The key strengths and weaknesses of the COMPANY from the perspective of employees. For example this could include information about the benefits, company culture, work-life balance, or other relevant information. If there is no information about current or former employees, say "Not applicable".
+            3. Prospective investor perspective: Any key information about the COMPANY from the perspective of a prospective investor, such as fundraising, valuation, layoffs, partnerships, or other information indicating that the company is improving or worsening. If there is no information about the company's financials, say "Not applicable".
+            Any claims in these three sections should have a hyperlink citation to all sources, for example "CLAIM (source1, source2, source3)".
+
+            Do not make speculations, simply summarize the key facts and opinions stated in the thread.
+            
+</pre>
+
+<h2>Prompt</h2>
+<pre>
+
+            COMPANY: {company}
+            PRODUCT: {product}
+            
+            Summaries: 
+            {text}
+            
+</pre>
+    
+
+<h2>Aggregation input (converted markdown to HTML)</h2>
+<h1>Summary: Internet medicine is awesome, 98point6 was so so helpful for me (thread id: bg7ip2)</h1>
+<p>Users on Reddit are discussing their experiences with 98point6, an online medical service. One user shares a positive experience with the service, highlighting the affordability and convenience of getting a prescription online. Another user mentions that 98point6 did not prescribe the needed antibiotics for their ear and sinus infections.</p>
+<h2>User Experience</h2>
+<h3>Strengths</h3>
+<ul>
+<li>"$20 got me an awesome appointment with a nice doctor and a prescription for a medication I could afford that solved my issue." (source: bg7ip2)</li>
+<li>"Helped me get paxlovid for covid more quickly than I otherwise would have been able to. Win win." (source: idl52u3)</li>
+</ul>
+<h3>Weaknesses</h3>
+<ul>
+<li>"All three times they did not prescribe the needed antibiotic to get better. I had an ear infection, my husband had an ear infection, then I had a sinus infection." (source: hrmpl3t)</li>
+</ul>
+<h2>Employee Experience</h2>
+<h3>Strengths</h3>
+<p>Not applicable</p>
+<h3>Weaknesses</h3>
+<p>Not applicable</p>
+<h2>Investor Perspective</h2>
+<p>Not applicable</p>
+<h1>Summary: Has anyone used the 98point6 primary care? (thread id: l5bbt9)</h1>
+<p>The Reddit thread discusses users' experiences with the 98point6 primary care program, particularly in relation to depression treatment.</p>
+<h2>User Experience</h2>
+<h3>Strengths</h3>
+<ul>
+<li>"I really appreciate the accessibility of it. I have only used it for physical health issues." (source: gkwtoqb)</li>
+</ul>
+<h3>Weaknesses</h3>
+<ul>
+<li>"Total garbage, they rarely prescribe any meds online and tell you to go to a clinic." (source: joi8dqm)</li>
+</ul>
+<h2>Employee Experience</h2>
+<h3>Strengths</h3>
+<p>Not applicable</p>
+<h3>Weaknesses</h3>
+<p>Not applicable</p>
+<h2>Investor Perspective</h2>
+<p>Not applicable</p>
+
+<hr/>
+
+<h1>Debugging the mapping</h1>
+
+<h2>Mapping prompt</h2>
+
+
+<h1>Prompt</h1>
+
+<h2>System prompt</h2>
+<pre>
+
+            Please read the following Reddit thread and write an evididence-based summary of the key points relating to the COMPANY and PRODUCT specified.
+            The summary should begin with a brief 1-2 sentence summary of the thread.
+            Then it should three sections summarizing key facts and opinions from different perspectives:
+            1. User experience perspective: The key strengths and weaknesses of the PRODUCT from the perspective of current users. If there is no information from current users, say "Not applicable".
+            2. Prospective employee perspective: The key strengths and weaknesses of the COMPANY from the perspective of employees. For example this could include information about the benefits, company culture, work-life balance, or other relevant information. If there is no information about current or former employees, say "Not applicable".
+            3. Prospective investor perspective: Any key information about the COMPANY from the perspective of a prospective investor, such as fundraising, valuation, layoffs, partnerships, or other information indicating that the company is improving or worsening. If there is no information about the company's financials, say "Not applicable".
+
+            Provide a clear and concise summary of the key points, avoiding unnecessary details.
+            Do not make speculations, simply summarize the key facts and opinions stated in the thread.
+            
+</pre>
+
+<h2>Prompt</h2>
+<pre>
+
+            COMPANY: {company}
+            PRODUCT: {product}
+            
+            Reddit thread: 
+            {text}
+            
+</pre>
+    
+
+
+<h2>Individual summaries</h2>
+
+<h1>Internet medicine is awesome, 98point6 was so so helpful for me by FrugalChef13 on 2019-04-22</h1>
+<a href="https://www.reddit.com/r/povertyfinance/comments/bg7ip2/internet_medicine_is_awesome_98point6_was_so_so/">https://www.reddit.com/r/povertyfinance/comments/bg7ip2/internet_medicine_is_awesome_98point6_was_so_so/</a>
+
+Users on Reddit are discussing their experiences with 98point6, an online medical service. One user shares a positive experience with the service, highlighting the affordability and convenience of getting a prescription online. Another user mentions that 98point6 did not prescribe the needed antibiotics for their ear and sinus infections.
+
+<h2>User Experience</h2>
+
+<h3>Strengths</h3>
+
+<ul><li>"$20 got me an awesome appointment with a nice doctor and a prescription for a medication I could afford that solved my issue."</li> (source: bg7ip2)
+<li>"Helped me get paxlovid for covid more quickly than I otherwise would have been able to. Win win."</li> (source: idl52u3)</ul>
+
+<h3>Weaknesses</h3>
+
+<ul><li>"All three times they did not prescribe the needed antibiotic to get better. I had an ear infection, my husband had an ear infection, then I had a sinus infection."</li> (source: hrmpl3t)</ul>
+
+<h2>Employee Experience</h2>
+
+<h3>Strengths</h3>
+
+
+
+<h3>Weaknesses</h3>
+
+
+
+<h2>Investor Perspective</h2>
+
+
+
+<h2>Original Thread</h2>
+<p><h1>Post bg7ip2:  Internet medicine is awesome, 98point6 was so so helpful for me by FrugalChef13 on 2019-04-22 [+55 votes]</h1>
+<p><strong>TL;DR- $20 got me an awesome appointment with a nice doctor and a prescription for a medication I could afford that solved my issue.</strong></p>
+<p><em>Disclaimer: This particular thing worked well for me so I'm going to tell you about it. Everyone is different, so it might not work as well (or at all) for you.  Take what you find useful from this post and ignore the rest.  I'm not compensated or connected to the website I'm discussing.</em></p>
+<p>So like a lot of people on here I'm usually either uninsured or underinsured.  Right now it's underinsured with a high deductible, so when I messed my back up badly enough that I could barely move I freaked.  I've got scoliosis, a fucked up spine, bad knees, and muscles that love to spasm uncontrollably for days on end.  I'd run out of my prescription muscle relaxants last fall and hadn't been able to afford another appointment.  Advil helps a little but it wears off in 4 hours so I kept waking up in pain, and for some reason Aleve has never worked for me.  Just doesn't, it's weird.</p>
+<p>So I was fucked.  Can't sleep, hurts like crazy, still gotta work.  Fuck.  Can't afford the $100+ for a doctor's appointment, plus taking the day off to get into the next town over where there's a walk in clinic that can take me on short notice.  Fuck fuck.  Bad.</p>
+<p>So I drank several glasses of wine and started googling "how to get a prescription online."  There are some pretty sketchy (and expensive) options that I am pretty sure are hella illegal, and then I see a result for <a href="https://98point6.com">98point6.com</a>.  It's $20 for a one year membership with unlimited online appointments ($120 for the second year unless I cancel before then).  Fuck it, I'm drunk enough to sleep tonight, if I'm still in bad shape tomorrow morning it's worth a try.  I was still in bad shape the next morning, so I did it.</p>
+<p>Guys, it was amazing.  It's not perfect, obviously- you need an internet connection and either a phone or  computer with webcam.  I chatted with some weird robot for 10 minutes or so and answered questions about what my problem was, then I got connected to this nice doctor lady and we talked over the webcam for... 10 minutes maybe?   about what was going on, what I'd already tried, what I knew from my own medical history likely wouldn't help.  She was so kind, and didn't make me feel dumb or worthless for not being able to afford a full price doctor's appointment in my town.  She said that even people who do have a local PCP use their service because it's faster and cheaper and easier than an office visit.  (One limitation of internet medicine is that they can't prescribe controlled substances, or medications with high potential for abuse which apparently includes the muscle relaxant I usually took.)   She recommended a prescription anti-inflammatory that lasts for 12 hours, since the muscle relaxant I'd taken in the past wasn't an option to have prescribed over the internet. And then I said the thing I hate saying- "This sounds like a good option, but cost is a big issue for me.  What's the usual price of this med out of pocket?"</p>
+<p>Usually when I ask that the doctor says something shitty like "well it's what I normally prescribe for someone in your situation, the cost you'll pay varies based on the pharmacy and your insurance. Unfortunately I can't estimate your cost."  This lady did not.</p>
+<p>This amazing awesome doctor picked up her iPhone and said "I have an app for a website called GoodRx, if you give me your zip code I'll let you know what this will cost at the pharmacies in your area using their discount program. If this medication is out of your price range there are a few other things that would work just as well and might be more affordable."  She didn't shame me for being poor, she was actively prepared to address the needs of people who have limited funds, and she was willing to spend her time to find a medication I could afford.  Happily, the med she prescribed was under $15 for a 1 month supply through GoodRx, hooray!  (I know that's a lot for some people, but it was doable for me.)</p>
+<p>I would 100% use 98point6 again, especially since my $20 gets me unlimited visits for a year.  It's not the right place to go for a broken arm, but for prescription anti-inflammatories or antibiotics for your 3rd UTI of the year or something pretty basic it's a good low cost option.   And not having to leave the house to talk to a doctor was really really great.</p>
+<p>If anyone else has recommendations or critiques or thoughts on internet medicine stuff I'd love to hear it.</p>
+<h2>Comment elj1h0o by None on 2019-04-22 [+8 votes] (in reply to bg7ip2):</h2>
+<p>That sounds like a great resource! Especially for my two most common ailments, pink eye (I work with kids, they’re gross) and strep. Thanks for sharing</p>
+<h3>Comment eljexpb by FrugalChef13 on 2019-04-23 [+3 votes] (in reply to elj1h0o):</h3>
+<p>Yeah, it's not a "this solves all your problems" thing, but it might be a "this solves some of your problems this week" thing.</p>
+<p>I love children and are they are horrible little germ spreaders.  Wonderful munchkins, terrible pink eye.</p>
+<h2>Comment eljwrv8 by AnotherDay_RS on 2019-04-23 [+3 votes] (in reply to bg7ip2):</h2>
+<p>Sounds like a great service but what i don't understand is, If they cannot prescribe you the medication due to ie; controlled substance etc. Why is she giving you price to purchase it under GoodRX?</p>
+<p>Sorry that part wasn't clear to me, I thought you needed a doctor approval to prescribe controlled substances.</p>
+<h3>Comment eljx9uw by FrugalChef13 on 2019-04-23 [+3 votes] (in reply to eljwrv8):</h3>
+<p>So there are prescriptions, and there are controlled substances which are like super duper extra prescriptions.  Controlled substances are usually stuff with a high chance of being abused, or that is sold as street drug.</p>
+<p>A prescription is for stuff like "the pill" or prescription anti-inflammatories or antibiotics.</p>
+<p>Controlled substances are prescription drugs with extra levels of protection and oversight.  The biggies are opiates (Percocet, Oxycontin, etc), stimulants (Ritalin, Adderall), and benzodiazepines (Valium, Klonopin).  Even IRL doctors have to do extra stuff to prescribe controlled substances, and you have to sign and do extra stuff to fill the prescriptions and pick them up at the pharmacy.</p>
+<p>So the 98point6 doctor could prescribe me the long-acting prescription anti-inflammatory meloxicam, but not the controlled substance Vicodin or the muscle relaxant Flexiril.  Neither medication can be purchased without a prescription from a doctor, but Vicodin is super extra hard to get prescribed.</p>
+<p>Does that make sense?</p>
+<p>EDIT: I tried to clarify the original post to make it more obvious that although she couldn't prescribe the thing I'd taken in the past, she did prescribe a thing that helped a lot.  It actually helped even more than the thing I'd taken in the past and without making me drowsy, which is AWESOME!</p>
+<h4>Comment eljy54o by AnotherDay_RS on 2019-04-23 [+2 votes] (in reply to eljx9uw):</h4>
+<p>That's great!! I will have to keep that service in mind, Thanks for clarifying.</p>
+<h4>Comment elkh6df by Mr_Fuzzo on 2019-04-23 [+2 votes] (in reply to eljx9uw):</h4>
+<p>Controlled substances, for the un-initiated are medications like opiates, barbiturates, methamphetamines, benzodiazepines, etc.</p>
+<p>So, meds like Xanax, OxyContin, Ritalin, etc.</p>
+<h4>Comment jl3md0l by booalijules on 2023-05-22 [+1 votes] (in reply to eljx9uw):</h4>
+<p>What about something like dexamethasone or prednisone?</p>
+<h2>Comment hrmpl3t by MarketWorldly9908 on 2022-01-07 [+3 votes] (in reply to bg7ip2):</h2>
+<p>My husband and I have used 98.6 three times. All three times they did not prescribe the needed antibiotic to get better. I had an ear infection, my husband had an ear infection, then I had a sinus infection. We had to wait and get into our family doctor, so we paid 98.6 and our family doctor. I would not recommend them!</p>
+<h2>Comment elkkysu by NightSkyButterfly on 2019-04-23 [+2 votes] (in reply to bg7ip2):</h2>
+<p>I'm not sure where your old prescription on file is, but I know at the big box pharmacy I used to work at we could send an electronic request to the doctor to write a new script without a visit. Doesn't always work, but worth a try for a med you need!</p>
+<h2>Comment idl52u3 by Sweetcynic36 on 2022-06-24 [+1 votes] (in reply to bg7ip2):</h2>
+<p>Helped me get paxlovid for covid more quickly than I otherwise would have been able to. Win win.</p>
+<h2>Comment k4j76lw by prettyclouds88 on 2023-10-12 [+1 votes] (in reply to bg7ip2):</h2>
+<p>Thank you for this.</p></p>
+        
+
+<h1>Has anyone used the 98point6 primary care? by pinkmoonbliss on 2021-01-26</h1>
+<a href="https://www.reddit.com/r/Chipotle/comments/l5bbt9/has_anyone_used_the_98point6_primary_care/">https://www.reddit.com/r/Chipotle/comments/l5bbt9/has_anyone_used_the_98point6_primary_care/</a>
+
+The Reddit thread discusses users' experiences with the 98point6 primary care program, particularly in relation to depression treatment.
+
+<h2>User Experience</h2>
+
+<h3>Strengths</h3>
+
+<ul><li>"I really appreciate the accessibility of it. I have only used it for physical health issues."</li> (source: gkwtoqb)</ul>
+
+<h3>Weaknesses</h3>
+
+<ul><li>"Total garbage, they rarely prescribe any meds online and tell you to go to a clinic."</li> (source: joi8dqm)</ul>
+
+<h2>Employee Experience</h2>
+
+<h3>Strengths</h3>
+
+
+
+<h3>Weaknesses</h3>
+
+
+
+<h2>Investor Perspective</h2>
+
+
+
+<h2>Original Thread</h2>
+<p><h1>Post l5bbt9:  Has anyone used the 98point6 primary care? by pinkmoonbliss on 2021-01-26 [+12 votes]</h1>
+<p>It’s the 24/7 doctor program and been thinking about using it for depression treatment</p>
+<h2>Comment gkugtqg by None on 2021-01-26 [+10 votes] (in reply to l5bbt9):</h2>
+<p>I haven’t but good for you for getting your life on track. Depression is a hard thing to get through but with the right mindset and helpful support from those you trust around you, I believe you will do amazing things! Keep riding the grind train💪🏼💪🏼💪🏼</p>
+<h2>Comment gkwtoqb by Somethingtacos on 2021-01-27 [+2 votes] (in reply to l5bbt9):</h2>
+<p>I really appreciate the accessibility of it. I have only used it for physical health issues. I don't know if 98point6 actually can provide mental healthcsre tbh.</p>
+<p>If it can't, ask your manager about EAP. It can help connect you to some resources, if not a (temporary) counselor.</p>
+<h2>Comment joi8dqm by AntRed666 on 2023-06-17 [+1 votes] (in reply to l5bbt9):</h2>
+<p>Total garbage, they rarely prescribe any meds online and tell you to go to a clinic. I just choose to order my meds online from Canada or Mexico.</p></p>
+        
+
+</body>
+</html>
