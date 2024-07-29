@@ -334,11 +334,6 @@ def summarize_summaries(
     )
 
 
-summary_result = summarize_thread(
-    CompanyProduct("Singularity 6", "Palia"),
-    "https://www.reddit.com/r/MMORPG/comments/1bz2e0z/palia_developers_singularity_6_axes_35_of_staff/",
-)
-summary_result
 
 
 def summarize_prompt(prompt):
@@ -357,7 +352,6 @@ def summarize_prompt(prompt):
     """
 
 
-display(HTML(summarize_prompt(thread_summary_prompt)))
 
 
 
@@ -422,4 +416,3 @@ Note: This only evaluates the evaluation stage, not the mapping stage.
     print(f"Results for {target} saved to {filename}")
 
 
-short_evaluation(CompanyProduct.same("98point6"), 5)
