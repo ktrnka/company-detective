@@ -25,40 +25,41 @@ class Claim(BaseModel):
     """A claim made in a Reddit thread"""
 
     quote: str = Field(
-        description="A short quote from the source representing the key claim"
+        description="A short quote from the source representing the key claim about the COMPANY or PRODUCT"
     )
-    comment_id: str = Field(description="The comment ID of the quote")
+    comment_id: str = Field(description="The comment or post ID of the quote")
 
 
 class ThreadSummary(BaseModel):
-    """A structured summary of a Reddit thread or threads about a company or product"""
+    """A structured summary of a Reddit thread or threads about a COMPANY or PRODUCT"""
 
     thread_summary: str = Field(description="An overview of the content")
 
     user_experience_strengths: Optional[List[Claim]] = Field(
         default=None,
-        description="Key positive themes in user feedback about the product",
+        description="Key positive themes in user feedback about the PRODUCT",
     )
     user_experience_weaknesses: Optional[List[Claim]] = Field(
         default=None,
-        description="Key negative themes in user feedback about the product",
+        description="Key negative themes in user feedback about the PRODUCT",
     )
 
     employee_experience_strengths: Optional[List[Claim]] = Field(
         default=None,
-        description="The key strengths of the company from the employee perspective",
+        description="The key strengths of the COMPANY from the employee perspective",
     )
     employee_experience_weaknesses: Optional[List[Claim]] = Field(
         default=None,
-        description="The key weaknesses of the company from the employee perspective",
+        description="The key weaknesses of the COMPANY from the employee perspective",
     )
 
     investor_perspective: Optional[List[Claim]] = Field(
         default=None,
-        description="Key information about the company from the perspective of a prospective investor",
+        description="Key information about the COMPANY from the perspective of a prospective investor",
     )
 
 
+# Note: To update this, run ThreadSummary.schema() and feed it into ChatGPT with this example output
 json_instructions = """
 The JSON object should have these top-level keys:
 
@@ -66,11 +67,12 @@ Required:
 thread_summary (string): An overview of the content discussed in the Reddit thread(s).
 
 Optional (should be omitted if no information is available):
-user_experience_strengths (list of Claim objects): Key positive themes in user feedback about the product.
-user_experience_weaknesses (list of Claim objects): Key negative themes in user feedback about the product.
-employee_experience_strengths (list of Claim objects): Key strengths of the company from the employee perspective.
-employee_experience_weaknesses (list of Claim objects): Key weaknesses of the company from the employee perspective.
-investor_perspective (list of Claim objects): Key information about the company from the perspective of a prospective investor.
+user_experience_strengths (list of Claim objects): Key positive themes in user feedback about the PRODUCT.
+user_experience_weaknesses (list of Claim objects): Key negative themes in user feedback about the PRODUCT.
+employee_experience_strengths (list of Claim objects): Key strengths of the COMPANY from the employee perspective.
+employee_experience_weaknesses (list of Claim objects): Key weaknesses of the COMPANY from the employee perspective.
+investor_perspective (list of Claim objects): Key information about the COMPANY from the perspective of a prospective investor.
+
 Each Claim object should match this format:
 
 Claim Object:

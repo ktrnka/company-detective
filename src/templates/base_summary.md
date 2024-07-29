@@ -1,6 +1,6 @@
 {% macro render_claims(claims) -%}
 {% if claims %}
-{% for claim in claims %}- "{{ claim.quote }}" (source: {{claim.comment_id}})
+{% for claim in claims %}- "{{ claim.quote }}" (Comment ID: {{claim.comment_id}})
 {% endfor %}
 {% endif %}
 {% endmacro %}

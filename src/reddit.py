@@ -45,7 +45,7 @@ def comment_forest_to_markdown(comment: Comment, level=1, parent_id=None, max_de
         return ""
 
     parent_header = f" (in reply to {parent_id})" if parent_id else ""
-    text = f"{'#' * level} Comment {comment.id} by {comment.author} on {utc_to_date(comment.created_utc)} [{comment.score:+d} votes]{parent_header}:\n"
+    text = f"{'#' * level} Comment ID {comment.id} by {comment.author} on {utc_to_date(comment.created_utc)} [{comment.score:+d} votes]{parent_header}:\n"
     text += f"{comment.body}\n\n"
 
     text += "\n\n".join(
@@ -63,7 +63,7 @@ def submission_to_markdown(submission: Submission, pagination_limit=10) -> str:
     submission.comments.replace_more(limit=pagination_limit)
 
     text = f"""
-# Post {submission.id}:  {submission.title} by {submission.author} on {utc_to_date(submission.created_utc)} [{submission.score:+d} votes]
+# Post ID {submission.id}:  {submission.title} by {submission.author} on {utc_to_date(submission.created_utc)} [{submission.score:+d} votes]
 {submission.selftext}
 
 """
