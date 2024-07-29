@@ -4,8 +4,6 @@ from typing import NamedTuple
 from langchain_core.messages.ai import AIMessage
 import markdown
 from itertools import chain
-import hashlib
-import os
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -14,7 +12,11 @@ from core import CompanyProduct
 import jinja2
 import praw
 
-templates = jinja2.FileSystemLoader("templates")
+templates = jinja2.Environment(
+    loader=jinja2.FileSystemLoader("templates"),
+    # autoescape=select_autoescape()
+)
+# template = env.get_template("thread_summary.md")
 
 class Claim(BaseModel):
     """A claim made in a Reddit thread"""
@@ -175,9 +177,12 @@ class Evaluation(NamedTuple):
     comment_ids_in_source: int
 
 
-class ThreadResult(NamedTuple):
+class ThreadSummaryResult(NamedTuple):
+    # inputs
     submission: praw.models.Submission
     text: str
+
+    # outputs
     summary_result: AIMessage
 
     def evaluate(self) -> Evaluation:
@@ -244,10 +249,10 @@ class ThreadResult(NamedTuple):
         """
 
 
-class AggregationResult(NamedTuple):
+class AggregatedSummaryResult(NamedTuple):
     # inputs
     target: CompanyProduct
-    summaries: List[ThreadResult]
+    summaries: List[ThreadSummary]
     aggregation_prompt_context: str
 
     # outputs
@@ -312,12 +317,18 @@ class AggregationResult(NamedTuple):
         """
 
 
-def summarize_thread(
-    target: CompanyProduct, url: str, text_max_chars=40000
-) -> ThreadResult:
-    submission = reddit.submission(url=url)
-    text = format_reddit_thread(submission)
+from praw.models import Submission
+import reddit
 
+def summarize_submission(
+    target: CompanyProduct, submission: Submission, text_max_chars=40000
+) -> ThreadSummaryResult:
+    """
+    Create a structured summary of a Reddit submission about a company or product
+    """
+    text = reddit.submission_to_markdown(submission)
+
+    # TODO: Replace truncation with splitting the content in some form. Also replace with a token limit rather than a character limit.
     if len(text) > text_max_chars:
         print(f"Text too long: {len(text)} > {text_max_chars}. Truncating.")
         text = text[:text_max_chars]
@@ -333,7 +344,7 @@ def summarize_thread(
             "json_instructions": json_instructions,
         }
     )
-    return ThreadResult(submission=submission, text=text, summary_result=summary_result)
+    return ThreadSummaryResult(submission=submission, text=text, summary_result=summary_result)
 
 
 def claims_to_markdown(claims: Optional[List[Claim]]) -> str:
@@ -345,7 +356,7 @@ def claims_to_markdown(claims: Optional[List[Claim]]) -> str:
     )
 
 
-def summary_to_markdown(summary_result: ThreadResult, debug=False) -> str:
+def summary_to_markdown(summary_result: ThreadSummary, debug=False) -> str:
     text = f"""
 # Summary: {summary_result.submission.title} (thread id: {summary_result.submission.id})
 
@@ -388,8 +399,8 @@ def summary_to_markdown(summary_result: ThreadResult, debug=False) -> str:
 
 
 def summarize_summaries(
-    target: CompanyProduct, summaries: List[ThreadResult]
-) -> AggregationResult:
+    target: CompanyProduct, summaries: List[ThreadSummary]
+) -> AggregatedSummaryResult:
     text = "\n\n".join(summary_to_markdown(result) for result in summaries)
 
     runnable = aggregation_prompt | llm.with_structured_output(schema=ThreadSummary)
@@ -402,7 +413,7 @@ def summarize_summaries(
         }
     )
 
-    return AggregationResult(
+    return AggregatedSummaryResult(
         target=target,
         summaries=summaries,
         aggregation_prompt_context=text,
@@ -425,62 +436,3 @@ def summarize_prompt(prompt):
 </pre>
     """
 
-
-def short_evaluation(target: CompanyProduct, num_threads=2):
-    # This is cached so it should be quick
-    thread_urls = reddit_search(target, stop=10, pause=2)[:num_threads]
-
-    # The ID of the test is the last 4 chars of the sha of the url list
-    test_id = hashlib.sha256("".join(thread_urls).encode()).hexdigest()[-4:]
-
-    folder = f"evaluation/test_{test_id}"
-    os.makedirs(folder, exist_ok=True)
-
-    # individual thread results
-    results = [summarize_thread(target, url) for url in thread_urls]
-
-    # aggregation result
-    aggregation_result = summarize_summaries(target, results)
-
-    # make a unified page
-    result_htmls = "\n".join(r.to_html() for r in results)
-    html_result = wrap_html(
-        f"""
-{aggregation_result.to_html()}
-
-<hr/>
-
-<h1>Debugging the aggregation</h1>
-
-<h2>Hallucination evaluation</h2>
-Note: This only evaluates the evaluation stage, not the mapping stage.
-{aggregation_result.evaluate()}
-
-<h2>Aggregation prompt</h2>
-{summarize_prompt(aggregation_prompt)}
-
-<h2>Aggregation input (converted markdown to HTML)</h2>
-{markdown.markdown(aggregation_result.aggregation_prompt_context)}
-
-<hr/>
-
-<h1>Debugging the mapping</h1>
-
-<h2>Mapping prompt</h2>
-
-{summarize_prompt(thread_summary_prompt)}
-
-
-<h2>Individual summaries</h2>
-{result_htmls}
-"""
-    )
-
-    # Create the filename using the current timestamp
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"{folder}/{timestamp}.html"
-
-    with open(filename, "w") as f:
-        f.write(html_result)
-
-    print(f"Results for {target} saved to {filename}")
