@@ -13,6 +13,8 @@ import os
 import re
 from typing import Dict, List, Optional, Tuple, TypedDict
 from urllib.parse import urljoin
+from datetime import datetime
+from typing import NamedTuple, Optional
 
 from loguru import logger as log
 from scrapfly import ScrapeApiResponse, ScrapeConfig, ScrapflyClient, ScrapflyScrapeError
@@ -23,6 +25,7 @@ BASE_CONFIG = {
     # for more: https://scrapfly.io/docs/scrape-api/anti-scraping-protection
     "asp": True,
     "country": "US",
+    "cache": True,
 }
 
 
@@ -279,3 +282,40 @@ class Url:
             new = re.sub(".htm", f"_P{page}.htm", url)
         assert new != url
         return new
+    
+
+class GlassdoorReview(NamedTuple):
+    """Wrapper around a Glassdoor review to make autocomplete easier"""
+    # raw fields
+    advice: Optional[str]
+    cons: Optional[str]
+    lengthOfEmployment: int
+    pros: Optional[str]
+    ratingOverall: int
+    reviewId: int
+    summary: str
+
+    # processed fields
+    jobTitle: Optional[str]
+    dateTime: datetime
+
+    
+    @classmethod
+    def from_dict(cls, advice, cons, lengthOfEmployment, pros, ratingOverall, reviewId, summary, jobTitle, reviewDateTime, **_kwargs):
+        job_title = jobTitle["text"] if jobTitle else None
+        date_time = datetime.strptime(reviewDateTime, "%Y-%m-%dT%H:%M:%S.%f")
+
+        return cls(
+            advice, cons, lengthOfEmployment, pros, ratingOverall, reviewId, summary, job_title, date_time
+        )
+
+    @classmethod
+    def parse_reviews(cls, raw_results: dict):
+        """Parse Glassdoor reviews from the raw API response"""
+        parsed_reviews = [
+            cls.from_dict(**review)
+            for review in raw_results["reviews"]
+        ]
+        parsed_reviews = sorted(parsed_reviews, key=lambda x: x.dateTime, reverse=False)
+
+        return parsed_reviews
