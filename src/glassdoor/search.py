@@ -2,8 +2,9 @@
 from googlesearch import search
 from core import CompanyProduct
 import re
+from functools import lru_cache
 
-
+@lru_cache(1000)
 def find_review_url(target: CompanyProduct, pause_seconds=2, debug=False):
     """Find the URL Glassdoor review page for a company"""
     query = f'site:www.glassdoor.com/Reviews/ "{target.company}""'
