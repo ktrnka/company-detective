@@ -2,7 +2,6 @@ from typing import Optional, List
 from langchain_core.pydantic_v1 import BaseModel, Field
 from typing import NamedTuple
 from langchain_core.messages.ai import AIMessage
-import markdown
 from itertools import chain
 
 from langchain_openai import ChatOpenAI
@@ -13,7 +12,8 @@ import jinja2
 import praw
 
 from praw.models import Submission
-import reddit
+
+from .fetch import submission_to_markdown
 
 # templates to convert summaries to markdown and html
 templates = jinja2.Environment(
@@ -156,6 +156,7 @@ class Evaluation(NamedTuple):
     quotes_in_source: int
     comment_ids_in_source: int
 
+
 def evaluate_claims(result: AIMessage, text: str) -> Evaluation:
     claims_made = 0
     quotes_in_source = 0
@@ -179,6 +180,7 @@ def evaluate_claims(result: AIMessage, text: str) -> Evaluation:
 
     return Evaluation(claims_made, quotes_in_source, comment_ids_in_source)
 
+
 class ThreadSummaryResult(NamedTuple):
     # inputs
     submission: praw.models.Submission
@@ -189,13 +191,18 @@ class ThreadSummaryResult(NamedTuple):
 
     def evaluate(self) -> Evaluation:
         return evaluate_claims(self.summary_result, self.text)
-    
-    def is_under_max_hallucinations(self, max_allowable_hallucinations: int, debug=False) -> bool:
+
+    def is_under_max_hallucinations(
+        self, max_allowable_hallucinations: int, debug=False
+    ) -> bool:
         """
         Check for hallucinations using the comment_id evaluation, which seems pretty reliable.
         """
         evaluation = self.evaluate()
-        is_ok = evaluation.claims_made - evaluation.comment_ids_in_source <= max_allowable_hallucinations
+        is_ok = (
+            evaluation.claims_made - evaluation.comment_ids_in_source
+            <= max_allowable_hallucinations
+        )
 
         if debug and not is_ok:
             print(f"Filtering {self.submission.title} with evaluation {evaluation}")
@@ -249,7 +256,7 @@ def summarize_submission(
     """
     Create a structured summary of a Reddit submission about a company or product
     """
-    text = reddit.submission_to_markdown(submission)
+    text = submission_to_markdown(submission)
 
     # TODO: Replace truncation with splitting the content in some form. Also replace with a token limit rather than a character limit.
     if len(text) > text_max_chars:
@@ -295,6 +302,7 @@ def summarize_summaries(
         aggregation_prompt_context=text,
         summary_result=result,
     )
+
 
 # TODO: Remove or replace this
 def summarize_prompt(prompt: ChatPromptTemplate) -> str:
