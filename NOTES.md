@@ -55,6 +55,19 @@
 - Try doing a more flattened version like thegigabrain
     - I could theoretically do this but the LangChain docs/tutorials don't work anymore with their map-reduce style, which would be ideal
 
+# Glassdoor pipeline (last updated 7/30)
+
+## Issues
+
+- I started having some issues of the Google search getting blocked; I should switch to a Google Custom Search API
+- Instacart: Most of the Glassdoor reviews are from drivers, not FTE
+
+## TODO
+
+- Explore ways to make sure that it's grounded in evidence
+
+## Ideas
+
 # General
 
 ## User research questions

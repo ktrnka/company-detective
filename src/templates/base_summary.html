@@ -7,48 +7,71 @@
 {% endmacro %}
 
 {% macro render_claims(claims) -%}
-    {% if claims %}
-    <ul>
-        {% for claim in claims %}
-        <li>"{{ claim.quote }}" (source: {{ render_link(claim.comment_id) }})</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+{% if claims %}
+<ul>
+    {% for claim in claims %}
+    <li>"{{ claim.quote }}" (source: {{ render_link(claim.comment_id) }})</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No information found.</p>
+{% endif %}
 {% endmacro %}
 
 <html>
+
 <head>
     <title></title>
+
+    <!-- materialize css dependencies -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>{% block header %}Header{% endblock %}</h1>
+    <div class="container">
 
-<p>
-{{result.summary_result.thread_summary}}
-</p>
 
-<h2>User Experience</h2>
+        <h1>{% block header %}Header{% endblock %}</h1>
 
-<h3>Strengths</h3>
+        <p>
+            {{result.summary_result.thread_summary}}
+        </p>
 
-{{ render_claims(result.summary_result.user_experience_strengths) }}
+        <h2>User Experience</h2>
 
-<h3>Weaknesses</h3>
+        <h3>Strengths</h3>
 
-{{ render_claims(result.summary_result.user_experience_weaknesses) }}
+        {{ render_claims(result.summary_result.user_experience_strengths) }}
 
-<h2>Employee Experience</h2>
+        <h3>Weaknesses</h3>
 
-<h3>Strengths</h3>
-{{ render_claims(result.summary_result.employee_experience_strengths) }}
+        {{ render_claims(result.summary_result.user_experience_weaknesses) }}
 
-<h3>Weaknesses</h3>
-{{ render_claims(result.summary_result.employee_experience_weaknesses) }}
+        <h2>Employee Experience</h2>
 
-<h2>Investor Perspective</h2>
-{{ render_claims(result.summary_result.investor_perspective) }}
+        <h3>Strengths</h3>
+        {{ render_claims(result.summary_result.employee_experience_strengths) }}
+
+        <h3>Weaknesses</h3>
+        {{ render_claims(result.summary_result.employee_experience_weaknesses) }}
+
+        <h2>Investor Perspective</h2>
+        {{ render_claims(result.summary_result.investor_perspective) }}
+
+    </div>
+
+    <!-- materialize css dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
 </body>
-</html>
 
+</html>
