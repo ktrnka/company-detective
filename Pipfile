@@ -15,6 +15,7 @@ markdown = "*"
 Jinja2 = "*"
 loguru = "*"
 scrapfly-sdk = {extras = ["all"]}
+google-api-python-client = "*"
 
 [dev-packages]
 jupyter = "*"
