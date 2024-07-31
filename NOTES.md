@@ -60,7 +60,7 @@
 ## Issues
 
 - I started having some issues of the Google search getting blocked; I should switch to a Google Custom Search API
-- Instacart: Most of the Glassdoor reviews are from drivers, not FTE
+- Instacart: Most of the Glassdoor reviews are from drivers, not FTE. It'd be nice to add context information about the query itself, like "summarize xyz from the perspective of a director of marketing"
 
 ## TODO
 
@@ -80,7 +80,21 @@ I should ask friends about their job searches and what they look for.
 
 ## TODO
 
-- nicely formatted HTML output so I can read the sources if I want to, etc. I saw one demo used Streamlit to do that
+- Data modules
+    - Job listings
+        - Indeed from Scrapify?
+        - Glassdoor from Scrapify?
+        - Current titles from Linkedin? (compare hiring distribution vs existing distribution)
+    - (Startups) Fundraising
+        - Crunchbase from Scrapify?
+        - News from Reddit and Google News / scraping?
+    - People
+        - Linkedin?
+    - Giving back
+        - Blogs
+        - Academic articles
+        - Sponsoring events
+        - Individual employees giving talks
 
 ## Experimental notes
 
@@ -125,7 +139,6 @@ I should ask friends about their job searches and what they look for.
     - Reasonable communicators / collaborators?
     - Anti-PhD sentiment?
 - Culture
-    - 
 - Productivity
     - General
         - If all-remote, how good is communication / collab? What about roadmap alignment?
