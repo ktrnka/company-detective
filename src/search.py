@@ -4,12 +4,12 @@ import os
 from typing import List, NamedTuple
 
 load_dotenv()
-_service = build(
-    "customsearch", "v1", developerKey=os.getenv("GOOGLE_API_KEY")
-)
+_service = build("customsearch", "v1", developerKey=os.getenv("GOOGLE_API_KEY"))
+
 
 class SearchResult(NamedTuple):
     """Convenience class to represent a search result."""
+
     title: str
     link: str
     snippet: str
@@ -24,10 +24,13 @@ class SearchResult(NamedTuple):
             formattedUrl=json["formattedUrl"],
         )
 
-def search(query: str, dateRestrict=None, linkSite=None, num: int=10) -> List[SearchResult]:
+
+def search(
+    query: str, dateRestrict=None, linkSite=None, num: int = 10
+) -> List[SearchResult]:
     """
     Wrapper for the Google Custom Search API to add parameters, types, and authentication with defaults that are appropriate for this project.
-    
+
     Args:
         query (str): The search query.
         dateRestrict (str, optional): Restricts results to URLs based on date. Possible values are: d[number], w[number], m[number], y[number]. For example, d10 returns URLs indexed by Google in the past 10 days. Defaults to None.
@@ -56,4 +59,3 @@ def search(query: str, dateRestrict=None, linkSite=None, num: int=10) -> List[Se
         .execute()
     )
     return [SearchResult.from_json(item) for item in res["items"]]
-
