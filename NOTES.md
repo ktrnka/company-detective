@@ -95,6 +95,7 @@ I should ask friends about their job searches and what they look for.
         - Academic articles
         - Sponsoring events
         - Individual employees giving talks
+- Think about how I'll form an overall summary
 
 ## Experimental notes
 
