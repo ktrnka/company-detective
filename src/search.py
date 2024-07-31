@@ -1,13 +1,30 @@
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
 import os
+from typing import List, NamedTuple
 
 load_dotenv()
 _service = build(
     "customsearch", "v1", developerKey=os.getenv("GOOGLE_API_KEY")
 )
 
-def search(query: str, dateRestrict=None, linkSite=None, num: int=10) -> dict:
+class SearchResult(NamedTuple):
+    """Convenience class to represent a search result."""
+    title: str
+    link: str
+    snippet: str
+    formattedUrl: str
+
+    @classmethod
+    def from_json(cls, json):
+        return cls(
+            title=json["title"],
+            link=json["link"],
+            snippet=json["snippet"],
+            formattedUrl=json["formattedUrl"],
+        )
+
+def search(query: str, dateRestrict=None, linkSite=None, num: int=10) -> List[SearchResult]:
     """
     Wrapper for the Google Custom Search API to add parameters, types, and authentication with defaults that are appropriate for this project.
     
@@ -38,5 +55,5 @@ def search(query: str, dateRestrict=None, linkSite=None, num: int=10) -> dict:
         )
         .execute()
     )
-    return res
+    return [SearchResult.from_json(item) for item in res["items"]]
 
