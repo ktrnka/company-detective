@@ -83,7 +83,7 @@
         <ul>
         {% for thread_result in reddit_summary.summaries %}
             <li>
-                <a href="{{thread_result.submission.permalink}}">{{ thread_result.submission.title }}</a><br/>
+                <a href="https://www.reddit.com/{{thread_result.submission.permalink}}">{{ thread_result.submission.title }}</a><br/>
             </li>
         {% endfor %}
         </ul>
