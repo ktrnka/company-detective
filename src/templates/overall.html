@@ -95,13 +95,30 @@
         </ul>
 
 
-        <h1>Summary of Glassdoor for {{reddit_summary.overall_summary.target.company}}</h1>
+        <h1>Glassdoor for {{reddit_summary.overall_summary.target.company}}</h1>
 
-        Source: <a href="{{glassdoor_summary.review_page.link}}">{{glassdoor_summary.review_page.title}}</a> (processed {{glassdoor_summary.num_parsed_reviews}} / {{glassdoor_summary.num_raw_reviews}} reviews)
-
+        <h2>Reviews</h2>
         <p>
             {{glassdoor_summary.summary_html}}
         </p>
+
+        <h3>Source</h3>
+        Source: <a href="{{glassdoor_summary.review_page.link}}">{{glassdoor_summary.review_page.title}}</a> (processed {{glassdoor_summary.num_parsed_reviews}} / {{glassdoor_summary.num_raw_reviews}} reviews)
+
+        <h2>Job listings (possibly partial listings)</h2>
+        {% if glassdoor_summary.jobs %}
+        <ul>
+        {% for job in glassdoor_summary.jobs %}
+            <li>
+                <a href="{{job.seoJobLink}}">{{ job.jobTitleText }}, {{ job.locationName }}</a>: Posted {{ job.ageInDays }} days ago<br/>
+                {{ job.snippet }}
+            </li>
+        {% endfor %}
+        </ul>
+        {% else %}
+        <p>No job listings found.</p>
+        {% endif %}
+
 
 
     </div>
