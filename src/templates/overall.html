@@ -89,6 +89,15 @@
         </ul>
         <p>Note: We process fewer threads than the search results mainly to save OpenAI costs. Sometimes we also filter search results if there aren't enough comments, or if we detect significant hallucination in the LLM summary of the individual thread.</p>
 
+        <h1>Summary of Glassdoor for {{reddit_summary.overall_summary.target.company}}</h1>
+
+        Source: <a href="{{glassdoor_summary.review_page.link}}">{{glassdoor_summary.review_page.title}}</a> (processed {{glassdoor_summary.num_parsed_reviews}} / {{glassdoor_summary.num_raw_reviews}} reviews)
+
+        <p>
+            {{glassdoor_summary.summary_html}}
+        </p>
+
+
     </div>
 
     <!-- materialize css dependencies -->

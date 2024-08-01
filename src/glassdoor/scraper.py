@@ -256,6 +256,11 @@ class Url:
         if region:
             return url + f"?filter.countryId={region.value}"
         return url
+    
+    @staticmethod
+    def review(employer: str, review_id: int) -> str:
+        employer = employer.replace(" ", "-")
+        return f"https://www.glassdoor.com/Reviews/Employee-Review-{employer}-RVW{review_id}.htm"
 
     @staticmethod
     def parse_review_url(url: str) -> Tuple[str, str]:
@@ -312,6 +317,7 @@ class GlassdoorReview(NamedTuple):
     
     @classmethod
     def from_dict(cls, advice, cons, lengthOfEmployment, pros, ratingOverall, reviewId, summary, jobTitle, reviewDateTime, **_kwargs):
+        # TODO: from_dict is a misleading name
         job_title = jobTitle["text"] if jobTitle else None
         date_time = datetime.strptime(reviewDateTime, "%Y-%m-%dT%H:%M:%S.%f")
 
@@ -329,3 +335,33 @@ class GlassdoorReview(NamedTuple):
         parsed_reviews = sorted(parsed_reviews, key=lambda x: x.dateTime, reverse=False)
 
         return parsed_reviews
+
+class GlassdoorJob(NamedTuple):
+    """Wrapper around a Glassdoor job listing to make autocomplete easier"""
+    ageInDays: int
+    goc: str
+    jobTitleText: str
+    locationName: str
+    payCurrency: str
+    payPercentile10: int
+    payPercentile50: int
+    payPercentile90: int
+    payPeriod: str
+    salarySource: str
+    seoJobLink: str
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            ageInDays=data["ageInDays"],
+            goc=data["goc"],
+            jobTitleText=data["jobTitleText"],
+            locationName=data["locationName"],
+            payCurrency=data["payCurrency"],
+            payPercentile10=data["payPercentile10"],
+            payPercentile50=data["payPercentile50"],
+            payPercentile90=data["payPercentile90"],
+            payPeriod=data["payPeriod"],
+            salarySource=data["salarySource"],
+            seoJobLink=data["seoJobLink"],
+        )
