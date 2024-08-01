@@ -258,6 +258,16 @@ class Url:
         return url
 
     @staticmethod
+    def parse_review_url(url: str) -> Tuple[str, str]:
+        """
+        Parse Glassdoor review page URL to get employer name and ID
+        e.g. https://www.glassdoor.com/Reviews/eBay-Reviews-E7853.htm
+        returns ("eBay", "7853")
+        """
+        employer = re.search(r"/Reviews/(.*)-Reviews-E([0-9A-F]+).htm", url).groups()
+        return employer
+
+    @staticmethod
     def salaries(employer: str, employer_id: str, region: Optional[Region] = None) -> str:
         employer = employer.replace(" ", "-")
         url = f"https://www.glassdoor.com/Salary/{employer}-Salaries-E{employer_id}.htm?"
