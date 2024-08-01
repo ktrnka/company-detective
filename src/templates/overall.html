@@ -1,22 +1,23 @@
-{% macro render_link(comment_id) %}
-{% if permalinks %}
-<a href="https://reddit.com/{{ permalinks[comment_id] }}">{{ comment_id }}</a>
-{% else %}
+{% macro render_link(comment_id) -%}
+{%- if reddit_summary.permalinks -%}
+<a href="https://reddit.com/{{ reddit_summary.permalinks[comment_id] }}">{{ comment_id }}</a>
+{%- else -%}
 {{ comment_id }}
-{% endif %}
-{% endmacro %}
+{%- endif -%}
+{%- endmacro -%}
 
 {% macro render_claims(claims) -%}
 {% if claims %}
 <ul>
     {% for claim in claims %}
-    <li>"{{ claim.quote }}" (source: {{ render_link(claim.comment_id) }})</li>
+    <li>"{{ claim.quote }}" (source comment: {{ render_link(claim.comment_id) -}})</li>
     {% endfor %}
 </ul>
 {% else %}
 <p>No information found.</p>
 {% endif %}
 {% endmacro %}
+
 
 <html>
 
@@ -77,9 +78,13 @@
             </li>
         {% endfor %}
         </ul>
-        <p>Note: We process fewer threads than the search results mainly to save OpenAI costs. Sometimes we also filter search results if there aren't enough comments, or if we detect significant hallucination in the LLM summary of the individual thread.</p>
+        <p class="about">Notes: 
+            We process fewer threads than the search results mainly to save OpenAI costs. Sometimes we also filter search results if there aren't enough comments, or if we detect significant hallucination in the LLM summary of the individual thread.
+            The threads are flattened and shortened to fit within the LLM context length. Very deep comment threads may be cut off, as well as very long threads.
+            We also filter out comment trees with a negative score.
+        </p>
 
-        <h3>Full search Results</h3>
+        <h3>Search results</h3>
         <ul>
         {% for source in reddit_summary.sources %}
             <li>
