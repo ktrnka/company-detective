@@ -1,20 +1,21 @@
-# News pipeline
+# News pipeline (updated 8/5)
 
-## Design issues
+## Issues
 
-- What can I really do with news? For most companies there isn't a ton of information in these articles.
-    - Very useful: Product reviews, layoffs
-    - Borderline: Fundraising, acquisition, partnerships
-- Tons of near-duplicate articles
+Major issues
 
-## Technical issues
+- I'm not sure how to best facet the output
+- I want to include information about change over time but I'm not as sure how to do that
 
+Minor issues
+
+- The formatting of the bibliography is inconsistent
 - Many news sites block the requests
-
-### Concerns
-
+- Now that I'm using the official Google API, I've lost the ability to do a news-specific search
+- The search results often include sources from the company itself, which may be somewhat biased
 - The text extractor doesn't look very good. I tried setting up textpipe but I couldn't get it installed
-- Worried about being blocked by Google
+- The unified article context can get quite long
+- Sometimes the LLM fails to identify the author of each article
 
 # Reddit pipeline (last updated 7/29)
 
@@ -87,7 +88,6 @@ I should ask friends about their job searches and what they look for.
         - Current titles from Linkedin? (compare hiring distribution vs existing distribution)
     - (Startups) Fundraising
         - Crunchbase from Scrapify?
-        - News from Reddit and Google News / scraping?
     - People
         - Linkedin?
     - Giving back
