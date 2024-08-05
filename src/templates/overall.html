@@ -40,7 +40,7 @@
 
     <div class="container">
 
-
+<!-- Reddit summary -->
         <h1>Summary of Reddit for {{reddit_summary.overall_summary.target.company}} / {{reddit_summary.overall_summary.target.product}}</h1>
 
         <p>
@@ -94,7 +94,7 @@
         {% endfor %}
         </ul>
 
-
+<!-- Glassdoor summary -->
         <h1>Glassdoor for {{reddit_summary.overall_summary.target.company}}</h1>
 
         <h2>Reviews</h2>
@@ -119,7 +119,24 @@
         <p>No job listings found.</p>
         {% endif %}
 
+<!-- News summary -->
+ <h1>News about {{news_summary.target.company}}</h1>
 
+ <p>
+{{news_summary.summary_html}}
+ </p>
+
+    <h3>Sources</h3>
+    <ul>
+    {% for source in news_summary.search_results %}
+        <li>
+            <a href="{{source.link}}">{{ source.title }}</a><br/>
+            {{ source.snippet }}
+        </li>
+    {% endfor %}
+    
+    <p class="about">Notes: These are the raw search results from Google rather than the LLM output above.
+    </p>
 
     </div>
 
