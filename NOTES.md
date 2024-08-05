@@ -1,3 +1,14 @@
+# Crunchbase pipeline (8/5)
+
+- Scrapfly worked pretty nicely, though you need to pass it the people URL
+- Pydantic models worked really nicely for parsing in conjunction with Copilot, though it took some guess and check to figure out which fields were optional
+- Good info from CB: Founding date, company description, fundraising rounds, and recent news
+
+## Issues
+
+- The people list is very skewed
+- I'm not sure what I want to do with the data except to show the company fundraising
+
 # News pipeline (updated 8/5)
 
 ## Issues
