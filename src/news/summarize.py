@@ -5,6 +5,7 @@ from langchain_openai import ChatOpenAI
 
 from core import CompanyProduct
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
@@ -38,20 +39,21 @@ At the end of the document, include a list of the sources that were used to gene
             """,
         ),
         (
-            "human", 
+            "human",
             """
             Company: {company_name}
             
             Articles: 
             {text}
-            """
-            ),
+            """,
+        ),
     ]
 )
 
 
-
-def summarize(target: CompanyProduct, article_markdowns: List[str], debug=True) -> AIMessage:
+def summarize(
+    target: CompanyProduct, article_markdowns: List[str], debug=True
+) -> AIMessage:
     """Summarize a list of news articles"""
     unified_markdown = "\n\n".join(article for article in article_markdowns)
 
@@ -64,4 +66,3 @@ def summarize(target: CompanyProduct, article_markdowns: List[str], debug=True) 
     result = runnable.invoke({"text": unified_markdown, "company_name": target.company})
 
     return result
-
