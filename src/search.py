@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from googleapiclient.discovery import build
 import os
 from typing import Iterable, List, NamedTuple
+from pprint import pprint
 
 load_dotenv()
 _service = build("customsearch", "v1", developerKey=os.getenv("GOOGLE_API_KEY"))
@@ -26,7 +27,7 @@ class SearchResult(NamedTuple):
 
 
 def search(
-    query: str, dateRestrict=None, linkSite=None, num: int = 10
+    query: str, dateRestrict=None, linkSite=None, num: int = 10, debug=False
 ) -> Iterable[SearchResult]:
     """
     Wrapper for the Google Custom Search API to add parameters, types, and authentication with defaults that are appropriate for this project.
@@ -63,5 +64,12 @@ def search(
             )
             .execute()
         )
+
+        if debug:
+            pprint(results)
+
+        if results["searchInformation"]["totalResults"] == "0":
+            break
+
         for result in results["items"]:
             yield SearchResult.from_json(result)
