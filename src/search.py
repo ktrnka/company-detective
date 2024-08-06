@@ -3,27 +3,18 @@ from googleapiclient.discovery import build
 import os
 from typing import Iterable, List, NamedTuple
 from pprint import pprint
+from pydantic import BaseModel
 
 load_dotenv()
 _service = build("customsearch", "v1", developerKey=os.getenv("GOOGLE_API_KEY"))
 
 
-class SearchResult(NamedTuple):
-    """Convenience class to represent a search result."""
-
+class SearchResult(BaseModel):
+    """Google search result"""
     title: str
     link: str
     snippet: str
     formattedUrl: str
-
-    @classmethod
-    def from_json(cls, json):
-        return cls(
-            title=json["title"],
-            link=json["link"],
-            snippet=json["snippet"],
-            formattedUrl=json["formattedUrl"],
-        )
 
 
 def search(
@@ -72,4 +63,4 @@ def search(
             break
 
         for result in results["items"]:
-            yield SearchResult.from_json(result)
+            yield SearchResult(**result)
