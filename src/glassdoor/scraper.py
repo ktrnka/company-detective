@@ -7,6 +7,7 @@ https://scrapfly.io/blog/how-to-scrape-glassdoor/
 To run this scraper set env variable $SCRAPFLY_KEY with your scrapfly API key:
 $ export $SCRAPFLY_KEY="your key from https://scrapfly.io/dashboard"
 """
+
 from enum import Enum
 import json
 import os
@@ -17,7 +18,13 @@ from datetime import datetime
 from typing import NamedTuple, Optional
 
 from loguru import logger as log
-from scrapfly import ScrapeApiResponse, ScrapeConfig, ScrapflyClient, ScrapflyScrapeError
+from pydantic import BaseModel
+from scrapfly import (
+    ScrapeApiResponse,
+    ScrapeConfig,
+    ScrapflyClient,
+    ScrapflyScrapeError,
+)
 
 SCRAPFLY = ScrapflyClient(key=os.environ["SCRAPFLY_KEY"])
 BASE_CONFIG = {
@@ -87,13 +94,19 @@ async def scrape_jobs(url: str, max_pages: Optional[int] = None) -> List[Dict]:
     if max_pages and _total_pages > max_pages:
         other_page_urls = other_page_urls[:max_pages]
 
-    log.info("scraped first page of jobs of {}, scraping remaining {} pages", url, _total_pages - 1)
+    log.info(
+        "scraped first page of jobs of {}, scraping remaining {} pages",
+        url,
+        _total_pages - 1,
+    )
     other_pages = [ScrapeConfig(url, **BASE_CONFIG) for url in other_page_urls]
     async for result in SCRAPFLY.concurrent_scrape(other_pages):
         if not isinstance(result, ScrapflyScrapeError):
             jobs.extend(parse_jobs(result)[0])
         else:
-            log.error(f"failed to scrape {result.api_response.config['url']}, got: {result.message}")
+            log.error(
+                f"failed to scrape {result.api_response.config['url']}, got: {result.message}"
+            )
     log.info("scraped {} jobs from {} in {} pages", len(jobs), url, _total_pages)
     return jobs
 
@@ -101,7 +114,11 @@ async def scrape_jobs(url: str, max_pages: Optional[int] = None) -> List[Dict]:
 def parse_reviews(result: ScrapeApiResponse) -> Dict:
     """parse Glassdoor reviews page for review data"""
     cache = find_hidden_data(result)
-    reviews = next(v for k, v in cache.items() if k.startswith("employerReviews") and v.get("reviews"))
+    reviews = next(
+        v
+        for k, v in cache.items()
+        if k.startswith("employerReviews") and v.get("reviews")
+    )
     return reviews
 
 
@@ -115,24 +132,41 @@ async def scrape_reviews(url: str, max_pages: Optional[int] = None) -> Dict:
     if max_pages and max_pages < total_pages:
         total_pages = max_pages
 
-    log.info("scraped first page of reviews of {}, scraping remaining {} pages", url, total_pages - 1)
+    log.info(
+        "scraped first page of reviews of {}, scraping remaining {} pages",
+        url,
+        total_pages - 1,
+    )
     other_pages = [
-        ScrapeConfig(url=Url.change_page(first_page.context["url"], page=page), **BASE_CONFIG)
+        ScrapeConfig(
+            url=Url.change_page(first_page.context["url"], page=page), **BASE_CONFIG
+        )
         for page in range(2, total_pages + 1)
     ]
     async for result in SCRAPFLY.concurrent_scrape(other_pages):
         if not isinstance(result, ScrapflyScrapeError):
             reviews["reviews"].extend(parse_reviews(result)["reviews"])
         else:
-            log.error(f"failed to scrape {result.api_response.config['url']}, got: {result.message}")
-    log.info("scraped {} reviews from {} in {} pages", len(reviews["reviews"]), url, total_pages)
+            log.error(
+                f"failed to scrape {result.api_response.config['url']}, got: {result.message}"
+            )
+    log.info(
+        "scraped {} reviews from {} in {} pages",
+        len(reviews["reviews"]),
+        url,
+        total_pages,
+    )
     return reviews
 
 
 def parse_salaries(result: ScrapeApiResponse) -> Dict:
     """Parse Glassdoor salaries page for salary data"""
     cache = find_hidden_data(result)
-    salaries = next(v for k, v in cache.items() if k.startswith("salariesByEmployer") and v.get("results"))
+    salaries = next(
+        v
+        for k, v in cache.items()
+        if k.startswith("salariesByEmployer") and v.get("results")
+    )
     return salaries
 
 
@@ -145,22 +179,36 @@ async def scrape_salaries(url: str, max_pages: Optional[int] = None) -> Dict:
     if max_pages and total_pages > max_pages:
         total_pages = max_pages
 
-    log.info("scraped first page of salaries of {}, scraping remaining {} pages", url, total_pages - 1)
+    log.info(
+        "scraped first page of salaries of {}, scraping remaining {} pages",
+        url,
+        total_pages - 1,
+    )
     other_pages = [
-        ScrapeConfig(url=Url.change_page(first_page.context["url"], page=page), **BASE_CONFIG)
+        ScrapeConfig(
+            url=Url.change_page(first_page.context["url"], page=page), **BASE_CONFIG
+        )
         for page in range(2, total_pages + 1)
     ]
     async for result in SCRAPFLY.concurrent_scrape(other_pages):
         if not isinstance(result, ScrapflyScrapeError):
             salaries["results"].extend(parse_salaries(result)["results"])
         else:
-            log.error(f"failed to scrape {result.api_response.config['url']}, got: {result.message}")
-    log.info("scraped {} salaries from {} in {} pages", len(salaries["results"]), url, total_pages)
+            log.error(
+                f"failed to scrape {result.api_response.config['url']}, got: {result.message}"
+            )
+    log.info(
+        "scraped {} salaries from {} in {} pages",
+        len(salaries["results"]),
+        url,
+        total_pages,
+    )
     return salaries
 
 
 class FoundCompany(TypedDict):
     """type hint for company search result"""
+
     name: str
     id: str
     url_overview: str
@@ -185,10 +233,16 @@ async def find_companies(query: str) -> List[FoundCompany]:
                 {
                     "name": result["suggestion"],
                     "id": result["employerId"],
-                    "url_overview": Url.overview(result["suggestion"], result["employerId"]),
+                    "url_overview": Url.overview(
+                        result["suggestion"], result["employerId"]
+                    ),
                     "url_jobs": Url.jobs(result["suggestion"], result["employerId"]),
-                    "url_reviews": Url.reviews(result["suggestion"], result["employerId"]),
-                    "url_salaries": Url.salaries(result["suggestion"], result["employerId"]),
+                    "url_reviews": Url.reviews(
+                        result["suggestion"], result["employerId"]
+                    ),
+                    "url_salaries": Url.salaries(
+                        result["suggestion"], result["employerId"]
+                    ),
                 }
             )
     return companies
@@ -235,7 +289,9 @@ class Url:
     """
 
     @staticmethod
-    def overview(employer: str, employer_id: str, region: Optional[Region] = None) -> str:
+    def overview(
+        employer: str, employer_id: str, region: Optional[Region] = None
+    ) -> str:
         employer = employer.replace(" ", "-")
         url = f"https://www.glassdoor.com/Overview/Working-at-{employer}-EI_IE{employer_id}"
         # glassdoor is allowing any prefix for employer name and
@@ -250,13 +306,17 @@ class Url:
         return url
 
     @staticmethod
-    def reviews(employer: str, employer_id: str, region: Optional[Region] = None) -> str:
+    def reviews(
+        employer: str, employer_id: str, region: Optional[Region] = None
+    ) -> str:
         employer = employer.replace(" ", "-")
-        url = f"https://www.glassdoor.com/Reviews/{employer}-Reviews-E{employer_id}.htm?"
+        url = (
+            f"https://www.glassdoor.com/Reviews/{employer}-Reviews-E{employer_id}.htm?"
+        )
         if region:
             return url + f"?filter.countryId={region.value}"
         return url
-    
+
     @staticmethod
     def review(employer: str, review_id: int) -> str:
         employer = employer.replace(" ", "-")
@@ -273,9 +333,13 @@ class Url:
         return employer
 
     @staticmethod
-    def salaries(employer: str, employer_id: str, region: Optional[Region] = None) -> str:
+    def salaries(
+        employer: str, employer_id: str, region: Optional[Region] = None
+    ) -> str:
         employer = employer.replace(" ", "-")
-        url = f"https://www.glassdoor.com/Salary/{employer}-Salaries-E{employer_id}.htm?"
+        url = (
+            f"https://www.glassdoor.com/Salary/{employer}-Salaries-E{employer_id}.htm?"
+        )
         if region:
             return url + f"?filter.countryId={region.value}"
         return url
@@ -297,11 +361,18 @@ class Url:
             new = re.sub(".htm", f"_P{page}.htm", url)
         assert new != url
         return new
-    
 
-class GlassdoorReview(NamedTuple):
-    """Wrapper around a Glassdoor review to make autocomplete easier"""
-    # raw fields
+
+class JobTitle(BaseModel):
+    """Glassdoor job title with ID"""
+
+    id: int
+    text: str
+
+
+class GlassdoorReview(BaseModel):
+    """An employee review of a company on Glassdoor"""
+
     advice: Optional[str]
     cons: Optional[str]
     lengthOfEmployment: int
@@ -309,59 +380,35 @@ class GlassdoorReview(NamedTuple):
     ratingOverall: int
     reviewId: int
     summary: str
+    jobTitle: Optional[JobTitle]
+    reviewDateTime: Optional[datetime]
 
-    # processed fields
-    jobTitle: Optional[str]
-    dateTime: datetime
-
-    
-    @classmethod
-    def from_dict(cls, advice, cons, lengthOfEmployment, pros, ratingOverall, reviewId, summary, jobTitle, reviewDateTime, **_kwargs):
-        # TODO: from_dict is a misleading name
-        job_title = jobTitle["text"] if jobTitle else None
-        date_time = datetime.strptime(reviewDateTime, "%Y-%m-%dT%H:%M:%S.%f")
-
-        return cls(
-            advice, cons, lengthOfEmployment, pros, ratingOverall, reviewId, summary, job_title, date_time
-        )
+    @property
+    def formatted_job_title(self) -> str:
+        return self.jobTitle.text if self.jobTitle else "Anonymous"
 
     @classmethod
     def parse_reviews(cls, raw_results: dict):
         """Parse Glassdoor reviews from the raw API response"""
-        parsed_reviews = [
-            cls.from_dict(**review)
-            for review in raw_results["reviews"]
-        ]
-        parsed_reviews = sorted(parsed_reviews, key=lambda x: x.dateTime, reverse=False)
+        parsed_reviews = [cls(**review) for review in raw_results["reviews"]]
+        parsed_reviews = sorted(
+            parsed_reviews, key=lambda x: x.reviewDateTime, reverse=False
+        )
 
         return parsed_reviews
 
-class GlassdoorJob(NamedTuple):
-    """Wrapper around a Glassdoor job listing to make autocomplete easier"""
+
+class GlassdoorJob(BaseModel):
+    """Basic job listing info from the company page on Glassdoor"""
+
     ageInDays: int
     goc: str
     jobTitleText: str
     locationName: str
     payCurrency: str
-    payPercentile10: int
-    payPercentile50: int
-    payPercentile90: int
-    payPeriod: str
-    salarySource: str
+    payPercentile10: Optional[int]
+    payPercentile50: Optional[int]
+    payPercentile90: Optional[int]
+    payPeriod: Optional[str]
+    salarySource: Optional[str]
     seoJobLink: str
-
-    @classmethod
-    def from_dict(cls, data):
-        return cls(
-            ageInDays=data["ageInDays"],
-            goc=data["goc"],
-            jobTitleText=data["jobTitleText"],
-            locationName=data["locationName"],
-            payCurrency=data["payCurrency"],
-            payPercentile10=data["payPercentile10"],
-            payPercentile50=data["payPercentile50"],
-            payPercentile90=data["payPercentile90"],
-            payPeriod=data["payPeriod"],
-            salarySource=data["salarySource"],
-            seoJobLink=data["seoJobLink"],
-        )
