@@ -16,7 +16,6 @@ def find_submission_urls(target: CompanyProduct, num_results=10) -> Iterable[str
 
 @lru_cache(1000)
 def find_submissions(target: CompanyProduct, num_results=10):
-    # NOTE: Ideally we probably want more than 10 results and need to paginate
     query = f'site:reddit.com "{target.company}""'
     if target.product != target.company:
         query += f' "{target.product}"'
