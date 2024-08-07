@@ -46,7 +46,8 @@ def search(
                 q=query,
                 cx=os.getenv("GOOGLE_CSE_ID"),
                 num=min(10, num - start),
-                start=start,
+                # Note: Indexing is 1-based. I found it was more comfortable to stay 0-based until this line
+                start=start + 1,
                 # defaults for search quality enUS
                 lr="lang_en",
                 hl="en",
