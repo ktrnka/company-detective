@@ -1,3 +1,8 @@
+# Indeed pipeline (8/6)
+
+- Scraping worked nicely for Rad AI but I don't know how it'll work for employers with many, many job listings
+- It's easy to get a better JD than the original, but it's hard to get a JD that highlights any subtle bias and possible issues
+
 # Crunchbase pipeline (8/5)
 
 - Scrapfly worked pretty nicely, though you need to pass it the people URL
