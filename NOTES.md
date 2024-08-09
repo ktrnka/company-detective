@@ -1,3 +1,30 @@
+# Lit review 8/9
+
+Wang et al 2023 Element-aware summarization with large language models: expert-aligned evaluation and chain-of-thought method
+- They build a good way to force an abstractive summary to touch on certain key points at the same time as preventing hallucination by having an information extraction stage about news events which then becomes context for the abstractive summary.
+- I think this is similar to the extract then abstract approach I've tried
+
+Zhang et al 2023 Benchmarking large language models for news summarization
+- They found that existing evaluations were horribly flawed, to the point that they aren't good at judging the quality of good summaries, so they made better references.
+- They also found that instruction tuning was more important than the model size, though I don't know if I entirely have that option
+
+Cohen-Wang et al 2024 ContextCite: Attributing Model Generation to Context
+- They develop a LIME-like method to attribute the generated output to sentences of the input by perturbing and measuring the effect of perturbation on the probability of the output, and show that it works well.
+- I'm not sure if this would work well for me or not, but I like the idea a lot.
+
+Khosravani and Trabelsi 2023 Recent trends in unsupervised summarization
+- Interesting review
+- For this project, the relevant concept is extract-than-abstract which they say does well for long documents and multi-document summarization, and provide some good citations of approaches.
+
+Tan et al 2020 Summarizing text on any aspects: a knowledge-informed weakly-supervised approach
+- I might need to re-read this... on first read it seemed fairly basic but I think there's something different going on with the aspect-based summaries from the general summaries
+- The relevant detail for my work is to provide an overview or gloss of each aspect to extract, which I'm already doing
+
+Suhara et al 2020 OpinionDigest: A simple framework for opinion summarization
+- Really nice work, though it's not quite the same problem as I'm facing
+- They have a pipeline like 1) extract opinions 2) cluster opinions 3) filter clusters 4) generate an abstractive summary
+- This is close to the approach I've started to explore, but A) I've been mixing facts and opinions B) I haven't tried a clustering step
+
 # Indeed pipeline (8/6)
 
 - Scraping worked nicely for Rad AI but I don't know how it'll work for employers with many, many job listings
