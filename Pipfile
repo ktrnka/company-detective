@@ -17,6 +17,7 @@ loguru = "*"
 scrapfly-sdk = {extras = ["all"]}
 google-api-python-client = "*"
 markdownify = "*"
+requests-cache = "*"
 
 [dev-packages]
 jupyter = "*"

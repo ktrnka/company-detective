@@ -1,7 +1,10 @@
 from typing import NamedTuple
 import re
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
+from langchain.globals import set_llm_cache
+from langchain.cache import SQLiteCache
+import requests_cache
 
 class CompanyProduct(NamedTuple):
     company: str
@@ -23,3 +26,36 @@ def make_experiment_dir(target: CompanyProduct) -> str:
     os.makedirs(folder_path, exist_ok=True)
 
     return folder_path
+
+def get_project_dir(relative_path: str) -> str:
+    """Get the path of a file from the project root"""
+    current_file = os.path.abspath(__file__)
+    project_root = os.path.dirname(os.path.dirname(current_file))
+    project_dir = os.path.join(project_root, relative_path)
+    return project_dir
+
+def init_langchain_cache():
+    """Initialize the langchain cache, which improves speed and cost of the LLM by caching in SQLite"""
+    cache_dir = get_project_dir(".cache")
+    os.path.makedirs(cache_dir, exist_ok=True)
+
+    cache_path = os.path.join(cache_dir, "langchain.sqlite")
+
+    set_llm_cache(SQLiteCache(database_path=cache_path))
+
+    return cache_path
+
+def init_requests_cache():
+    """Initialize the requests cache, which improves the speed of the requests library by caching in SQLite and should reduce risk around getting blocked"""
+    cache_dir = get_project_dir(".cache")
+    os.makedirs(cache_dir, exist_ok=True)
+
+    cache_path = os.path.join(cache_dir, "requests_cache.sqlite")
+
+    requests_cache.install_cache(
+        db_path='company_detective_requests_cache',
+        backend='sqlite',
+        cache_control=True,
+        expire_after=timedelta(days=7)
+    )
+    return cache_path
