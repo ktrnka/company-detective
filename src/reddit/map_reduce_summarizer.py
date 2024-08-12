@@ -18,13 +18,19 @@ templates = jinja2.Environment(
 )
 
 
-def truncate_document(llm, document: str, max_tokens: int):
+def truncate_document(llm, document: str, max_tokens: int, debug=False) -> str:
     """Helper to truncate long documents"""
     num_tokens = llm.get_num_tokens(document)
     if num_tokens > max_tokens:
         approx_chars_per_token = len(document) / num_tokens
         num_chars_needed = max_tokens * approx_chars_per_token
         truncated_document = document[: int(num_chars_needed)]
+
+        if debug:
+            print(
+                f"Truncated document from {num_tokens} tokens ({len(document)} chars) to {max_tokens} tokens ({len(truncated_document)} chars)"
+            )
+
         return truncated_document
     else:
         return document
@@ -78,14 +84,15 @@ combine_prompt_template = PromptTemplate(
 )
 
 
-def summarize(target: CompanyProduct, threads: List[Submission]) -> str:
+def summarize(target: CompanyProduct, threads: List[Submission], debug=False) -> str:
     """Summarize a list of Reddit threads"""
     thread_markdowns = [submission_to_markdown(thread) for thread in threads]
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
     truncated_thread_markdowns = [
-        truncate_document(llm, document, 30000) for document in thread_markdowns
+        truncate_document(llm, document, 30000, debug=debug)
+        for document in thread_markdowns
     ]
     documents = [
         Document(page_content=thread_markdown)
@@ -98,7 +105,7 @@ def summarize(target: CompanyProduct, threads: List[Submission]) -> str:
         map_prompt=map_prompt_template,
         combine_prompt=combine_prompt_template,
         token_max=30000,
-        verbose=True,
+        verbose=debug,
     )
 
     output = summary_chain.run(
