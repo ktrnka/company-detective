@@ -6,8 +6,8 @@ from typing import List, Optional, Tuple
 class FundingRound(BaseModel):
     announced_on: date
     raised_usd: int
-    investors: int
-    lead_investors: List[str]
+    investors: Optional[int]
+    lead_investors: Optional[List[str]]
 
 class Article(BaseModel):
     title: Optional[str]
