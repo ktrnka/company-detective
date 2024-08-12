@@ -15,5 +15,5 @@ Facebook: {{organization.facebook}}
 ## News
 
 {% for article in organization.news -%}
-- {{ article.title }} ({{ article.author or article.publisher }}, {{ article.date }})
+- {{ article.title }} ([{{ article.author or article.publisher }}, {{ article.date }}]({{article.url}}))
 {% endfor %}
