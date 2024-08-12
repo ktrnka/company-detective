@@ -383,14 +383,21 @@ class GlassdoorReview(BaseModel):
     jobTitle: Optional[JobTitle]
     reviewDateTime: Optional[datetime]
 
+    # The Glassdoor URL part for the employer, used to build the full URL
+    employer_url_part: str
+
     @property
     def formatted_job_title(self) -> str:
         return self.jobTitle.text if self.jobTitle else "Anonymous"
+    
+    @property
+    def url(self) -> str:
+        return Url.review(self.employer_url_part, self.reviewId)
 
     @classmethod
-    def parse_reviews(cls, raw_results: dict):
+    def parse_reviews(cls, employer_url_part: str, raw_results: dict):
         """Parse Glassdoor reviews from the raw API response"""
-        parsed_reviews = [cls(**review) for review in raw_results["reviews"]]
+        parsed_reviews = [cls(employer_url_part=employer_url_part, **review) for review in raw_results["reviews"]]
         parsed_reviews = sorted(
             parsed_reviews, key=lambda x: x.reviewDateTime, reverse=False
         )

@@ -34,7 +34,7 @@ review_summary_prompt = ChatPromptTemplate.from_messages(
             Provide a clear and concise summary of the key points, avoiding unnecessary details.
             Format the response as Markdown.
 
-            In quotations please format like: "quote" (job title on date)
+            In quotations please format like: "quote" [Job title on date](url)
             """,
         ),
         (

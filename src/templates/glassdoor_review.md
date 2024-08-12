@@ -1,4 +1,4 @@
-# {{review.ratingOverall}} stars by {{review.formatted_job_title}} on {{review.reviewDateTime.strftime('%Y-%m-%d')}}
+# {{review.ratingOverall}} stars by [{{review.formatted_job_title}} on {{review.reviewDateTime.strftime('%Y-%m-%d')}}]({{review.url}})
 
 {{review.summary}}
 
