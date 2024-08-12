@@ -1,9 +1,9 @@
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
 import os
-from typing import Iterable, List, NamedTuple
+from typing import Iterable, List, NamedTuple, Optional
 from pprint import pprint
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 load_dotenv()
 _service = build("customsearch", "v1", developerKey=os.getenv("GOOGLE_API_KEY"))
@@ -13,8 +13,15 @@ class SearchResult(BaseModel):
     """Google search result"""
     title: str
     link: str
-    snippet: str
+    snippet: Optional[str]
     formattedUrl: str
+
+    @model_validator(mode='before')
+    def _allow_missing_optional(cls, data):
+        if "snippet" not in data:
+            data["snippet"] = None
+
+        return data
 
 
 def search(
