@@ -84,7 +84,7 @@ combine_prompt_template = PromptTemplate(
 )
 
 
-def summarize(target: CompanyProduct, threads: List[Submission], debug=False) -> str:
+def summarize(target: CompanyProduct, threads: List[Submission], debug=False) -> dict:
     """Summarize a list of Reddit threads"""
     thread_markdowns = [submission_to_markdown(thread) for thread in threads]
 
@@ -106,9 +106,10 @@ def summarize(target: CompanyProduct, threads: List[Submission], debug=False) ->
         combine_prompt=combine_prompt_template,
         token_max=30000,
         verbose=debug,
+        return_intermediate_steps=True,
     )
 
-    output = summary_chain.run(
+    result = summary_chain(
         {
             "company": target.company,
             "product": target.product,
@@ -116,4 +117,4 @@ def summarize(target: CompanyProduct, threads: List[Submission], debug=False) ->
         }
     )
 
-    return output
+    return result
