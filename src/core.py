@@ -58,7 +58,7 @@ def init_requests_cache():
     cache_path = os.path.join(cache_dir, "requests_cache.sqlite")
 
     requests_cache.install_cache(
-        cache_path, backend="sqlite", cache_control=True, expire_after=timedelta(days=7), allowable_codes=[200, 403])
+        cache_path, backend="sqlite", cache_control=True, expire_after=timedelta(days=7), allowable_codes=[200, 403]
     )
 
     # TODO: There's a design limitation in how this interacts with throttling, like in the news article scraper. Though the news article scraper also does a lru in-memory cache, so it only matters on fresh notebooks.
