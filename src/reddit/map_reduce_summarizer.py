@@ -37,13 +37,13 @@ def truncate_document(llm, document: str, max_tokens: int, debug=False) -> str:
 
 
 map_prompt = """
-Please read the following Reddit thread and extract key opinions and facts relating to the user experience of the PRODUCT {product} by the COMPANY {company} from the perspective of current users.
+Please read the following Reddit thread and extract all opinions and facts relating to the user experience of the PRODUCT {product} by the COMPANY {company} from the perspective of current users.
 Only include information about the COMPANY {company} and PRODUCT {product}. 
 Do not extract information about other companies or products.
-If the text does not contain any relevant information about the COMPANY or PRODUCT, please write "No relevant information found."
+If the text does not contain any relevant information about the COMPANY or PRODUCT, please return an empty string.
 
 Format the results as a Markdown list of quotes, each with a permalink to the source of the quote like so:
-- "quote" [Author on Date](permalink)
+- "quote" [Author, Reddit, Date](permalink)
 
 For example:
 
@@ -52,20 +52,21 @@ Input comment:
 My husband and I have used 98.6 three times. All three times they did not prescribe the needed antibiotic to get better. I had an ear infection, my husband had an ear infection, then I had a sinus infection. We had to wait and get into our family doctor, so we paid 98.6 and our family doctor. I would not recommend them!
 
 Example output:
-- "All three times they did not prescribe the needed antibiotic to get better." [MarketWorldly9908 on 2022-01-07](https://www.reddit.com/r/povertyfinance/comments/bg7ip2/internet_medicine_is_awesome_98point6_was_so_so/hrmpl3t/)
+- "All three times they did not prescribe the needed antibiotic to get better." [MarketWorldly9908, Reddit, 2022-01-07](https://www.reddit.com/r/povertyfinance/comments/bg7ip2/internet_medicine_is_awesome_98point6_was_so_so/hrmpl3t/)
 
 Each quote should be a short, concise statement that captures the essence of the sentiment or information.
 Be sure to extract a comprehensive sample of both positive and negative opinions, as well as any factual statements about the product.
 
-Reddit thread: 
+REDDIT THREAD: 
 {text}
 
-MARKDOWN LIST OF QUOTES ABOUT THE COMPANY AND PRODUCT:
+MARKDOWN LIST OF QUOTES ABOUT THE COMPANY {company} AND PRODUCT {product}:
 """
 map_prompt_template = PromptTemplate(template=map_prompt, input_variables=["text"])
 
 combine_prompt = """
-Please cluster all of the quotes below, organizing them into thematic topics of feedback about the COMPANY {company} and PRODUCT {product}.
+Please organize all of the quotes below into thematic topics of feedback about the COMPANY {company} and PRODUCT {product}.
+
 Use the following top-level headings:
 # Positive Sentiments
 # Negative Sentiments
@@ -73,11 +74,11 @@ Use the following top-level headings:
 
 If there are many quotes under a heading, please subdivide into headings to group similar quotes together.
 
-Summaries: 
+EXTRACTS FROM REDDIT THREADS: 
 {text}
 
 
-GROUPED QUOTES IN MARKDOWN FORMAT:
+COMPREHENSIVE, ORGANIZED QUOTES IN MARKDOWN FORMAT:
 """
 combine_prompt_template = PromptTemplate(
     template=combine_prompt, input_variables=["text"]

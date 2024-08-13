@@ -6,7 +6,7 @@ from langchain_core.messages.ai import AIMessage
 
 
 from core import CompanyProduct
-from .scraper import GlassdoorReview
+from .models import GlassdoorReview
 
 templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),
@@ -17,33 +17,23 @@ review_summary_prompt = ChatPromptTemplate.from_messages(
         (
             "system",
             """
-            Please read the following Glassdoor reviews and write a summary of the key pros, cons, and quotations relating to the following aspects of the company:
-            - Leadership
-            - Compensation and benefits
-            - Diversity, equity, and inclusion
-            - Work-life balance
-            - Growth opportunities
-            - Company culture
+Please extract a comprehensive list of quotes from Glassdoor reviews for the company {company}.
+Ensure that all opinions and sentiments are accurately represented.
 
-            Please also include a section summarizing how the company has changed over time, if applicable.
+Organize the quotes into categories as appropriate.
+Take extra care to find quotes of 1) explanations why employees like or dislike working for the company, 2) key events or changes in the company, and 3) any verifyable facts about working at the company.
+Format the response as Markdown.
 
-            Please also summarize the relationship between job functions and employee satisfaction.
-
-            Finish the summary with a list of questions that you would ask the company's leadership both following up on the reviews and also asking about topics that were not mentioned in the reviews.
-
-            Provide a clear and concise summary of the key points, avoiding unnecessary details.
-            Format the response as Markdown.
-
-            In quotations please format like: "quote" [Job title on date](url)
+Format quotations as: "quote" [Job title, Glassdoor, date](url)
             """,
         ),
         (
             "human",
             """
-            Company: {company}
-            
-            Glassdoor reviews: 
-            {text}
+COMPANY OF INTEREST: {company}
+
+EMPLOYEE REVIEWS: 
+{text}
             """,
         ),
     ]
@@ -56,7 +46,7 @@ def summarize(target: CompanyProduct, reviews: List[GlassdoorReview]) -> AIMessa
         for review in reviews
     )
 
-    print(f"The prompt context has {len(content_string):,} characters in {len(reviews)} reviews")
+    print(f"Glassdoor: The prompt context has {len(content_string):,} characters in {len(reviews)} reviews")
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     runnable = review_summary_prompt | llm

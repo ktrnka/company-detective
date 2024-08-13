@@ -14,9 +14,9 @@ prompt = ChatPromptTemplate.from_messages(
         (
             "system",
             """
-You're an expert in reviewing and summarizing news about companies and products.
-You'll be given several articles about a company in markdown format.
-Produce a unified summary of all the information about the company that might be useful for a prospective candidate or investor.
+You're an expert in reviewing and analyzing news about companies and products.
+You'll be given several articles to carefully review.
+Produce a comprehensive summary of all the information about the company that might be useful for a prospective candidate or investor.
 Examples of information that would be useful include:
 - Acquisitions
 - Partnerships
@@ -28,23 +28,18 @@ Examples of information that would be useful include:
 
 Format the output as a markdown document.
 When summarizing a claim, reference the source of the claim with a markdown link, as in ([John Smith, New York Times, June 2021](https://example.com)).
-If the author name is not available, just use the publication name.
-
-At the end of the document, include a list of the sources that were used to generate the summary. For each article, include:
-- The author
-- The publication date
-- The title
-- A link to the article
-- The organization that published the article
+If the author name is not available, use the publication name.
             """,
         ),
         (
             "human",
             """
-            Company: {company_name}
-            
-            Articles: 
-            {text}
+COMPANY OF INTEREST: {company_name}
+
+NEWS ARTICLES: 
+{text}
+
+COMPREHENSIVE SUMMARY, MARKDOWN FORMAT:
             """,
         ),
     ]
@@ -58,7 +53,7 @@ def summarize(
     unified_markdown = "\n\n".join(article for article in article_markdowns)
 
     if debug:
-        print(f"{len(unified_markdown):,} characters in unified context")
+        print(f"News: {len(unified_markdown):,} characters of context, {len(article_markdowns)} articles")
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
