@@ -19,6 +19,12 @@ class RedditSummary:
 def run(
     target: CompanyProduct, num_threads: int = 2, min_comments: int = 2
 ) -> Optional[RedditSummary]:
+    """
+    Run the full Reddit pipeline:
+    - Find Reddit threads
+    - Fetch the threads
+    - Summarize the threads
+    """
     reddit_client = reddit.fetch.init()
 
     # Search for URLs
