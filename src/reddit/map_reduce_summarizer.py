@@ -11,11 +11,22 @@ from langchain import PromptTemplate
 from praw.models import Submission
 
 from .fetch import submission_to_markdown
+from pydantic import BaseModel
 
 # templates to convert summaries to markdown and html
 templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),
 )
+
+
+class SummaryResult(BaseModel):
+    """Wrapper around the summarization chain with intermediate steps returned"""
+
+    output_text: str
+    intermediate_steps: List[str]
+
+    # Note: This can't be automatically deserialized because of the Document type, but the error is a cryptic one about the number of args to validate
+    # input_documents: List[Document]
 
 
 def truncate_document(llm, document: str, max_tokens: int, debug=False) -> str:
@@ -88,7 +99,9 @@ combine_prompt_template = PromptTemplate(
 )
 
 
-def summarize(target: CompanyProduct, threads: List[Submission], debug=True) -> dict:
+def summarize(
+    target: CompanyProduct, threads: List[Submission], debug=True
+) -> SummaryResult:
     """Summarize a list of Reddit threads"""
     thread_markdowns = [submission_to_markdown(thread) for thread in threads]
 
@@ -126,15 +139,17 @@ def summarize(target: CompanyProduct, threads: List[Submission], debug=True) -> 
         }
     )
 
+    result = SummaryResult(**result)
+
     if debug:
         input_length = sum(len(doc.page_content) for doc in documents)
-        intermediate_length = sum(len(text) for text in result["intermediate_steps"])
+        intermediate_length = sum(len(text) for text in result.intermediate_steps)
 
         print(
             f"Reddit: Extract stage {input_length:,} chars -> {intermediate_length:,} chars ({intermediate_length / input_length:.0%})"
         )
 
-        summary_length = len(result["output_text"])
+        summary_length = len(result.output_text)
         print(
             f"Reddit: Combine stage {intermediate_length:,} chars -> {summary_length:,} chars ({summary_length / intermediate_length:.0%})"
         )
