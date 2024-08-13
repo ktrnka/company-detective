@@ -74,14 +74,17 @@ Use the following top-level headings:
 
 If there are many quotes under a heading, please subdivide into headings to group similar quotes together.
 
+Focus on selecting quotes that provide specific and grounded feedback. Avoid vague and general statements.
+
+The output should be detailed and thorough, approximately 50% of the input length.
+
 EXTRACTS FROM REDDIT THREADS: 
 {text}
-
 
 COMPREHENSIVE, ORGANIZED QUOTES IN MARKDOWN FORMAT:
 """
 combine_prompt_template = PromptTemplate(
-    template=combine_prompt, input_variables=["text"]
+    template=combine_prompt, input_variables=["text", "company", "product"]
 )
 
 
@@ -111,7 +114,7 @@ def summarize(target: CompanyProduct, threads: List[Submission], debug=True) -> 
         map_prompt=map_prompt_template,
         combine_prompt=combine_prompt_template,
         token_max=30000,
-        # verbose=debug,
+        verbose=debug,
         return_intermediate_steps=True,
     )
 
