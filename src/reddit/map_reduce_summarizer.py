@@ -128,10 +128,15 @@ def summarize(target: CompanyProduct, threads: List[Submission], debug=True) -> 
 
     if debug:
         input_length = sum(len(doc.page_content) for doc in documents)
+        intermediate_length = sum(
+            len(text) for text in result["intermediate_steps"]
+        )
         summary_length = len(result["output_text"])
-        summary_ratio = summary_length / input_length
+
+        summary_input_ratio = summary_length / input_length
+        summary_intermediate_ratio = summary_length / intermediate_length
         print(
-            f"Reddit: The summary has {summary_length:,} characters, {summary_ratio:.0%} of the input"
+            f"Reddit: The summary has {summary_length:,} characters, {summary_input_ratio:.0%} of the input, {summary_intermediate_ratio:.0%} of the intermediate extracts"
         )
 
     return result
