@@ -1,4 +1,4 @@
-import reddit.map_reduce_summarizer
+import reddit.summarizer
 import reddit.search
 import reddit.fetch
 
@@ -13,7 +13,7 @@ from typing import List, Optional
 class RedditSummary:
     sources: List[SearchResult]
     threads: List[reddit.fetch.Submission]
-    summary: reddit.map_reduce_summarizer.SummaryResult
+    summary: reddit.summarizer.SummaryResult
 
 
 def run(
@@ -44,7 +44,7 @@ def run(
     post_submissions = post_submissions[:num_threads]
 
     # Aggregate the summaries
-    result = reddit.map_reduce_summarizer.summarize(target, post_submissions)
+    result = reddit.summarizer.summarize(target, post_submissions)
 
     return RedditSummary(
         sources=search_results, threads=post_submissions, summary=result
