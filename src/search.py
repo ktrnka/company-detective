@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
 import os
-from typing import Iterable, List, NamedTuple, Optional
+from typing import Iterable, Optional
 from pprint import pprint
 from pydantic import BaseModel, model_validator
 
