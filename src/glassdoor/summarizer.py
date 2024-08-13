@@ -39,20 +39,28 @@ EMPLOYEE REVIEWS:
     ]
 )
 
-def summarize(target: CompanyProduct, reviews: List[GlassdoorReview]) -> AIMessage:
+def summarize(target: CompanyProduct, reviews: List[GlassdoorReview], debug=True) -> AIMessage:
     """Summarize a list of Glassdoor reviews"""
     content_string = "\n\n".join(
         templates.get_template("glassdoor_review.md").render(review=review)
         for review in reviews
     )
 
-    print(f"Glassdoor: The prompt context has {len(content_string):,} characters in {len(reviews)} reviews")
+    if debug:
+        print(f"Glassdoor: The context has {len(content_string):,} characters in {len(reviews)} reviews")
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     runnable = review_summary_prompt | llm
-    return runnable.invoke(
+    result = runnable.invoke(
         {
             "text": content_string,
             "company": target.company,
         }
     )
+
+    if debug:
+        summary_ratio = len(result.content) / len(content_string)
+        print(f"Glassdoor: The summary has {len(result.content):,} characters, {summary_ratio:.0%} of the input")
+
+
+    return result

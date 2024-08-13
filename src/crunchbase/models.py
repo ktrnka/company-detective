@@ -48,6 +48,10 @@ class Organization(BaseModel):
     @property
     def news(self):
         return sorted([article for article in self.timeline if article.is_news], key=lambda article: article.date, reverse=True)
+    
+    @property
+    def url(self):
+        return f"https://www.crunchbase.com/organization/{self.id}"
 
 
 class Employee(BaseModel):

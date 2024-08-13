@@ -60,4 +60,8 @@ def summarize(
     runnable = prompt | llm
     result = runnable.invoke({"text": unified_markdown, "company_name": target.company})
 
+    if debug:
+        summary_ratio = len(result.content) / len(unified_markdown)
+        print(f"News: The summary has {len(result.content):,} characters, {summary_ratio:.0%} of the input")
+
     return result

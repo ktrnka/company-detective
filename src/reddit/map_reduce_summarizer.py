@@ -85,7 +85,7 @@ combine_prompt_template = PromptTemplate(
 )
 
 
-def summarize(target: CompanyProduct, threads: List[Submission], debug=False) -> dict:
+def summarize(target: CompanyProduct, threads: List[Submission], debug=True) -> dict:
     """Summarize a list of Reddit threads"""
     thread_markdowns = [submission_to_markdown(thread) for thread in threads]
 
@@ -100,22 +100,35 @@ def summarize(target: CompanyProduct, threads: List[Submission], debug=False) ->
         for thread_markdown in truncated_thread_markdowns
     ]
 
+    if debug:
+        print(
+            f"Reddit: The prompt context has {sum(len(doc.page_content) for doc in documents):,} characters in {len(documents)} threads"
+        )
+
     summary_chain = load_summarize_chain(
         llm=llm,
         chain_type="map_reduce",
         map_prompt=map_prompt_template,
         combine_prompt=combine_prompt_template,
         token_max=30000,
-        verbose=debug,
+        # verbose=debug,
         return_intermediate_steps=True,
     )
 
-    result = summary_chain(
+    result = summary_chain.invoke(
         {
             "company": target.company,
             "product": target.product,
             "input_documents": documents,
         }
     )
+
+    if debug:
+        input_length = sum(len(doc.page_content) for doc in documents)
+        summary_length = len(result["output_text"])
+        summary_ratio = summary_length / input_length
+        print(
+            f"Reddit: The summary has {summary_length:,} characters, {summary_ratio:.0%} of the input"
+        )
 
     return result
