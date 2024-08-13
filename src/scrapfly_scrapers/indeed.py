@@ -1,6 +1,4 @@
 """
-From https://github.com/scrapfly/scrapfly-scrapers/blob/main/indeed-scraper/indeed.py
-
 This is an example web scraper for indeed.com used in scrapfly blog article:
 https://scrapfly.io/blog/how-to-scrape-indeedcom/
 
