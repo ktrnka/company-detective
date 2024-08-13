@@ -56,7 +56,7 @@ If the text does not contain any relevant information about the COMPANY or PRODU
 Format the results as a Markdown list of quotes, each with a permalink to the source of the quote like so:
 - "quote" [Author, Reddit, Date](permalink)
 
-For example:
+EXAMPLE for 98point6:
 
 Input comment:
 ## Comment ID hrmpl3t with +3 score by [MarketWorldly9908 on 2022-01-07](https://www.reddit.com/r/povertyfinance/comments/bg7ip2/internet_medicine_is_awesome_98point6_was_so_so/hrmpl3t/) (in reply to ID bg7ip2):
@@ -65,34 +65,26 @@ My husband and I have used 98.6 three times. All three times they did not prescr
 Example output:
 - "All three times they did not prescribe the needed antibiotic to get better." [MarketWorldly9908, Reddit, 2022-01-07](https://www.reddit.com/r/povertyfinance/comments/bg7ip2/internet_medicine_is_awesome_98point6_was_so_so/hrmpl3t/)
 
+----
+
 Each quote should be a short, concise statement that captures the essence of the sentiment or information.
 Be sure to extract a comprehensive sample of both positive and negative opinions, as well as any factual statements about the product.
 
 REDDIT THREAD: 
 {text}
 
-MARKDOWN LIST OF QUOTES ABOUT THE COMPANY {company} AND PRODUCT {product}:
+MARKDOWN LIST OF QUOTES ABOUT THE COMPANY {company} AND PRODUCT {product} (markdown only, don't wrap in backticks):
 """
 map_prompt_template = PromptTemplate(template=map_prompt, input_variables=["text"])
 
 combine_prompt = """
-Please organize all of the quotes below into thematic topics of feedback about the COMPANY {company} and PRODUCT {product}.
-
-Use the following top-level headings:
-# Positive Sentiments
-# Negative Sentiments
-# Statements of Fact
-
-If there are many quotes under a heading, please subdivide into headings to group similar quotes together.
-
-Focus on selecting quotes that provide specific and grounded feedback. Avoid vague and general statements.
-
-The output should be detailed and thorough, approximately 50% of the input length.
+Please organize all of the quotes below into topics about the COMPANY {company} and PRODUCT {product}.
+Organize into headings based on the sentiment or type of information in the quote.
 
 EXTRACTS FROM REDDIT THREADS: 
 {text}
 
-COMPREHENSIVE, ORGANIZED QUOTES IN MARKDOWN FORMAT:
+ORGANIZED QUOTES IN MARKDOWN FORMAT (markdown only, don't wrap in backticks):
 """
 combine_prompt_template = PromptTemplate(
     template=combine_prompt, input_variables=["text", "company", "product"]
