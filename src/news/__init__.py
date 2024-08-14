@@ -20,6 +20,13 @@ class NewsSummary(NamedTuple):
 
 
 def run(target: CompanyProduct, max_results=30) -> NewsSummary:
+    """
+    Run the News pipeline:
+    1. Find news articles
+    2. Download the articles
+    3. Extract the core content as text
+    4. Summarize the articles 
+    """
     search_results = news.search.find_news_articles(target, num_results=max_results)
 
     article_markdowns = {result.link: news.scrape.get_article_markdown(result.link) for result in search_results}
