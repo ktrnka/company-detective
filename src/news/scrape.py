@@ -22,12 +22,7 @@ def get_article_text(url: str, delay_seconds=1) -> Optional[str]:
 
         # Very basic rate limiting if the cache wasn't used
         if not isinstance(response, requests_cache.models.response.CachedResponse):
-            print(
-                f"get_article_text: Cache miss, delaying {delay_seconds} seconds for {url}"
-            )
             time.sleep(delay_seconds)
-        else:
-            print(f"get_article_text: Cache hit for {url}")
     except requests.exceptions.ReadTimeout as e:
         print(f"get_article_text: Timeout on {url}")
         return None
@@ -37,10 +32,6 @@ def get_article_text(url: str, delay_seconds=1) -> Optional[str]:
         article = soup.find("article")
         if article:
             return article.get_text().strip()
-    else:
-        print(
-            f"get_article_text: Failed to get article from {url}: {response.status_code}"
-        )
 
     return None
 
@@ -77,12 +68,7 @@ def request_article(
 
         # Very basic rate limiting if the cache wasn't used
         if not isinstance(response, requests_cache.models.response.CachedResponse):
-            print(
-                f"request_article: Cache miss, delaying {delay_seconds} seconds for {url}"
-            )
             time.sleep(delay_seconds)
-        else:
-            print(f"request_article: Cache hit for {url}")
 
         return response
     except requests.exceptions.ReadTimeout as e:
