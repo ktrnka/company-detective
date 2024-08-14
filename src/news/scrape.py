@@ -1,4 +1,3 @@
-import newspaper.configuration
 import requests
 from bs4 import BeautifulSoup
 from functools import lru_cache
@@ -23,7 +22,9 @@ def get_article_text(url: str, delay_seconds=1) -> Optional[str]:
 
         # Very basic rate limiting if the cache wasn't used
         if not isinstance(response, requests_cache.models.response.CachedResponse):
-            print(f"get_article_text: Cache miss, delaying {delay_seconds} seconds for {url}")
+            print(
+                f"get_article_text: Cache miss, delaying {delay_seconds} seconds for {url}"
+            )
             time.sleep(delay_seconds)
         else:
             print(f"get_article_text: Cache hit for {url}")
@@ -37,7 +38,9 @@ def get_article_text(url: str, delay_seconds=1) -> Optional[str]:
         if article:
             return article.get_text().strip()
     else:
-        print(f"get_article_text: Failed to get article from {url}: {response.status_code}")
+        print(
+            f"get_article_text: Failed to get article from {url}: {response.status_code}"
+        )
 
     return None
 
@@ -57,7 +60,10 @@ def get_article_markdown(url: str) -> Optional[str]:
 
 import newspaper
 
-def request_article(url: str, delay_seconds=1) -> Optional[requests_cache.models.response.BaseResponse]:
+
+def request_article(
+    url: str, delay_seconds=1
+) -> Optional[requests_cache.models.response.BaseResponse]:
     """Handle HTTP request for the URL with caching and rate limiting"""
     try:
         response = requests.get(
@@ -71,7 +77,9 @@ def request_article(url: str, delay_seconds=1) -> Optional[requests_cache.models
 
         # Very basic rate limiting if the cache wasn't used
         if not isinstance(response, requests_cache.models.response.CachedResponse):
-            print(f"request_article: Cache miss, delaying {delay_seconds} seconds for {url}")
+            print(
+                f"request_article: Cache miss, delaying {delay_seconds} seconds for {url}"
+            )
             time.sleep(delay_seconds)
         else:
             print(f"request_article: Cache hit for {url}")
@@ -82,12 +90,19 @@ def request_article(url: str, delay_seconds=1) -> Optional[requests_cache.models
         return None
 
 
-def response_to_article(response: requests_cache.models.response.BaseResponse) -> newspaper.Article:
-    article = newspaper.article(response.url, language='en', input_html=response.text, fetch_images=False)
+def response_to_article(
+    response: requests_cache.models.response.BaseResponse,
+) -> newspaper.Article:
+    """Parse the response from a URL into a newspaper Article"""
+    article = newspaper.article(
+        response.url, language="en", input_html=response.text, fetch_images=False
+    )
     article.parse()
     return article
 
+
 def article_to_markdown(article: newspaper.Article, max_chars=None) -> str:
+    """Format a parsed newspaper Article into Markdown for summarization"""
     header = article.title
     if article.authors:
         header += f" by {', '.join(article.authors)}"
