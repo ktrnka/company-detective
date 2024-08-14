@@ -20,6 +20,7 @@ google-api-python-client = "*"
 markdownify = "*"
 requests-cache = "*"
 pytz = "*"
+newspaper4k = "*"
 
 [dev-packages]
 jupyter = "*"
