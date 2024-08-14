@@ -1,3 +1,4 @@
+import newspaper.configuration
 import requests
 from bs4 import BeautifulSoup
 from functools import lru_cache
@@ -82,19 +83,21 @@ def request_article(url: str, delay_seconds=1) -> Optional[requests_cache.models
 
 
 def response_to_article(response: requests_cache.models.response.BaseResponse) -> newspaper.Article:
-    article = newspaper.article(response.url, language='en', input_html=response.text)
+    article = newspaper.article(response.url, language='en', input_html=response.text, fetch_images=False)
     article.parse()
     return article
 
-def article_to_markdown(article: newspaper.Article) -> str:
+def article_to_markdown(article: newspaper.Article, max_chars=None) -> str:
     header = article.title
     if article.authors:
         header += f" by {', '.join(article.authors)}"
     if article.publish_date:
         header += f" on {article.publish_date.strftime('%Y-%m-%d')}"
+
+    text = article.text
+    if max_chars:
+        text = text[:max_chars]
+
     header = f"# [{header}]({article.url})"
 
-    return f"""
-{header}
-{article.text}
-"""
+    return f"{header}\n{text}"
