@@ -16,7 +16,7 @@ prompt = ChatPromptTemplate.from_messages(
             """
 You're an expert in reviewing and analyzing news about companies and products.
 You'll be given several articles to carefully review.
-Produce a comprehensive and detailed summary of all the information about the company that might be useful for a prospective candidate or investor.
+Produce a detailed report of all the information about the company that might be useful for a prospective candidate or investor.
 Examples of information that would be useful include:
 - Acquisitions
 - Partnerships
@@ -27,10 +27,9 @@ Examples of information that would be useful include:
 - The names and roles of any key personnel
 - Information about this product: {product_name}
 
-The summary should be detailed and approximately 20% of the input length.
 Include direct quotations from the articles as appropriate to highlight key points.
 Format the output as a markdown document.
-When summarizing a claim, reference the source of the claim with a markdown link, as in ([John Smith, New York Times, June 2021](https://example.com)).
+To build trust, include the source of each statement with a markdown link, as in ([John Smith, New York Times, June 2021](https://example.com)).
 If the author name is not available, use the publication name.
             """,
         ),
@@ -43,7 +42,7 @@ PRODUCT OF INTEREST: {product_name}
 NEWS ARTICLES: 
 {text}
 
-COMPREHENSIVE SUMMARY, MARKDOWN FORMAT:
+COMPREHENSIVE ANALYST REPORT, MARKDOWN FORMAT:
             """,
         ),
     ]
