@@ -12,7 +12,7 @@ def find_news_articles(
     query = f'"{target.company}"'
     if target.product != target.company:
         query += f' "{target.product}"'
-    query += " news"
+    query += " news -site:reddit.com -site:twitter.com -site:x.com -site:linkedin.com"
 
     return list(
         result for result in search(query, num=num_results, dateRestrict=date_restrict)
