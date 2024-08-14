@@ -19,6 +19,7 @@ scrapfly-sdk = {extras = ["all"]}
 google-api-python-client = "*"
 markdownify = "*"
 requests-cache = "*"
+pytz = "*"
 
 [dev-packages]
 jupyter = "*"
