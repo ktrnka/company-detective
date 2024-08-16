@@ -5,7 +5,7 @@ from typing import List, Optional, Tuple
 
 class FundingRound(BaseModel):
     announced_on: date
-    raised_usd: int
+    raised_usd: Optional[int]
     investors: Optional[int]
     lead_investors: Optional[List[str]]
 
@@ -48,6 +48,10 @@ class Organization(BaseModel):
     @property
     def news(self):
         return sorted([article for article in self.timeline if article.is_news], key=lambda article: article.date, reverse=True)
+    
+    @property
+    def filtered_funding_rounds(self):
+        return sorted([round for round in self.funding_rounds if round.raised_usd], key=lambda round: round.announced_on, reverse=True)
     
     @property
     def url(self):
