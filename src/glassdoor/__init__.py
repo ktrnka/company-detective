@@ -45,6 +45,7 @@ async def run(
     target: CompanyProduct, max_review_pages=1, max_job_pages=0, debug=False, url_override=None
 ) -> GlassdoorResult:
     
+    # NOTE: This is necessary in rare cases where the Google search results don't contain the overview page at all, like Pomelo Care
     if url_override:
         review_page = SearchResult(
             link=url_override,

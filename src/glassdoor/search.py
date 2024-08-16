@@ -4,7 +4,7 @@ import re
 from functools import lru_cache
 from search import search, SearchResult
 
-# @lru_cache(1000)
+@lru_cache(1000)
 def find_review(target: CompanyProduct, debug=False) -> SearchResult:
     """Find the Glassdoor review page for a company"""
     query = f'site:www.glassdoor.com/Reviews/ "{target.company}"'
