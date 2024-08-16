@@ -13,7 +13,7 @@ class NewsSummary(NamedTuple):
 
     # intermediates
     search_results: List[SearchResult]
-    article_markdowns: Mapping[str, str]
+    article_markdowns: List[str]
 
     # output
     summary_markdown: str
@@ -29,11 +29,15 @@ def run(target: CompanyProduct, max_results=30) -> NewsSummary:
     """
     search_results = news.search.find_news_articles(target, num_results=max_results)
 
-    article_markdowns = {result.link: news.scrape.get_article_markdown(result.link) for result in search_results}
+    # Fetch and filter
+    responses = [news.scrape.request_article(result.link) for result in search_results]
+    responses = [response for response in responses if response.ok]
 
-    article_markdown_list = [article for article in article_markdowns.values() if article]
+    # Parse and format
+    articles = [news.scrape.response_to_article(response) for response in responses]
+    article_markdowns = [news.scrape.article_to_markdown(article) for article in articles]
 
-    llm_result = news.summarize.summarize(target, article_markdown_list)
+    llm_result = news.summarize.summarize(target, article_markdowns)
 
     return NewsSummary(
         target=target, 
