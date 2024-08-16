@@ -29,7 +29,7 @@ class Organization(BaseModel):
     description: str
     founded_on: date
     linkedin: str
-    facebook: str
+    facebook: Optional[str]
     twitter: str
     email: str
     website: str

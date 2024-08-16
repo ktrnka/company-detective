@@ -42,9 +42,16 @@ class GlassdoorResult:
 
 
 async def run(
-    target: CompanyProduct, max_review_pages=1, max_job_pages=0, debug=False
+    target: CompanyProduct, max_review_pages=1, max_job_pages=0, debug=False, url_override=None
 ) -> GlassdoorResult:
-    review_page = find_review(target)
+    
+    if url_override:
+        review_page = SearchResult(
+            link=url_override,
+            formattedUrl=url_override,
+            title="Manually-entered Glassdoor URL",)
+    else:
+        review_page = find_review(target, debug=debug)
     company, company_id = UrlBuilder.parse_review_url(review_page.link)
 
     # job results, not 100% used yet

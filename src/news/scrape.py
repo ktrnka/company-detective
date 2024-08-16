@@ -50,6 +50,7 @@ def get_article_markdown(url: str) -> Optional[str]:
 
 
 import newspaper
+from bs4 import BeautifulSoup
 
 
 def request_article(
@@ -75,13 +76,19 @@ def request_article(
         print(f"request_article: Timeout on {url}")
         return None
 
+def remove_img_tags(html_str: str) -> str:
+    """Remove all img tags from an HTML string"""
+    soup = BeautifulSoup(html_str, "html.parser")
+    for img in soup.find_all("img"):
+        img.decompose()
+    return str(soup)
 
 def response_to_article(
     response: requests_cache.models.response.BaseResponse,
 ) -> newspaper.Article:
     """Parse the response from a URL into a newspaper Article"""
     article = newspaper.article(
-        response.url, language="en", input_html=response.text, fetch_images=False
+        response.url, language="en", input_html=remove_img_tags(response.text), fetch_images=False
     )
     article.parse()
     return article

@@ -20,14 +20,17 @@ class UrlBuilder(Url):
         return f"https://www.glassdoor.com/Reviews/Employee-Review-{employer}-RVW{review_id}.htm"
 
     @staticmethod
-    def parse_review_url(url: str) -> EmployerKey:
+    def parse_review_url(url: str) -> Optional[EmployerKey]:
         """
         Parse Glassdoor review page URL to get employer name and ID
         e.g. https://www.glassdoor.com/Reviews/eBay-Reviews-E7853.htm
         returns ("eBay", "7853")
         """
         groups = re.search(r"/Reviews/(.*)-Reviews-E([0-9A-F]+).htm", url).groups()
-        return EmployerKey(*groups)
+
+        if groups:
+            return EmployerKey(*groups)
+        return None
 
 
 class JobTitle(BaseModel):

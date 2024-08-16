@@ -1,10 +1,10 @@
 # {{organization.legal_name}}, founded {{organization.founded_on}} [(Crunchbase, {{current_year}})]({{organization.url}})
 {{organization.description}}
 
-Website: {{organization.website}}
-LinkedIn: {{organization.linkedin}}
-Twitter: {{organization.twitter}}
-Facebook: {{organization.facebook}}
+- Website: {{organization.website}}
+- LinkedIn: {{organization.linkedin}}
+- Twitter: {{organization.twitter}}
+- Facebook: {{organization.facebook}}
 
 ## Funding ({{organization.funding_total_usd // 1000000}}M USD total)
 
