@@ -1,4 +1,4 @@
-# {{organization.legal_name}}, founded {{organization.founded_on}} ((Crunchbase, {{current_year}})[{{organization.url}}])
+# {{organization.legal_name}}, founded {{organization.founded_on}} [(Crunchbase, {{current_year}})]({{organization.url}})
 {{organization.description}}
 
 Website: {{organization.website}}
