@@ -66,3 +66,37 @@ def init_requests_cache():
     # TODO: There's a design limitation in how this interacts with throttling, like in the news article scraper. Though the news article scraper also does a lru in-memory cache, so it only matters on fresh notebooks.
 
     return cache_path
+
+
+
+import re
+
+def nest_markdown(markdown_doc: str, header_change: int) -> str:
+    """Nest the headers in a markdown document by changing the header level"""
+    assert header_change > 0, "Header change must be positive"
+    nested_markdown = re.sub(r'^(#+)', lambda match: '#' * min(len(match.group(1)) + header_change, 6), markdown_doc, flags=re.MULTILINE)
+    return nested_markdown
+
+def test_nest_markdown():
+    # Test nest_markdown function
+    markdown_doc = """
+    # Header 1
+    Some text
+
+    ## Header 2
+
+    This # might be harder
+    """
+    header_change = 2
+
+    expected_output = """
+    ### Header 1
+    Some text
+
+    #### Header 2
+
+    This # might be harder
+    """
+
+    # Check if the nested markdown is correct
+    assert nest_markdown(markdown_doc, header_change) == expected_output, f"Expected: \n{expected_output}\n\nActual: \n{nest_markdown(markdown_doc, header_change)}"
