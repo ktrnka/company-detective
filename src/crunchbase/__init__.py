@@ -1,4 +1,3 @@
-from pprint import pprint
 from search import search
 from core import CompanyProduct
 import scrapfly_scrapers.crunchbase
