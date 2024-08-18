@@ -40,6 +40,7 @@ EMPLOYEE REVIEWS:
     ]
 )
 
+
 def summarize(target: CompanyProduct, reviews: List[GlassdoorReview]) -> AIMessage:
     """Summarize a list of Glassdoor reviews"""
     content_string = "\n\n".join(
@@ -57,7 +58,11 @@ def summarize(target: CompanyProduct, reviews: List[GlassdoorReview]) -> AIMessa
     )
 
     summary_ratio = len(result.content) / len(content_string)
-    logger.info("{:,} -> {:,} chars ({:.0%})", len(content_string), len(result.content), summary_ratio)
-
+    logger.info(
+        "{:,} -> {:,} chars ({:.0%})",
+        len(content_string),
+        len(result.content),
+        summary_ratio,
+    )
 
     return result

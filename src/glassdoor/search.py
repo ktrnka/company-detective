@@ -1,10 +1,10 @@
-# search for a company
-from core import CompanyProduct
 import re
 from functools import lru_cache
+from loguru import logger
+
+from core import CompanyProduct
 from search import search, SearchResult
 
-from loguru import logger
 
 @lru_cache(1000)
 def find_review(target: CompanyProduct) -> SearchResult:
