@@ -116,6 +116,8 @@ def test_extract_core_domain():
     assert extract_core_domain("https://www.reddit.com/r/freelance/comments/p2cdrt/gunio_rejected_me_immediately/") == "reddit"
     assert extract_core_domain("https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW34284332.htm") == "glassdoor"
     assert extract_core_domain("https://gun.io/guest-posts/2023/09/junior-sql-developer-job-description/") == "gun.io"
+    assert extract_core_domain("https://bit.ly/3P9HRMV") == "bit.ly"
+    assert extract_core_domain("http://test") == "test"
 
 
 class URLShortener:
@@ -128,7 +130,7 @@ class URLShortener:
         self.url_cache = {}
         self.counter = 0
 
-    def shorten_markdown(self, markdown: str) -> str:
+    def shorten_markdown(self, markdown: str, debug=False) -> str:
         def replace_url(match):
             url = match.group(0)
             if url not in self.url_cache:
@@ -138,17 +140,26 @@ class URLShortener:
                 self.url_cache[url] = f"cache://{domain}/{self.counter}"
             return self.url_cache[url]
 
-        return re.sub(r"(https?://[^\s)]+)", replace_url, markdown)
+        shortened_markdown = re.sub(r"(https?://[^\s)]+)", replace_url, markdown)
 
-    def unshorten_markdown(self, markdown: str) -> str:
+        if debug:
+            print(f"shorten_markdown: {len(markdown):,} -> {len(shortened_markdown):,} chars")
+
+        return shortened_markdown
+
+    def unshorten_markdown(self, markdown: str, debug=False) -> str:
         def replace_short_url(match):
             short_url = match.group(0)
             for url, shortened in self.url_cache.items():
                 if shortened == short_url:
                     return url
             return short_url
+        
+        unshortened_markdown = re.sub(r"cache://[^\s)]+", replace_short_url, markdown)
+        if debug:
+            print(f"unshorten_markdown: {len(markdown):,} -> {len(unshortened_markdown):,} chars")
 
-        return re.sub(r"cache://[^\s)]+", replace_short_url, markdown)
+        return unshortened_markdown
 
 def test_url_shortener():
     example_md = """
