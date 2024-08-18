@@ -43,6 +43,7 @@ def run(
     ]
 
     if len(post_submissions) == 0:
+        # TODO: Raise an error
         print(f"No posts with enough comments found for {target}")
         return None
 

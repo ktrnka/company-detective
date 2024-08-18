@@ -1,19 +1,17 @@
 from typing import List
 
-from langchain_openai import ChatOpenAI
-
-from core import CompanyProduct
 import jinja2
 from langchain_core.documents import Document
 from langchain.chains.summarize import load_summarize_chain
 from langchain import PromptTemplate
-
+from langchain_openai import ChatOpenAI
 from praw.models import Submission
-
-from .fetch import submission_to_markdown
 from pydantic import BaseModel
-
 from loguru import logger
+
+from core import CompanyProduct
+from .fetch import submission_to_markdown
+
 
 # templates to convert summaries to markdown and html
 templates = jinja2.Environment(
@@ -39,7 +37,13 @@ def truncate_document(llm, document: str, max_tokens: int) -> str:
         num_chars_needed = max_tokens * approx_chars_per_token
         truncated_document = document[: int(num_chars_needed)]
 
-        logger.debug("Truncated document from {:,} tokens ({:,} chars) to {:,} tokens ({:,}) chars)", num_tokens, len(document), max_tokens, len(truncated_document))
+        logger.debug(
+            "Truncated document from {:,} tokens ({:,} chars) to {:,} tokens ({:,}) chars)",
+            num_tokens,
+            len(document),
+            max_tokens,
+            len(truncated_document),
+        )
 
         return truncated_document
     else:
@@ -90,23 +94,19 @@ combine_prompt_template = PromptTemplate(
 )
 
 
-def summarize(
-    target: CompanyProduct, threads: List[Submission]
-) -> SummaryResult:
+def summarize(target: CompanyProduct, threads: List[Submission]) -> SummaryResult:
     """Summarize a list of Reddit threads"""
     thread_markdowns = [submission_to_markdown(thread) for thread in threads]
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
     truncated_thread_markdowns = [
-        truncate_document(llm, document, 30000)
-        for document in thread_markdowns
+        truncate_document(llm, document, 30000) for document in thread_markdowns
     ]
     documents = [
         Document(page_content=thread_markdown)
         for thread_markdown in truncated_thread_markdowns
     ]
-
 
     summary_chain = load_summarize_chain(
         llm=llm,
@@ -131,8 +131,18 @@ def summarize(
     input_length = sum(len(doc.page_content) for doc in documents)
     intermediate_length = sum(len(text) for text in result.intermediate_steps)
     summary_length = len(result.output_text)
-    
-    logger.info(f"Reddit: Extract stage {input_length:,} chars -> {intermediate_length:,} chars ({intermediate_length / input_length:.0%})")
-    logger.info(f"Reddit: Combine stage {intermediate_length:,} chars -> {summary_length:,} chars ({summary_length / intermediate_length:.0%})")
+
+    logger.info(
+        "Reddit: Extract stage {:,} chars -> {:,} chars ({:.0%})",
+        input_length,
+        intermediate_length,
+        intermediate_length / input_length,
+    )
+    logger.info(
+        "Reddit: Combine stage {:,} chars -> {:,} chars ({:.0%})",
+        intermediate_length,
+        summary_length,
+        summary_length / intermediate_length,
+    )
 
     return result
