@@ -23,6 +23,7 @@ class SearchResult(BaseModel):
 
         return data
 
+from loguru import logger
 
 def search(
     query: str, dateRestrict=None, linkSite=None, num: int = 10, debug=False
@@ -64,8 +65,7 @@ def search(
             .execute()
         )
 
-        if debug:
-            pprint(results)
+        logger.debug("Google search results: {}", results)
 
         if results["searchInformation"]["totalResults"] == "0":
             break

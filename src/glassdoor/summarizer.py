@@ -4,6 +4,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages.ai import AIMessage
 
+from loguru import logger
 
 from core import CompanyProduct
 from .models import GlassdoorReview
@@ -39,15 +40,12 @@ EMPLOYEE REVIEWS:
     ]
 )
 
-def summarize(target: CompanyProduct, reviews: List[GlassdoorReview], debug=True) -> AIMessage:
+def summarize(target: CompanyProduct, reviews: List[GlassdoorReview]) -> AIMessage:
     """Summarize a list of Glassdoor reviews"""
     content_string = "\n\n".join(
         templates.get_template("glassdoor_review.md").render(review=review)
         for review in reviews
     )
-
-    if debug:
-        print(f"Glassdoor: The context has {len(content_string):,} characters in {len(reviews)} reviews")
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     runnable = review_summary_prompt | llm
@@ -58,9 +56,8 @@ def summarize(target: CompanyProduct, reviews: List[GlassdoorReview], debug=True
         }
     )
 
-    if debug:
-        summary_ratio = len(result.content) / len(content_string)
-        print(f"Glassdoor: The summary has {len(result.content):,} characters, {summary_ratio:.0%} of the input")
+    summary_ratio = len(result.content) / len(content_string)
+    logger.info("{:,} -> {:,} chars ({:.0%})", len(content_string), len(result.content), summary_ratio)
 
 
     return result

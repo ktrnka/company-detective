@@ -14,6 +14,7 @@ from glassdoor.search import find_review
 from glassdoor.summarizer import summarize
 from glassdoor.models import UrlBuilder, GlassdoorReview, GlassdoorJob
 
+from loguru import logger
 
 scrapfly_scrapers.glassdoor.BASE_CONFIG["cache"] = True
 
@@ -42,7 +43,7 @@ class GlassdoorResult:
 
 
 async def run(
-    target: CompanyProduct, max_review_pages=1, max_job_pages=0, debug=False, url_override=None
+    target: CompanyProduct, max_review_pages=1, max_job_pages=0, url_override=None
 ) -> GlassdoorResult:
     
     # NOTE: This is necessary in rare cases where the Google search results don't contain the overview page at all, like Pomelo Care
@@ -52,7 +53,7 @@ async def run(
             formattedUrl=url_override,
             title="Manually-entered Glassdoor URL",)
     else:
-        review_page = find_review(target, debug=debug)
+        review_page = find_review(target)
     company, company_id = UrlBuilder.parse_review_url(review_page.link)
 
     # job results, not 100% used yet
@@ -66,8 +67,8 @@ async def run(
 
     response = await scrape_reviews(review_page.link, max_pages=max_review_pages)
 
-    if debug:
-        pprint(response)
+    logger.debug("Glassdoor response: {}", response)
+
     reviews = GlassdoorReview.parse_reviews(company, response)
 
     review_summary = summarize(target, reviews)

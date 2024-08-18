@@ -6,6 +6,7 @@ import jinja2
 from datetime import datetime
 from .models import *
 
+from loguru import logger
 
 scrapfly_scrapers.crunchbase.BASE_CONFIG["cache"] = True
 templates = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"))
@@ -39,8 +40,7 @@ async def run(target: CompanyProduct, debug=False) -> str:
         _response_cache[url] = await scrapfly_scrapers.crunchbase.scrape_company(url)
 
     crunchbase_raw_response = _response_cache[url]
-    if debug:
-        pprint(crunchbase_raw_response)
+    logger.debug("Crunchbase response: {}", crunchbase_raw_response)
     organization, employees = parse(crunchbase_raw_response)
 
     return templates.get_template("crunchbase.md").render(

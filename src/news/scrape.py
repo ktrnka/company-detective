@@ -5,6 +5,10 @@ from typing import Optional
 import time
 
 import requests_cache.models.response
+from bs4 import BeautifulSoup
+
+# NOTE: This is newpaper4k not newspaper3k
+import newspaper
 
 
 @lru_cache(maxsize=1000)
@@ -49,8 +53,7 @@ def get_article_markdown(url: str) -> Optional[str]:
         return None
 
 
-import newspaper
-from bs4 import BeautifulSoup
+
 
 
 def request_article(

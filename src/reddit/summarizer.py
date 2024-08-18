@@ -13,6 +13,8 @@ from praw.models import Submission
 from .fetch import submission_to_markdown
 from pydantic import BaseModel
 
+from loguru import logger
+
 # templates to convert summaries to markdown and html
 templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),
@@ -29,7 +31,7 @@ class SummaryResult(BaseModel):
     # input_documents: List[Document]
 
 
-def truncate_document(llm, document: str, max_tokens: int, debug=False) -> str:
+def truncate_document(llm, document: str, max_tokens: int) -> str:
     """Helper to truncate long documents"""
     num_tokens = llm.get_num_tokens(document)
     if num_tokens > max_tokens:
@@ -37,10 +39,7 @@ def truncate_document(llm, document: str, max_tokens: int, debug=False) -> str:
         num_chars_needed = max_tokens * approx_chars_per_token
         truncated_document = document[: int(num_chars_needed)]
 
-        if debug:
-            print(
-                f"Truncated document from {num_tokens} tokens ({len(document)} chars) to {max_tokens} tokens ({len(truncated_document)} chars)"
-            )
+        logger.debug("Truncated document from {:,} tokens ({:,} chars) to {:,} tokens ({:,}) chars)", num_tokens, len(document), max_tokens, len(truncated_document))
 
         return truncated_document
     else:
@@ -92,7 +91,7 @@ combine_prompt_template = PromptTemplate(
 
 
 def summarize(
-    target: CompanyProduct, threads: List[Submission], debug=True
+    target: CompanyProduct, threads: List[Submission]
 ) -> SummaryResult:
     """Summarize a list of Reddit threads"""
     thread_markdowns = [submission_to_markdown(thread) for thread in threads]
@@ -100,7 +99,7 @@ def summarize(
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
     truncated_thread_markdowns = [
-        truncate_document(llm, document, 30000, debug=debug)
+        truncate_document(llm, document, 30000)
         for document in thread_markdowns
     ]
     documents = [
@@ -108,10 +107,6 @@ def summarize(
         for thread_markdown in truncated_thread_markdowns
     ]
 
-    if debug:
-        print(
-            f"Reddit: The prompt context has {sum(len(doc.page_content) for doc in documents):,} characters in {len(documents)} threads"
-        )
 
     summary_chain = load_summarize_chain(
         llm=llm,
@@ -119,7 +114,7 @@ def summarize(
         map_prompt=map_prompt_template,
         combine_prompt=combine_prompt_template,
         token_max=30000,
-        verbose=debug,
+        verbose=False,
         return_intermediate_steps=True,
     )
 
@@ -133,17 +128,11 @@ def summarize(
 
     result = SummaryResult(**result)
 
-    if debug:
-        input_length = sum(len(doc.page_content) for doc in documents)
-        intermediate_length = sum(len(text) for text in result.intermediate_steps)
-
-        print(
-            f"Reddit: Extract stage {input_length:,} chars -> {intermediate_length:,} chars ({intermediate_length / input_length:.0%})"
-        )
-
-        summary_length = len(result.output_text)
-        print(
-            f"Reddit: Combine stage {intermediate_length:,} chars -> {summary_length:,} chars ({summary_length / intermediate_length:.0%})"
-        )
+    input_length = sum(len(doc.page_content) for doc in documents)
+    intermediate_length = sum(len(text) for text in result.intermediate_steps)
+    summary_length = len(result.output_text)
+    
+    logger.info(f"Reddit: Extract stage {input_length:,} chars -> {intermediate_length:,} chars ({intermediate_length / input_length:.0%})")
+    logger.info(f"Reddit: Combine stage {intermediate_length:,} chars -> {summary_length:,} chars ({summary_length / intermediate_length:.0%})")
 
     return result

@@ -74,24 +74,21 @@ COMPREHENSIVE ANALYST REPORT, MARKDOWN FORMAT:
     ]
 )
 
-
+from loguru import logger
 
 def summarize(
-    target: CompanyProduct, article_markdowns: List[str], debug=True
+    target: CompanyProduct, article_markdowns: List[str]
 ) -> AIMessage:
     """Summarize a list of news articles"""
     unified_markdown = "\n\n".join(article for article in article_markdowns)
 
-    if debug:
-        print(f"News: {len(unified_markdown):,} characters of context, {len(article_markdowns)} articles")
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
     runnable = prompt | llm
     result = runnable.invoke({"text": unified_markdown, "company_name": target.company, "product_name": target.product})
 
-    if debug:
-        summary_ratio = len(result.content) / len(unified_markdown)
-        print(f"News: The summary has {len(result.content):,} characters, {summary_ratio:.0%} of the input")
+    summary_ratio = len(result.content) / len(unified_markdown)
+    logger.info("{:,} -> {:,} chars ({:.0%})", len(unified_markdown), len(result.content), summary_ratio)
 
     return result
