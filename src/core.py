@@ -8,6 +8,7 @@ import requests_cache
 
 import re
 import urllib.parse
+from loguru import logger
 
 class CompanyProduct(NamedTuple):
     company: str
@@ -101,6 +102,9 @@ def test_nest_markdown():
     # Check if the nested markdown is correct
     assert nest_markdown(markdown_doc, header_change) == expected_output, f"Expected: \n{expected_output}\n\nActual: \n{nest_markdown(markdown_doc, header_change)}"
 
+def simplify_markdown(markdown_doc: str) -> str:
+    # TODO: Improve this, write tests, etc
+    return markdown_doc.strip().strip("```markdown").strip("```")
 
 def extract_core_domain(url: str) -> str:
     """Extract the core part of a domain, e.g. 'reddit' from 'https://www.reddit.com/r/freelance/comments/p2cdrt/gunio_rejected_me_immediately/'"""
@@ -130,7 +134,7 @@ class URLShortener:
         self.url_cache = {}
         self.counter = 0
 
-    def shorten_markdown(self, markdown: str, debug=False) -> str:
+    def shorten_markdown(self, markdown: str) -> str:
         def replace_url(match):
             url = match.group(0)
             if url not in self.url_cache:
@@ -142,12 +146,11 @@ class URLShortener:
 
         shortened_markdown = re.sub(r"(https?://[^\s)]+)", replace_url, markdown)
 
-        if debug:
-            print(f"shorten_markdown: {len(markdown):,} -> {len(shortened_markdown):,} chars")
+        logger.info(f"{len(markdown):,} -> {len(shortened_markdown):,} chars ({len(shortened_markdown) / len(markdown):.0%} of original)")
 
         return shortened_markdown
 
-    def unshorten_markdown(self, markdown: str, debug=False) -> str:
+    def unshorten_markdown(self, markdown: str) -> str:
         def replace_short_url(match):
             short_url = match.group(0)
             for url, shortened in self.url_cache.items():
@@ -156,8 +159,7 @@ class URLShortener:
             return short_url
         
         unshortened_markdown = re.sub(r"cache://[^\s)]+", replace_short_url, markdown)
-        if debug:
-            print(f"unshorten_markdown: {len(markdown):,} -> {len(unshortened_markdown):,} chars")
+        logger.info(f"{len(markdown):,} -> {len(unshortened_markdown):,} chars ({len(unshortened_markdown) / len(markdown):.0%} of original)")
 
         return unshortened_markdown
 
