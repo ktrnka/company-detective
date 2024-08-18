@@ -6,6 +6,8 @@ from langchain.globals import set_llm_cache
 from langchain.cache import SQLiteCache
 import requests_cache
 
+import re
+import urllib.parse
 
 class CompanyProduct(NamedTuple):
     company: str
@@ -69,8 +71,6 @@ def init_requests_cache():
 
 
 
-import re
-
 def nest_markdown(markdown_doc: str, header_change: int) -> str:
     """Nest the headers in a markdown document by changing the header level"""
     assert header_change > 0, "Header change must be positive"
@@ -78,7 +78,7 @@ def nest_markdown(markdown_doc: str, header_change: int) -> str:
     return nested_markdown
 
 def test_nest_markdown():
-    # Test nest_markdown function
+    """Test the nest_markdown function"""
     markdown_doc = """
     # Header 1
     Some text
@@ -100,3 +100,95 @@ def test_nest_markdown():
 
     # Check if the nested markdown is correct
     assert nest_markdown(markdown_doc, header_change) == expected_output, f"Expected: \n{expected_output}\n\nActual: \n{nest_markdown(markdown_doc, header_change)}"
+
+
+def extract_core_domain(url: str) -> str:
+    """Extract the core part of a domain, e.g. 'reddit' from 'https://www.reddit.com/r/freelance/comments/p2cdrt/gunio_rejected_me_immediately/'"""
+    domain = urllib.parse.urlparse(url).hostname
+    domain_parts = domain.split(".")
+    if domain_parts[-1] in {"com", "net", "org"}:
+        domain_parts = domain_parts[:-1]
+    if domain_parts[0] == "www":
+        domain_parts = domain_parts[1:]
+    return ".".join(domain_parts)
+
+def test_extract_core_domain():
+    assert extract_core_domain("https://www.reddit.com/r/freelance/comments/p2cdrt/gunio_rejected_me_immediately/") == "reddit"
+    assert extract_core_domain("https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW34284332.htm") == "glassdoor"
+    assert extract_core_domain("https://gun.io/guest-posts/2023/09/junior-sql-developer-job-description/") == "gun.io"
+
+
+class URLShortener:
+    """
+    Shorten URLs in markdown to a cache URL with functionality to unshorten them.
+    This is designed to reduce the number of tokens in the LLM input and output, which can improve speed and reduce cost.
+    It also tends to increase the overall output length.
+    """
+    def __init__(self):
+        self.url_cache = {}
+        self.counter = 0
+
+    def shorten_markdown(self, markdown: str) -> str:
+        def replace_url(match):
+            url = match.group(0)
+            if url not in self.url_cache:
+                self.counter += 1
+                domain = extract_core_domain(url)
+                
+                self.url_cache[url] = f"cache://{domain}/{self.counter}"
+            return self.url_cache[url]
+
+        return re.sub(r"(https?://[^\s)]+)", replace_url, markdown)
+
+    def unshorten_markdown(self, markdown: str) -> str:
+        def replace_short_url(match):
+            short_url = match.group(0)
+            for url, shortened in self.url_cache.items():
+                if shortened == short_url:
+                    return url
+            return short_url
+
+        return re.sub(r"cache://[^\s)]+", replace_short_url, markdown)
+
+def test_url_shortener():
+    example_md = """
+# Bibliography
+
+### Reddit
+- [DeeRegs, Reddit, 2021-08-11](https://www.reddit.com/r/freelance/comments/p2cdrt/gunio_rejected_me_immediately/)
+- [LeyKlussyn, Reddit, 2021-08-11](https://www.reddit.com/r/freelance/comments/p2cdrt/gunio_rejected_me_immediately/h8lbqse/)
+- [dustinechos, Reddit, 2021-08-12](https://www.reddit.com/r/freelance/comments/p2cdrt/gunio_rejected_me_immediately/h8lwjj6/)
+- [ork4n, Reddit, 2021-09-02](https://www.reddit.com/r/freelance/comments/p2cdrt/gunio_rejected_me_immediately/hb9vnff/)
+- [solid_steel, Reddit, 2016-08-13](https://www.reddit.com/r/freelance/comments/4xibr5/do_sites_like_toptal_staffzen_gunio_crew/d6fqpy5/)
+- [cclites, Reddit, 2016-08-13](https://www.reddit.com/r/freelance/comments/4xibr5/do_sites_like_toptal_staffzen_gunio_crew/d6ft7g1/)
+- [pdevito3, Reddit, 2022-04-29](https://www.reddit.com/r/freelance/comments/uelpju/gunio_users_you_might_need_an_extra_active_step/)
+- [markcloud23, Reddit, 2024-03-25](https://www.reddit.com/r/webdev/comments/10kdu6f/best_toptal_alternatives_for_finding_high_paying/kwh10c0/)
+- [wehivo9, Reddit, 2023-01-24](https://www.reddit.com/r/webdev/comments/10kdu6f/best_toptal_alternatives_for_finding_high_paying/)
+- [League-Ill, Reddit, 2023-09-07](https://www.reddit.com/r/startups/comments/16cck2y/gripe_about_developer_talent_on_upwork/jzlem6l/)
+- [Beginning-Comedian-2, Reddit, 2024-06-10](https://www.reddit.com/r/reactjs/comments/xrwxr6/best_place_to_hire_quality_react_developers_for/l80by6f/)
+- [FlexJobs, Reddit, 2018-06-20](https://www.reddit.com/r/digitalnomad/comments/8sbpho/remote_part_time_work_while_i_live_in_south/e10awdc/)
+
+### Glassdoor
+- [Associate, Glassdoor, 2020-07-17](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW34284332.htm)
+- [Client Growth Associate, Glassdoor, 2021-02-11](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW42349229.htm)
+- [Anonymous, Glassdoor, 2021-02-26](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW43161322.htm)
+- [Anonymous, Glassdoor, 2021-11-03](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW54871286.htm)
+- [Presales Solutions Architect, Glassdoor, 2022-01-31](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW58860158.htm)
+- [Account Manager, Glassdoor, 2021-03-30](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW44794895.htm)
+- [Account Executive, Glassdoor, 2021-05-03](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW46389131.htm)
+- [Software Engineer, Glassdoor, 2023-12-28](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW82904632.htm)
+- [Marketing, Glassdoor, 2024-02-23](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW84685389.htm)
+
+### News
+- [Scott Stockdale, Gun.io, September 2023](https://gun.io/guest-posts/2023/09/junior-sql-developer-job-description/)
+- [Victoria Stahr, Gun.io, July 2024](https://gun.io/news/2024/07/how-to-get-involved-with-the-gun-io-community/)
+- [Chris Johnson, Gun.io, May 2024](https://gun.io/news/2024/05/gunai-revolutionize-tech-hiring/)
+- [Greater Nashville Tech Council, 2022-08-09](https://bit.ly/3P9HRMV)
+- [Vicky, Twine, April 2024](https://www.twine.net/blog/the-10-best-alternatives-to-toptal/)
+"""
+
+    url_shortener = URLShortener()
+    shortened_md = url_shortener.shorten_markdown(example_md)
+    print(shortened_md)
+
+    assert example_md == url_shortener.unshorten_markdown(shortened_md)
