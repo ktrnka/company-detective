@@ -2,6 +2,7 @@ from typing import List
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages.ai import AIMessage
 from langchain_openai import ChatOpenAI
+from loguru import logger
 
 from core import CompanyProduct
 from dotenv import load_dotenv
@@ -74,21 +75,28 @@ COMPREHENSIVE ANALYST REPORT, MARKDOWN FORMAT:
     ]
 )
 
-from loguru import logger
 
-def summarize(
-    target: CompanyProduct, article_markdowns: List[str]
-) -> AIMessage:
+def summarize(target: CompanyProduct, article_markdowns: List[str]) -> AIMessage:
     """Summarize a list of news articles"""
     unified_markdown = "\n\n".join(article for article in article_markdowns)
-
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
     runnable = prompt | llm
-    result = runnable.invoke({"text": unified_markdown, "company_name": target.company, "product_name": target.product})
+    result = runnable.invoke(
+        {
+            "text": unified_markdown,
+            "company_name": target.company,
+            "product_name": target.product,
+        }
+    )
 
     summary_ratio = len(result.content) / len(unified_markdown)
-    logger.info("{:,} -> {:,} chars ({:.0%})", len(unified_markdown), len(result.content), summary_ratio)
+    logger.info(
+        "{:,} -> {:,} chars ({:.0%})",
+        len(unified_markdown),
+        len(result.content),
+        summary_ratio,
+    )
 
     return result

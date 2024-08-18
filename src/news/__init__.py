@@ -1,4 +1,4 @@
-from typing import NamedTuple, Mapping, List
+from typing import NamedTuple, List
 
 from core import CompanyProduct
 from search import SearchResult
