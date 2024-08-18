@@ -25,6 +25,7 @@ newspaper4k = "*"
 [dev-packages]
 jupyter = "*"
 ipykernel = "*"
+diagrams = "*"
 
 [requires]
 python_version = "3.10"
