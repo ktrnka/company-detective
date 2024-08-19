@@ -26,6 +26,7 @@ newspaper4k = "*"
 jupyter = "*"
 ipykernel = "*"
 diagrams = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.10"

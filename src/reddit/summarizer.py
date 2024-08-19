@@ -9,7 +9,7 @@ from praw.models import Submission
 from pydantic import BaseModel
 from loguru import logger
 
-from core import CompanyProduct
+from core import CompanyProduct, URLShortener
 from .fetch import submission_to_markdown
 
 
@@ -57,16 +57,16 @@ Do not extract information about other companies or products.
 If the text does not contain any relevant information about the COMPANY or PRODUCT, please return an empty string.
 
 Format the results as a Markdown list of quotes, each with a permalink to the source of the quote like so:
-- "quote" [Author, Reddit, Date](permalink)
+- "quote" [Author, Reddit, Date](url)
 
 EXAMPLE for 98point6:
 
 Input comment:
-## Comment ID hrmpl3t with +3 score by [MarketWorldly9908 on 2022-01-07](https://www.reddit.com/r/povertyfinance/comments/bg7ip2/internet_medicine_is_awesome_98point6_was_so_so/hrmpl3t/) (in reply to ID bg7ip2):
+## Comment ID hrmpl3t with +3 score by [MarketWorldly9908 on 2022-01-07](cache://reddit/42) (in reply to ID bg7ip2):
 My husband and I have used 98.6 three times. All three times they did not prescribe the needed antibiotic to get better. I had an ear infection, my husband had an ear infection, then I had a sinus infection. We had to wait and get into our family doctor, so we paid 98.6 and our family doctor. I would not recommend them!
 
 Example output:
-- "All three times they did not prescribe the needed antibiotic to get better." [MarketWorldly9908, Reddit, 2022-01-07](https://www.reddit.com/r/povertyfinance/comments/bg7ip2/internet_medicine_is_awesome_98point6_was_so_so/hrmpl3t/)
+- "All three times they did not prescribe the needed antibiotic to get better." [MarketWorldly9908, Reddit, 2022-01-07](cache://reddit/42)
 
 ----
 
@@ -97,6 +97,7 @@ combine_prompt_template = PromptTemplate(
 def summarize(target: CompanyProduct, threads: List[Submission]) -> SummaryResult:
     """Summarize a list of Reddit threads"""
     thread_markdowns = [submission_to_markdown(thread) for thread in threads]
+    url_shortener = URLShortener()
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
@@ -104,7 +105,7 @@ def summarize(target: CompanyProduct, threads: List[Submission]) -> SummaryResul
         truncate_document(llm, document, 30000) for document in thread_markdowns
     ]
     documents = [
-        Document(page_content=thread_markdown)
+        Document(page_content=url_shortener.shorten_markdown(thread_markdown))
         for thread_markdown in truncated_thread_markdowns
     ]
 
@@ -125,10 +126,11 @@ def summarize(target: CompanyProduct, threads: List[Submission]) -> SummaryResul
             "input_documents": documents,
         }
     )
+    result["output_text"] = url_shortener.unshorten_markdown(result["output_text"])
 
     result = SummaryResult(**result)
 
-    input_length = sum(len(doc.page_content) for doc in documents)
+    input_length = sum(len(doc) for doc in truncated_thread_markdowns)
     intermediate_length = sum(len(text) for text in result.intermediate_steps)
     summary_length = len(result.output_text)
 

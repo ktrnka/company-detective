@@ -1,4 +1,4 @@
-from typing import NamedTuple
+from typing import NamedTuple, Set
 import re
 import os
 from datetime import datetime, timedelta
@@ -90,22 +90,22 @@ def nest_markdown(markdown_doc: str, header_change: int) -> str:
 def test_nest_markdown():
     """Test the nest_markdown function"""
     markdown_doc = """
-    # Header 1
-    Some text
+# Header 1
+Some text
 
-    ## Header 2
+## Header 2
 
-    This # might be harder
+This # might be harder
     """
     header_change = 2
 
     expected_output = """
-    ### Header 1
-    Some text
+### Header 1
+Some text
 
-    #### Header 2
+#### Header 2
 
-    This # might be harder
+This # might be harder
     """
 
     # Check if the nested markdown is correct
@@ -287,17 +287,26 @@ def test_extractive_fraction():
 
 
 def extract_urls(markdown: str) -> List[str]:
-    return re.findall(r"\[[^]]+\]\(([^)]+)\)", markdown)
+    return re.findall(r"\[[^]]+\]\(([^)\]]+)\)", markdown)
 
 
 def test_extract_urls():
     assert extract_urls("[a](b) [c](d)") == ["b", "d"]
 
+    # Sometimes the LLM mangles the Markdown and we ignore those
+    assert extract_urls("[a](b) [c](d [e](f)") == ["b", "f"]
 
-def extractive_fraction_urls(summary: str, source: str, n: int = 4):
+
+def extractive_fraction_urls(summary: str, source: str) -> float:
     summary_urls = set(extract_urls(summary))
     source_urls = set(extract_urls(source))
     return len(summary_urls & source_urls) / len(summary_urls)
+
+def extract_suspicious_urls(summary: str, source: str) -> Set[str]:
+    summary_urls = set(extract_urls(summary))
+    source_urls = set(extract_urls(source))
+
+    return summary_urls.difference(source_urls)
 
 
 def test_extractive_fraction_urls():
@@ -308,3 +317,8 @@ def test_extractive_fraction_urls():
 
     example_summary = "[a](b) [c](d) [e](l)"
     assert extractive_fraction_urls(example_summary, example_source) == 2 / 3
+
+def num_cache_mentions(llm_output: str) -> int:
+    """Count the number of cache:// in the output. It should be zero."""
+    mentions = re.findall(r"\bcache://", llm_output, re.IGNORECASE)
+    return len(mentions)
