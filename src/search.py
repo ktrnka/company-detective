@@ -1,11 +1,8 @@
-from dotenv import load_dotenv
 from googleapiclient.discovery import build
 import os
 from typing import Iterable, Optional
-from pprint import pprint
 from pydantic import BaseModel, model_validator
 
-load_dotenv()
 _service = build("customsearch", "v1", developerKey=os.getenv("GOOGLE_API_KEY"))
 
 

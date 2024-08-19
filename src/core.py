@@ -2,6 +2,7 @@ from typing import NamedTuple, Set
 import re
 import os
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
 from langchain.globals import set_llm_cache
 from langchain.cache import SQLiteCache
 import requests_cache
@@ -80,6 +81,13 @@ def init_requests_cache():
 
     return cache_path
 
+def init():
+    """
+    Initialize for regular development: load the .env file, initialize the langchain cache, and initialize the requests cache
+    """
+    load_dotenv()
+    init_langchain_cache()
+    init_requests_cache()
 
 def nest_markdown(markdown_doc: str, header_change: int) -> str:
     """Nest the headers in a markdown document by changing the header level"""

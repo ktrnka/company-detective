@@ -7,13 +7,10 @@ from langchain_core.messages.ai import AIMessage
 from langchain_openai import ChatOpenAI
 
 from core import CompanyProduct, URLShortener
-from dotenv import load_dotenv
 from loguru import logger
 
 from typing import List
 from search import SearchResult
-
-load_dotenv()
 
 
 def search_web(target: CompanyProduct) -> List[SearchResult]:

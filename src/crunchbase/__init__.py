@@ -23,7 +23,7 @@ def find_people_url(target: CompanyProduct) -> str:
     return f"{result.link}/people"
 
 
-async def run(target: CompanyProduct, debug=False) -> str:
+async def run(target: CompanyProduct) -> str:
     """
     Run the Crunchbase pipeline:
     1. Find the Crunchbase people page for the company

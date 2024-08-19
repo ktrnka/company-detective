@@ -13,7 +13,7 @@ templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),
 )
 
-review_summary_prompt = ChatPromptTemplate.from_messages(
+_prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
@@ -43,32 +43,32 @@ EMPLOYEE REVIEWS:
 
 def summarize(target: CompanyProduct, reviews: List[GlassdoorReview]) -> AIMessage:
     """Summarize a list of Glassdoor reviews"""
-    content_string = "\n\n".join(
+    combined_markdown = "\n\n".join(
         templates.get_template("glassdoor_review.md").render(review=review)
         for review in reviews
     )
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-    runnable = review_summary_prompt | llm
+    runnable = _prompt | llm
     result = runnable.invoke(
         {
-            "text": content_string,
+            "text": combined_markdown,
             "company": target.company,
         }
     )
 
-    summary_ratio = len(result.content) / len(content_string)
+    summary_ratio = len(result.content) / len(combined_markdown)
     logger.info(
         "{:,} -> {:,} chars ({:.0%})",
-        len(content_string),
+        len(combined_markdown),
         len(result.content),
         summary_ratio,
     )
     
     # Smoke tests
-    logger.info("Extractive fraction: {:.0%}", extractive_fraction(result.content, content_string))
-    logger.info("Percent of URLs in sources: {:.0%}", extractive_fraction_urls(result.content, content_string))
-    logger.info("Suspicious URLs: {}", extract_suspicious_urls(result.content, content_string))
+    logger.info("Extractive fraction: {:.0%}", extractive_fraction(result.content, combined_markdown))
+    logger.info("Percent of URLs in sources: {:.0%}", extractive_fraction_urls(result.content, combined_markdown))
+    logger.info("Suspicious URLs: {}", extract_suspicious_urls(result.content, combined_markdown))
     logger.info("Cache mentions: {} (should be zero)", num_cache_mentions(result.content))
 
     

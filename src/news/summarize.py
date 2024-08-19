@@ -5,12 +5,9 @@ from langchain_openai import ChatOpenAI
 from loguru import logger
 
 from core import CompanyProduct, extract_suspicious_urls, extractive_fraction, extractive_fraction_urls, num_cache_mentions
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
-prompt = ChatPromptTemplate.from_messages(
+_prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
@@ -82,7 +79,7 @@ def summarize(target: CompanyProduct, article_markdowns: List[str]) -> AIMessage
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
-    runnable = prompt | llm
+    runnable = _prompt | llm
     result = runnable.invoke(
         {
             "text": unified_markdown,
