@@ -1,3 +1,43 @@
+# General Search 8/19
+
+Skimming the full list of search results is interesting, but it doesn't feel ready for the overall summary because the full search results are swamped with garbage.
+
+Review of content:
+
+- Rippling
+    - Useful
+        - Better Business Bureau
+        - A blog about the company
+        - Case studies / companies highlighting Rippling
+        - News that's older than our regular news search
+        - App store links
+        - Comparison websites (maybe)
+    - Not useful
+        - Clones of Indeed
+        - Clones of Glassdoor
+        - Clones of Crunchbase
+        - Results not about the company
+- Pomelo
+    - Useful
+        - App store links
+        - Older news
+        - A partnership link
+        - A16Z page on investing in Pomelo
+        - A podcast or two with the CEO
+    - Not useful
+        - TONS of job boards
+        - Crunchbase clones
+- 98point6
+    - Useful
+        - Older news
+        - The people links are pretty neat, though it's a bit all over the board
+        - Pages from Banner|Aetna, Walmart/Sams, UW
+        - Page from Activant
+        - DRIVe HHS
+    - Not useful
+        - Clones of recent news
+        - Report card website that has no data on it
+
 # Lit review 8/9
 
 Wang et al 2023 Element-aware summarization with large language models: expert-aligned evaluation and chain-of-thought method

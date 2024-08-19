@@ -1,5 +1,5 @@
 from typing import List
-from core import CompanyProduct
+from core import CompanyProduct, cleanse_markdown
 from search import search, SearchResult
 from typing import List
 from langchain_core.prompts import ChatPromptTemplate
@@ -12,7 +12,6 @@ from loguru import logger
 
 from typing import List
 from search import SearchResult
-from src.core import cleanse_markdown
 
 load_dotenv()
 
