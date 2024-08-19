@@ -10,6 +10,7 @@ import re
 import urllib.parse
 from loguru import logger
 
+
 class CompanyProduct(NamedTuple):
     company: str
     product: str
@@ -61,7 +62,10 @@ def init_requests_cache():
     cache_path = os.path.join(cache_dir, "requests_cache.sqlite")
 
     requests_cache.install_cache(
-        cache_path, backend="sqlite", expire_after=timedelta(days=7), allowable_codes=[200, 403]
+        cache_path,
+        backend="sqlite",
+        expire_after=timedelta(days=7),
+        allowable_codes=[200, 403],
     )
 
     # I originally tried cache_control=True but many news sites disable caching entirely which isn't what I want during development
@@ -71,12 +75,17 @@ def init_requests_cache():
     return cache_path
 
 
-
 def nest_markdown(markdown_doc: str, header_change: int) -> str:
     """Nest the headers in a markdown document by changing the header level"""
     assert header_change > 0, "Header change must be positive"
-    nested_markdown = re.sub(r'^(#+)', lambda match: '#' * min(len(match.group(1)) + header_change, 6), markdown_doc, flags=re.MULTILINE)
+    nested_markdown = re.sub(
+        r"^(#+)",
+        lambda match: "#" * min(len(match.group(1)) + header_change, 6),
+        markdown_doc,
+        flags=re.MULTILINE,
+    )
     return nested_markdown
+
 
 def test_nest_markdown():
     """Test the nest_markdown function"""
@@ -100,11 +109,15 @@ def test_nest_markdown():
     """
 
     # Check if the nested markdown is correct
-    assert nest_markdown(markdown_doc, header_change) == expected_output, f"Expected: \n{expected_output}\n\nActual: \n{nest_markdown(markdown_doc, header_change)}"
+    assert (
+        nest_markdown(markdown_doc, header_change) == expected_output
+    ), f"Expected: \n{expected_output}\n\nActual: \n{nest_markdown(markdown_doc, header_change)}"
+
 
 def simplify_markdown(markdown_doc: str) -> str:
     # TODO: Improve this, write tests, etc
     return markdown_doc.strip().strip("```markdown").strip("```")
+
 
 def extract_core_domain(url: str) -> str:
     """Extract the core part of a domain, e.g. 'reddit' from 'https://www.reddit.com/r/freelance/comments/p2cdrt/gunio_rejected_me_immediately/'"""
@@ -116,10 +129,26 @@ def extract_core_domain(url: str) -> str:
         domain_parts = domain_parts[1:]
     return ".".join(domain_parts)
 
+
 def test_extract_core_domain():
-    assert extract_core_domain("https://www.reddit.com/r/freelance/comments/p2cdrt/gunio_rejected_me_immediately/") == "reddit"
-    assert extract_core_domain("https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW34284332.htm") == "glassdoor"
-    assert extract_core_domain("https://gun.io/guest-posts/2023/09/junior-sql-developer-job-description/") == "gun.io"
+    assert (
+        extract_core_domain(
+            "https://www.reddit.com/r/freelance/comments/p2cdrt/gunio_rejected_me_immediately/"
+        )
+        == "reddit"
+    )
+    assert (
+        extract_core_domain(
+            "https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW34284332.htm"
+        )
+        == "glassdoor"
+    )
+    assert (
+        extract_core_domain(
+            "https://gun.io/guest-posts/2023/09/junior-sql-developer-job-description/"
+        )
+        == "gun.io"
+    )
     assert extract_core_domain("https://bit.ly/3P9HRMV") == "bit.ly"
     assert extract_core_domain("http://test") == "test"
 
@@ -130,6 +159,7 @@ class URLShortener:
     This is designed to reduce the number of tokens in the LLM input and output, which can improve speed and reduce cost.
     It also tends to increase the overall output length.
     """
+
     def __init__(self):
         self.url_cache = {}
         self.counter = 0
@@ -140,13 +170,15 @@ class URLShortener:
             if url not in self.url_cache:
                 self.counter += 1
                 domain = extract_core_domain(url)
-                
+
                 self.url_cache[url] = f"cache://{domain}/{self.counter}"
             return self.url_cache[url]
 
         shortened_markdown = re.sub(r"(https?://[^\s)]+)", replace_url, markdown)
 
-        logger.info(f"{len(markdown):,} -> {len(shortened_markdown):,} chars ({len(shortened_markdown) / len(markdown):.0%} of original)")
+        logger.info(
+            f"{len(markdown):,} -> {len(shortened_markdown):,} chars ({len(shortened_markdown) / len(markdown):.0%} of original)"
+        )
 
         return shortened_markdown
 
@@ -157,11 +189,14 @@ class URLShortener:
                 if shortened == short_url:
                     return url
             return short_url
-        
+
         unshortened_markdown = re.sub(r"cache://[^\s)]+", replace_short_url, markdown)
-        logger.info(f"{len(markdown):,} -> {len(unshortened_markdown):,} chars ({len(unshortened_markdown) / len(markdown):.0%} of original)")
+        logger.info(
+            f"{len(markdown):,} -> {len(unshortened_markdown):,} chars ({len(unshortened_markdown) / len(markdown):.0%} of original)"
+        )
 
         return unshortened_markdown
+
 
 def test_url_shortener():
     example_md = """
@@ -209,54 +244,66 @@ def test_url_shortener():
 
 from typing import Iterable, Hashable, List
 
+
 def iterate_ngrams(tokens: List[Hashable], n: int) -> Iterable[tuple]:
     for i in range(len(tokens) - n + 1):
-        yield tuple(tokens[i:i + n])
+        yield tuple(tokens[i : i + n])
+
 
 def test_iterate_ngrams():
-    assert list(iterate_ngrams(['a', 'b', 'c', 'd'], 2)) == [('a', 'b'), ('b', 'c'), ('c', 'd')]
+    assert list(iterate_ngrams(["a", "b", "c", "d"], 2)) == [
+        ("a", "b"),
+        ("b", "c"),
+        ("c", "d"),
+    ]
 
 
 def tokenize(text: str) -> List[str]:
-    return re.split(r'\W+', text)
+    return re.split(r"\W+", text)
+
 
 def test_tokenize():
-    assert tokenize("a b c") == ['a', 'b', 'c']
-    assert tokenize("a, b, c") == ['a', 'b', 'c']
+    assert tokenize("a b c") == ["a", "b", "c"]
+    assert tokenize("a, b, c") == ["a", "b", "c"]
 
-def extractive_fraction(summary: str, source: str, n: int=4):
+
+def extractive_fraction(summary: str, source: str, n: int = 4):
     summary_ngrams = set(iterate_ngrams(tokenize(summary), n))
     source_ngrams = set(iterate_ngrams(tokenize(source), n))
     return len(summary_ngrams & source_ngrams) / len(summary_ngrams)
 
+
 def test_extractive_fraction():
-    example_source = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'
-    example_summary = 'a b c d e f g h i j k'
+    example_source = "a b c d e f g h i j k l m n o p q r s t u v w x y z"
+    example_summary = "a b c d e f g h i j k"
 
     assert extractive_fraction(example_summary, example_source) == 1.0
 
-    example_source = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'
-    example_summary = 'a b c d e g h i j k'
+    example_source = "a b c d e f g h i j k l m n o p q r s t u v w x y z"
+    example_summary = "a b c d e g h i j k"
 
     assert extractive_fraction(example_summary, example_source) < 1.0
 
 
 def extract_urls(markdown: str) -> List[str]:
-    return re.findall(r'\[[^]]+\]\(([^)]+)\)', markdown)
+    return re.findall(r"\[[^]]+\]\(([^)]+)\)", markdown)
+
 
 def test_extract_urls():
-    assert extract_urls('[a](b) [c](d)') == ['b', 'd']
+    assert extract_urls("[a](b) [c](d)") == ["b", "d"]
 
-def extractive_fraction_urls(summary: str, source: str, n: int=4):
+
+def extractive_fraction_urls(summary: str, source: str, n: int = 4):
     summary_urls = set(extract_urls(summary))
     source_urls = set(extract_urls(source))
     return len(summary_urls & source_urls) / len(summary_urls)
 
+
 def test_extractive_fraction_urls():
-    example_source = '[a](b) [c](d) [e](f) [g](h)'
-    example_summary = '[a](b) [c](d) [e](f)'
+    example_source = "[a](b) [c](d) [e](f) [g](h)"
+    example_summary = "[a](b) [c](d) [e](f)"
 
     assert extractive_fraction_urls(example_summary, example_source) == 1.0
 
-    example_summary = '[a](b) [c](d) [e](l)'
-    assert extractive_fraction_urls(example_summary, example_source) == 2/3
+    example_summary = "[a](b) [c](d) [e](l)"
+    assert extractive_fraction_urls(example_summary, example_source) == 2 / 3
