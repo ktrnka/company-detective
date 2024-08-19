@@ -9,7 +9,7 @@ from praw.models import Submission
 from pydantic import BaseModel
 from loguru import logger
 
-from core import CompanyProduct, URLShortener
+from core import CompanyProduct, URLShortener, extract_suspicious_urls, extractive_fraction, extractive_fraction_urls, num_cache_mentions
 from .fetch import submission_to_markdown
 
 
@@ -146,5 +146,12 @@ def summarize(target: CompanyProduct, threads: List[Submission]) -> SummaryResul
         summary_length,
         summary_length / intermediate_length,
     )
+
+    # Smoke tests
+    unshortened_context = "\n\n".join(thread_markdowns)
+    logger.info("Extractive fraction: {:.0%}", extractive_fraction(result.output_text, unshortened_context))
+    logger.info("Percent of URLs in sources: {:.0%}", extractive_fraction_urls(result.output_text, unshortened_context))
+    logger.info("Suspicious URLs: {}", extract_suspicious_urls(result.output_text, unshortened_context))
+    logger.info("Cache mentions: {} (should be zero)", num_cache_mentions(result.output_text))
 
     return result

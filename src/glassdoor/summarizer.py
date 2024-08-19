@@ -6,7 +6,7 @@ from langchain_core.messages.ai import AIMessage
 
 from loguru import logger
 
-from core import CompanyProduct
+from core import CompanyProduct, extract_suspicious_urls, extractive_fraction, extractive_fraction_urls, num_cache_mentions
 from .models import GlassdoorReview
 
 templates = jinja2.Environment(
@@ -64,5 +64,13 @@ def summarize(target: CompanyProduct, reviews: List[GlassdoorReview]) -> AIMessa
         len(result.content),
         summary_ratio,
     )
+    
+    # Smoke tests
+    logger.info("Extractive fraction: {:.0%}", extractive_fraction(result.content, content_string))
+    logger.info("Percent of URLs in sources: {:.0%}", extractive_fraction_urls(result.content, content_string))
+    logger.info("Suspicious URLs: {}", extract_suspicious_urls(result.content, content_string))
+    logger.info("Cache mentions: {} (should be zero)", num_cache_mentions(result.content))
+
+    
 
     return result

@@ -4,7 +4,7 @@ from langchain_core.messages.ai import AIMessage
 from langchain_openai import ChatOpenAI
 from loguru import logger
 
-from core import CompanyProduct
+from core import CompanyProduct, extract_suspicious_urls, extractive_fraction, extractive_fraction_urls, num_cache_mentions
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -98,5 +98,12 @@ def summarize(target: CompanyProduct, article_markdowns: List[str]) -> AIMessage
         len(result.content),
         summary_ratio,
     )
+
+    # Smoke tests
+    logger.info("Extractive fraction: {:.0%}", extractive_fraction(result.content, unified_markdown))
+    logger.info("Percent of URLs in sources: {:.0%}", extractive_fraction_urls(result.content, unified_markdown))
+    logger.info("Suspicious URLs: {}", extract_suspicious_urls(result.content, unified_markdown))
+    logger.info("Cache mentions: {} (should be zero)", num_cache_mentions(result.content))
+
 
     return result
