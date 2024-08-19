@@ -119,9 +119,8 @@ def summarize(
             "product_name": target.product,
         }
     )
-    cleanse_markdown(result)
 
-    result.content = url_shortener.unshorten_markdown(result.content)
+    result.content = url_shortener.unshorten_markdown(cleanse_markdown(result.content))
 
     logger.info(
         f"{len(unified_markdown):,} -> {len(result.content):,} chars ({len(result.content) / len(unified_markdown):.0%})"

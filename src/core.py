@@ -345,5 +345,5 @@ def test_num_cache_mentions():
     assert num_cache_mentions("cache://234 [hi](cache://567)") == 2
 
 
-def cleanse_markdown(result):
-    result.content = result.content.strip().strip("```markdown").strip("```")
+def cleanse_markdown(llm_markdown_output: str) -> str:
+    return llm_markdown_output.strip().strip("```markdown").strip("```").strip()
