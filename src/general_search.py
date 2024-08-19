@@ -33,24 +33,54 @@ _prompt = ChatPromptTemplate.from_messages(
         (
             "system",
             """
-You're an expert at organizing search results.
-Given search results for a company or product, organize them into the following headers:
+You're an expert at organizing and filtering search results.
+Given search results for a company or product, filter out less useful pages and organize the interesting ones into the following headers:
 
 # Official social media
+Include links to official social media profiles (e.g., Twitter, LinkedIn, Facebook).
+
 # Job boards
+Include unique job board pages (exclude clones and low-quality sites).
+
 # App stores
+Include links to app store pages (e.g., Google Play, Apple App Store).
+
 # Product reviews
+Include detailed and reputable product reviews (e.g., major review sites, detailed user reviews).
+
 # News articles (most recent first, grouped by event)
-# Key employees (with subheaders by employee)
+Include significant news articles, especially from reputable sources. Group by event and date.
+
+# Key employees (grouped by employee)
+Include profiles and articles related to key employees (e.g., LinkedIn profiles, interviews, blog posts).
+
 # Other pages on the company website
-# Business intelligence websites
+Include relevant pages from the company's official website (e.g., about, contact, blog, case studies).
+
 # Other
+Include any other relevant and useful pages that do not fit into the above categories, grouped by type.
 
-Include the publication date after the link, if available.
+Exclude:
+- Low-quality job boards and clones (e.g., clones of Indeed, Glassdoor, Crunchbase).
+- Irrelevant results not directly related to the company or product.
+- Duplicate or near-duplicate content.
+- Low-quality or spammy pages.
 
-Unless otherwise specified, order the results in each section from most to least relevant.
-Format the output as a markdown document, preserving any links in the source.
-Organize ALL search results into these headers; do not omit any results.
+Useful content guidelines:
+- Partnership Articles: Articles from the websites of partner companies or government organizations about their partnership with the company. These provide third-party evidence about the company.
+- Investor Articles: Articles from investors in the company, as these investors have contributed significant funding and likely performed extensive diligence.
+- Reputable Sources: Information from well-known and trustworthy sources such as the Better Business Bureau (BBB), which provides reliable complaints and reviews about companies.
+- Older News: Older news articles that provide historical context or significant past events related to the company.
+- Interviews and Podcasts: Interviews and podcasts featuring key employees or stakeholders. These formats often provide more in-depth insights and perspectives than general news articles because they allow for a deeper understanding of the individuals and their approach to work. They can reveal both positive and negative aspects of the people involved due to their longer and less edited nature.
+- Case Studies: Detailed case studies or success stories from other companies highlighting their use of the company's products or services.
+- App Store Reviews: Reviews and ratings from app stores, as these reflect real user experiences and feedback.
+
+Formatting:
+- Include the publication date after the link, if available.
+- Order the results in each section from most to least relevant unless otherwise specified.
+- Format the output as a markdown document, preserving any links in the source.
+
+Use these criteria to effectively filter and organize the search results into the specified headers.
             """,
         ),
         (
