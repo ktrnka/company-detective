@@ -18,20 +18,9 @@ class CompanyProduct(NamedTuple):
     @classmethod
     def same(cls, name: str):
         return cls(company=name, product=name)
-
-
-assert CompanyProduct.same("98point6")
-
-
-def make_experiment_dir(target: CompanyProduct) -> str:
-    folder_name = re.sub(r"[^a-zA-Z0-9]", "_", f"{target.company} {target.product}")
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-    folder_path = f"experiments/{folder_name}/{timestamp}"
-
-    os.makedirs(folder_path, exist_ok=True)
-
-    return folder_path
+    
+    def as_path(self) -> str:
+        return re.sub(r"[^a-zA-Z0-9]", "_", f"{self.company} {self.product}")
 
 
 def get_project_dir(relative_path: str, create_if_needed=True) -> str:
@@ -44,6 +33,23 @@ def get_project_dir(relative_path: str, create_if_needed=True) -> str:
         os.makedirs(project_dir, exist_ok=True)
 
     return project_dir
+
+def make_experiment_dir(target: CompanyProduct) -> str:
+    folder_name = re.sub(r"[^a-zA-Z0-9]", "_", f"{target.company} {target.product}")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    folder_path = f"output/{folder_name}/{timestamp}"
+
+    return get_project_dir(folder_path)
+
+def eval_filename(target: CompanyProduct, extension="html") -> str:
+    folder_path = get_project_dir(f"output/{target.as_path()}")
+
+    # Create the filename using the current timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{folder_path}/{timestamp}.{extension}"
+
+    return filename
 
 
 def init_langchain_cache():
