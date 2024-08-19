@@ -205,3 +205,58 @@ def test_url_shortener():
     print(shortened_md)
 
     assert example_md == url_shortener.unshorten_markdown(shortened_md)
+
+
+from typing import Iterable, Hashable, List
+
+def iterate_ngrams(tokens: List[Hashable], n: int) -> Iterable[tuple]:
+    for i in range(len(tokens) - n + 1):
+        yield tuple(tokens[i:i + n])
+
+def test_iterate_ngrams():
+    assert list(iterate_ngrams(['a', 'b', 'c', 'd'], 2)) == [('a', 'b'), ('b', 'c'), ('c', 'd')]
+
+
+def tokenize(text: str) -> List[str]:
+    return re.split(r'\W+', text)
+
+def test_tokenize():
+    assert tokenize("a b c") == ['a', 'b', 'c']
+    assert tokenize("a, b, c") == ['a', 'b', 'c']
+
+def extractive_fraction(summary: str, source: str, n: int=4):
+    summary_ngrams = set(iterate_ngrams(tokenize(summary), n))
+    source_ngrams = set(iterate_ngrams(tokenize(source), n))
+    return len(summary_ngrams & source_ngrams) / len(summary_ngrams)
+
+def test_extractive_fraction():
+    example_source = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'
+    example_summary = 'a b c d e f g h i j k'
+
+    assert extractive_fraction(example_summary, example_source) == 1.0
+
+    example_source = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'
+    example_summary = 'a b c d e g h i j k'
+
+    assert extractive_fraction(example_summary, example_source) < 1.0
+
+
+def extract_urls(markdown: str) -> List[str]:
+    return re.findall(r'\[[^]]+\]\(([^)]+)\)', markdown)
+
+def test_extract_urls():
+    assert extract_urls('[a](b) [c](d)') == ['b', 'd']
+
+def extractive_fraction_urls(summary: str, source: str, n: int=4):
+    summary_urls = set(extract_urls(summary))
+    source_urls = set(extract_urls(source))
+    return len(summary_urls & source_urls) / len(summary_urls)
+
+def test_extractive_fraction_urls():
+    example_source = '[a](b) [c](d) [e](f) [g](h)'
+    example_summary = '[a](b) [c](d) [e](f)'
+
+    assert extractive_fraction_urls(example_summary, example_source) == 1.0
+
+    example_summary = '[a](b) [c](d) [e](l)'
+    assert extractive_fraction_urls(example_summary, example_source) == 2/3
