@@ -302,6 +302,7 @@ def extractive_fraction_urls(summary: str, source: str) -> float:
     source_urls = set(extract_urls(source))
     return len(summary_urls & source_urls) / len(summary_urls)
 
+
 def extract_suspicious_urls(summary: str, source: str) -> Set[str]:
     summary_urls = set(extract_urls(summary))
     source_urls = set(extract_urls(source))
@@ -318,7 +319,13 @@ def test_extractive_fraction_urls():
     example_summary = "[a](b) [c](d) [e](l)"
     assert extractive_fraction_urls(example_summary, example_source) == 2 / 3
 
+
 def num_cache_mentions(llm_output: str) -> int:
     """Count the number of cache:// in the output. It should be zero."""
     mentions = re.findall(r"\bcache://", llm_output, re.IGNORECASE)
     return len(mentions)
+
+
+def test_num_cache_mentions():
+    assert num_cache_mentions("cache://1") == 1
+    assert num_cache_mentions("cache://234 [hi](cache://567)") == 2
