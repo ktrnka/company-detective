@@ -259,6 +259,7 @@ def test_iterate_ngrams():
 
 
 def tokenize(text: str) -> List[str]:
+    # NOTE: This is a very, very basic tokenizer for very basic tasks.
     return re.split(r"\W+", text)
 
 
