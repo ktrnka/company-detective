@@ -1,4 +1,12 @@
-# Experiments done 8/19
+# Experiments done 8/20
+
+## Company "About" page
+
+I tried a few different companies but most of them had very shallow "about" pages, which was a surprise. It's fairly quick and easy to Google search then inject that single page into the overall summary context so it might be worthwhile...
+
+- Rad AI: Useful "about page"
+- 98point6: Not very useful
+- Pomelo Care: Not very useful
 
 ## URL shortening
 
