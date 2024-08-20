@@ -323,6 +323,11 @@ def extract_suspicious_urls(summary: str, source: str) -> Set[str]:
 
     return summary_urls.difference(source_urls)
 
+def citation_density(summary: str) -> float:
+    summary_urls = extract_urls(summary)
+
+    num_link_syntax_chars = 4
+    return sum(len(url) + num_link_syntax_chars for url in summary_urls) / len(summary)
 
 def test_extractive_fraction_urls():
     example_source = "[a](b) [c](d) [e](f) [g](h)"
@@ -347,3 +352,36 @@ def test_num_cache_mentions():
 
 def cleanse_markdown(llm_markdown_output: str) -> str:
     return llm_markdown_output.strip().strip("```markdown").strip("```").strip()
+
+def log_summary_metrics(summary: str, summary_input: str):
+    # Get a logger for higher up the call stack so that the log messages are associated with the right function
+    caller_logger = logger.opt(depth=1)
+    
+    caller_logger.info(
+        "{:,} -> {:,} chars ({:.0%})",
+        len(summary_input),
+        len(summary),
+        len(summary) / len(summary_input),
+    )
+
+    # Smoke tests
+    try:
+        caller_logger.info("Extractive fraction: {:.0%}", extractive_fraction(summary, summary_input))
+    except ZeroDivisionError:
+        caller_logger.info("Extractive fraction: Summary is too short for ngrams")
+
+    try:
+        caller_logger.info("Percent of URLs in sources: {:.0%}", extractive_fraction_urls(summary, summary_input))
+    except ZeroDivisionError:
+        caller_logger.info("Percent of URLs in sources: No URLs in summary")
+
+    caller_logger.info("Citation density: {:.1%} (percent of output used by URLs/link syntax)", citation_density(summary))
+
+    caller_logger.info("Suspicious URLs: {}", extract_suspicious_urls(summary, summary_input))
+    caller_logger.info("Cache mentions: {} (should be zero)", num_cache_mentions(summary))
+
+def test_log_summary_metrics():
+    log_summary_metrics("a b c", "a b c")
+    log_summary_metrics("a b c", "a b d")
+    log_summary_metrics("a b c", "a b c d")
+    log_summary_metrics("a b c", "a b c d e f g h i j k l m n o p q r s t u v w x y z")

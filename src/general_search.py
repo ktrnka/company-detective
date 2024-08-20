@@ -1,12 +1,11 @@
 from typing import List
-from core import CompanyProduct, cleanse_markdown, extract_suspicious_urls, extractive_fraction, extractive_fraction_urls, num_cache_mentions
+from core import CompanyProduct, cleanse_markdown, URLShortener, log_summary_metrics
 from search import search, SearchResult
 from typing import List
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages.ai import AIMessage
 from langchain_openai import ChatOpenAI
 
-from core import CompanyProduct, URLShortener
 from loguru import logger
 
 from typing import List
@@ -122,13 +121,6 @@ def summarize(
 
     result.content = url_shortener.unshorten_markdown(cleanse_markdown(result.content))
 
-    logger.info(
-        f"{len(unified_markdown):,} -> {len(result.content):,} chars ({len(result.content) / len(unified_markdown):.0%})"
-    )
-    logger.info("Extractive fraction: {:.0%}", extractive_fraction(result.content, unified_markdown))
-    logger.info("Percent of URLs in sources: {:.0%}", extractive_fraction_urls(result.content, unified_markdown))
-    logger.info("Suspicious URLs: {}", extract_suspicious_urls(result.content, unified_markdown))
-    logger.info("Cache mentions: {} (should be zero)", num_cache_mentions(result.content))
-
+    log_summary_metrics(result.content, unified_markdown)
 
     return result
