@@ -1,44 +1,50 @@
+# Experiments done 8/19
+
+## URL shortening
+
+This worked surprisingly well. I was able to compress URLs from about 25 tokens to about 5, which improved URL consistency, gave me an easier way to spot-check, and also improved the quality of the rest of the processing.
+
+One challenge I found is that the prompt needed to be consistent with the shortened-URL format.
+
+I suspect that there's more opportunity by representing the whole citation as a small number of tokens rather than just focusing on the URL.
+
+## TextGrad-light
+
+I tried a "light" version of TextGrad but it bombed. I think you really need to do minibatch-style updates not SGD-style updates or else it'll try injecting too specific info.
+
+## Extract then abstract
+
+This general idea has worked amazingly well for sources like Reddit and Glassdoor. I'm not sure how much it would apply for news, which is more about deduplicating.
+
+## Citations
+
+This has been working great in general to ensure that any statements are grounded in the sources, and so that we can double-check it. Sometimes there's paraphrasing but I haven't run into anything false yet.
+
+It was initially difficult to get the formatting to be consistent across different types of sources but that's mostly done and reliable now.
+
 # General Search 8/19
 
-Skimming the full list of search results is interesting, but it doesn't feel ready for the overall summary because the full search results are swamped with garbage.
+The general search pipeline can be pretty good at times, but the LLM stage is not entirely reliable. It does a good job of weeding out clear junk, but doesn't do the best job of calling out special links like posts on third party websites.
 
-Review of content:
+# Lit review 8/19
 
-- Rippling
-    - Useful
-        - Better Business Bureau
-        - A blog about the company
-        - Case studies / companies highlighting Rippling
-        - News that's older than our regular news search
-        - App store links
-        - Comparison websites (maybe)
-    - Not useful
-        - Clones of Indeed
-        - Clones of Glassdoor
-        - Clones of Crunchbase
-        - Results not about the company
-- Pomelo
-    - Useful
-        - App store links
-        - Older news
-        - A partnership link
-        - A16Z page on investing in Pomelo
-        - A podcast or two with the CEO
-    - Not useful
-        - TONS of job boards
-        - Crunchbase clones
-- 98point6
-    - Useful
-        - Older news
-        - The people links are pretty neat, though it's a bit all over the board
-        - Pages from Banner|Aetna, Walmart/Sams, UW
-        - Page from Activant
-        - DRIVe HHS
-    - Not useful
-        - Clones of recent news
-        - Report card website that has no data on it
+Husain 2024 Your AI Product Needs Evals
+- Interesting read. I'm not sure what they mean by unit testing because it doesn't sound like a unit test... even so the idea of assertions sounds good to me, and even just having some sort of indicators is helpful
+- The emphasis on logging inspired me to improve mine
+- They recommend pretty big N for few-shot ICL, like dozens
 
-# Lit review 8/9
+Yan et al 2024 What We've Learned From A Year of Building with LLMs
+- Lots of good stuff here. At times preaching to the choir
+- They recommend breaking complex tasks into small steps. I could see how that would be necessary in a production system, especially when you can afford the API costs.
+
+Zeng et al ??? Meta-review Generation with Checklist-guided Iterative Introspection
+- Kinda like the title says, they have a checklist of evaluation questions like "Are the most important ... discussed in the above meta-review? If now, how can it be improved?" then iterating. So they're like TextGrad in the sense of iterating from evaluation.
+- Good results but I like the Wang et al 2023 approach better
+- I don't like that it's just summarizing OpenReview decisions
+
+Ladhak et al 2023 From Sparse to Dense: GPT-4 Summarization with Chain of Density Prompting
+- It seems promising in some ways but they're dealing with such tiny inputs and outputs, and they start with a really poor summary
+- Most of their improvement happened on the first iteration step, so I think this is going along with that agentic translation paper where you have mainly a single round of iteration
 
 Wang et al 2023 Element-aware summarization with large language models: expert-aligned evaluation and chain-of-thought method
 - They build a good way to force an abstractive summary to touch on certain key points at the same time as preventing hallucination by having an information extraction stage about news events which then becomes context for the abstractive summary.
@@ -65,92 +71,71 @@ Suhara et al 2020 OpinionDigest: A simple framework for opinion summarization
 - They have a pipeline like 1) extract opinions 2) cluster opinions 3) filter clusters 4) generate an abstractive summary
 - This is close to the approach I've started to explore, but A) I've been mixing facts and opinions B) I haven't tried a clustering step
 
-# Indeed pipeline (8/6)
+# Indeed pipeline (8/19)
 
-- Scraping worked nicely for Rad AI but I don't know how it'll work for employers with many, many job listings
-- It's easy to get a better JD than the original, but it's hard to get a JD that highlights any subtle bias and possible issues
+The pipeline is in reasonably good shape but the information isn't actionable enough for use.
 
-# Crunchbase pipeline (8/5)
+Areas to improve:
+- Extract benefits
+- Some way of prioritizing information in closer roles
+- Dealing with companies that have many openings
+- Companies that have no openings
+
+# Crunchbase pipeline (8/19)
 
 - Scrapfly worked pretty nicely, though you need to pass it the people URL
 - Pydantic models worked really nicely for parsing in conjunction with Copilot, though it took some guess and check to figure out which fields were optional
 - Good info from CB: Founding date, company description, fundraising rounds, and recent news
+- This has been a really solid data source, both for fundraising and the company overview
 
 ## Issues
 
 - The people list is very skewed
-- I'm not sure what I want to do with the data except to show the company fundraising
 
-# News pipeline (updated 8/5)
+# News pipeline (8/19)
+
+This pipeline has been pretty solid and useful
 
 ## Issues
 
 Major issues
 
-- I'm not sure how to best facet the output
-- I want to include information about change over time but I'm not as sure how to do that
+- It's limited to recent news (last 1 year), which missed a lot of info
+- It might be too abstractive of a pipeline. On one hand, that's great because there's so much news duplication. On the other hand, I'd really like to maintain attribution/citation all the way through.
+
 
 Minor issues
 
-- The formatting of the bibliography is inconsistent
-- Many news sites block the requests
-- Now that I'm using the official Google API, I've lost the ability to do a news-specific search
+- Some news sites block the requests
 - The search results often include sources from the company itself, which may be somewhat biased
-- The text extractor doesn't look very good. I tried setting up textpipe but I couldn't get it installed
 - The unified article context can get quite long
-- Sometimes the LLM fails to identify the author of each article
 
-# Reddit pipeline (last updated 7/29)
+# Reddit pipeline (8/19)
 
-## Current issues
-
-- Rad AI
-    - There isn't enough Reddit information to be useful. Most results are not actually about Rad AI at all but get represented as about Omni, though I found one comment plugging Omni.
-- Singularity 6 / Palia
-    - There's so much data that each search returns drastically different content. If we search for Palia, it's great game feedback. If we search for Singularity 6 or the combined one it has more info on acquisition
-- Instacart
-    - It mixes the feedback from the people ordering food vs the gig workers, and it's really mixing them in different sections.
-
-- Context length is a problem sometimes
-- Getting the facets to be distinct is challenging at times
-- I want to prefer evidence-based claims but fall back to opinions when none are available
-    - Good
-        - Patch 177 made income much easier
-        - I like the range of romance options with Palian characters
-        - Singularity 6 raised $XX in YYYY
-    - Meh
-        - Palia is boring
-        - I like the characters in Palia
-
-## Worries (issues without evidence)
-
-
-## TODO
-
-- Incorporate the date into summarization somehow
-- Experiment with scores in summarization
-
-### Ideas / experiments
-
-- Use LLM to optimize the query for Reddit to get the things I want
-- Do something like TextGrad to revise the prompt
-    - I tried a lightweight version of this but it adjusted the prompt too much to focus on the non-variables
-- Summary-of-summaries: This worked well
-- Try doing a more flattened version like thegigabrain
-    - I could theoretically do this but the LangChain docs/tutorials don't work anymore with their map-reduce style, which would be ideal
-
-# Glassdoor pipeline (last updated 7/30)
+The Reddit pipeline is pretty solid overall.
 
 ## Issues
 
-- I started having some issues of the Google search getting blocked; I should switch to a Google Custom Search API
+- Many companies have too little information on Reddit to add value, and it's tricky to get the prompts right in that case
+- I wish the extracted quotes were more information-dense. I've had trouble prompting on the types of extractions I'd like
+- Sometimes it extracts multiple quotes from a single post and there must be a better way to represent that, maybe "quote1 ... quote2"?
+- Sometimes the posts can come from drastically different dates but they aren't always organized by date
+- Gun.io: The summaries can be a little weird because many comments are from the Gig workers.
+
+### Ideas / experiments
+
+- Use LLM to optimize the query for Reddit to get the best feedback. For example, with S6/Palia it's better to just search Palia
+- Use LLM to rerank Reddit results
+
+# Glassdoor pipeline (8/19)
+
+This pipeline has been pretty solid.
+
+## Issues
+
+- I wish I could easily fetch more pages. Maybe if I cache it better I can fetch a lot more data without worrying about my Scrapfly budget.
 - Instacart: Most of the Glassdoor reviews are from drivers, not FTE. It'd be nice to add context information about the query itself, like "summarize xyz from the perspective of a director of marketing"
 
-## TODO
-
-- Explore ways to make sure that it's grounded in evidence
-
-## Ideas
 
 # General
 
@@ -179,14 +164,6 @@ I should ask friends about their job searches and what they look for.
         - Sponsoring events
         - Individual employees giving talks
 - Think about how I'll form an overall summary
-
-## Experimental notes
-
-- NER summarization gets some useful info:
-    - S6/Palia: Steam, Switch, Epic games, Daybreak Studios, CEOs
-    - 98point6: CEO, Bright.md, a few others
-    - Pomelo: Funding amount (sorta), investors maybe
-
 
 ## Key questions to answer from the various searches
 
