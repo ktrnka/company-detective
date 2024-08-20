@@ -31,7 +31,7 @@ def run(target: CompanyProduct, max_results=30) -> NewsSummary:
 
     # Fetch and filter
     responses = [news.scrape.request_article(result.link) for result in search_results]
-    responses = [response for response in responses if response.ok]
+    responses = [response for response in responses if response and response.ok]
 
     # Parse and format
     articles = [news.scrape.response_to_article(response) for response in responses]
