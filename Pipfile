@@ -21,6 +21,8 @@ markdownify = "*"
 requests-cache = "*"
 pytz = "*"
 newspaper4k = "*"
+app-store-web-scraper = "*"
+google-play-scraper = "*"
 
 [dev-packages]
 jupyter = "*"
