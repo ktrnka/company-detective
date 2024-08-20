@@ -1,9 +1,8 @@
 from functools import lru_cache
 from search import search, SearchResult
-from core import CompanyProduct, extract_suspicious_urls, extractive_fraction, extractive_fraction_urls, num_cache_mentions
+from core import CompanyProduct, log_summary_metrics
 import scrapfly_scrapers.indeed
 from .models import JobDetails, JobOverview
-scrapfly_scrapers.indeed.BASE_CONFIG["cache"] = True
 from markdownify import markdownify as md
 
 
@@ -11,17 +10,24 @@ from typing import List
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages.ai import AIMessage
 from langchain_openai import ChatOpenAI
-from loguru import logger
+
+scrapfly_scrapers.indeed.BASE_CONFIG["cache"] = True
+
 
 @lru_cache
 def find_indeed_jobs(target: CompanyProduct) -> SearchResult:
     # URL format https://www.indeed.com/cmp/Pomelo-Care/jobs
     results = list(search(f'site:www.indeed.com/cmp "{target.company}"', num=10))
-    results = [result for result in results if "/cmp/" in result.link and "/jobs" in result.link]
+    results = [
+        result
+        for result in results
+        if "/cmp/" in result.link and "/jobs" in result.link
+    ]
 
     assert results, f"No Indeed jobs found for {target.company}"
 
     return results[0]
+
 
 def job_to_markdown(job: JobDetails) -> str:
     return f"""
@@ -29,7 +35,6 @@ def job_to_markdown(job: JobDetails) -> str:
 
 {md(job.description)}
 """
-
 
 
 _prompt = ChatPromptTemplate.from_messages(
@@ -78,21 +83,15 @@ def summarize(
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
     runnable = _prompt | llm
-    result = runnable.invoke({"text": unified_markdown, "company_name": target.company, "candidate_title": candidate_title})
-
-    logger.info(
-        "{:,} -> {:,} chars ({:.0%})",
-        len(unified_markdown),
-        len(result.content),
-        len(result.content) / len(unified_markdown),
+    result = runnable.invoke(
+        {
+            "text": unified_markdown,
+            "company_name": target.company,
+            "candidate_title": candidate_title,
+        }
     )
 
-    # Smoke tests
-    logger.info("Extractive fraction: {:.0%}", extractive_fraction(result.content, unified_markdown))
-    logger.info("Percent of URLs in sources: {:.0%}", extractive_fraction_urls(result.content, unified_markdown))
-    logger.info("Suspicious URLs: {}", extract_suspicious_urls(result.content, unified_markdown))
-    logger.info("Cache mentions: {} (should be zero)", num_cache_mentions(result.content))
-
+    log_summary_metrics(result.content, unified_markdown)
 
     return result
 

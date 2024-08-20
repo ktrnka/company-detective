@@ -2,9 +2,8 @@ from typing import List
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages.ai import AIMessage
 from langchain_openai import ChatOpenAI
-from loguru import logger
 
-from core import CompanyProduct, extract_suspicious_urls, extractive_fraction, extractive_fraction_urls, num_cache_mentions
+from core import CompanyProduct, log_summary_metrics
 
 
 _prompt = ChatPromptTemplate.from_messages(
@@ -88,19 +87,6 @@ def summarize(target: CompanyProduct, article_markdowns: List[str]) -> AIMessage
         }
     )
 
-    summary_ratio = len(result.content) / len(unified_markdown)
-    logger.info(
-        "{:,} -> {:,} chars ({:.0%})",
-        len(unified_markdown),
-        len(result.content),
-        summary_ratio,
-    )
-
-    # Smoke tests
-    logger.info("Extractive fraction: {:.0%}", extractive_fraction(result.content, unified_markdown))
-    logger.info("Percent of URLs in sources: {:.0%}", extractive_fraction_urls(result.content, unified_markdown))
-    logger.info("Suspicious URLs: {}", extract_suspicious_urls(result.content, unified_markdown))
-    logger.info("Cache mentions: {} (should be zero)", num_cache_mentions(result.content))
-
+    log_summary_metrics(result.content, unified_markdown)
 
     return result

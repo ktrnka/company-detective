@@ -4,9 +4,8 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages.ai import AIMessage
 
-from loguru import logger
 
-from core import CompanyProduct, extract_suspicious_urls, extractive_fraction, extractive_fraction_urls, num_cache_mentions
+from core import CompanyProduct, log_summary_metrics
 from .models import GlassdoorReview
 
 templates = jinja2.Environment(
@@ -57,20 +56,6 @@ def summarize(target: CompanyProduct, reviews: List[GlassdoorReview]) -> AIMessa
         }
     )
 
-    summary_ratio = len(result.content) / len(combined_markdown)
-    logger.info(
-        "{:,} -> {:,} chars ({:.0%})",
-        len(combined_markdown),
-        len(result.content),
-        summary_ratio,
-    )
-    
-    # Smoke tests
-    logger.info("Extractive fraction: {:.0%}", extractive_fraction(result.content, combined_markdown))
-    logger.info("Percent of URLs in sources: {:.0%}", extractive_fraction_urls(result.content, combined_markdown))
-    logger.info("Suspicious URLs: {}", extract_suspicious_urls(result.content, combined_markdown))
-    logger.info("Cache mentions: {} (should be zero)", num_cache_mentions(result.content))
-
-    
+    log_summary_metrics(result.content, combined_markdown)
 
     return result
