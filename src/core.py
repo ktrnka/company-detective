@@ -37,7 +37,7 @@ def get_project_dir(relative_path: str, create_if_needed=True) -> str:
 
 def make_experiment_dir(target: CompanyProduct) -> str:
     folder_name = re.sub(r"[^a-zA-Z0-9]", "_", f"{target.company} {target.product}")
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now().strftime("%Y-%m-%d")
 
     folder_path = f"output/{folder_name}/{timestamp}"
 
