@@ -1,7 +1,8 @@
 from googleapiclient.discovery import build
 import os
 from typing import Iterable, Optional
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel
+from loguru import logger
 
 _service = build("customsearch", "v1", developerKey=os.getenv("GOOGLE_API_KEY"))
 
@@ -10,17 +11,9 @@ class SearchResult(BaseModel):
     """Google search result"""
     title: str
     link: str
-    snippet: Optional[str]
+    snippet: Optional[str] = None
     formattedUrl: str
 
-    @model_validator(mode='before')
-    def _allow_missing_optional(cls, data):
-        if "snippet" not in data:
-            data["snippet"] = None
-
-        return data
-
-from loguru import logger
 
 def search(
     query: str, dateRestrict=None, linkSite=None, num: int = 10, debug=False

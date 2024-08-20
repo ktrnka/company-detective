@@ -1,4 +1,4 @@
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel
 from typing import List, Dict, Optional
 import urllib.parse
 
@@ -6,16 +6,8 @@ import urllib.parse
 class Salary(BaseModel):
     currency: str
     salaryTextFormatted: bool
-    source: Optional[str]
-    text: Optional[str]
-
-    @model_validator(mode="before")
-    def _allow_missing_optional(cls, data):
-        if "source" not in data:
-            data["source"] = None
-        if "text" not in data:
-            data["text"] = None
-        return data
+    source: Optional[str] = None
+    text: Optional[str] = None
 
 
 class Attribute(BaseModel):
