@@ -5,11 +5,13 @@
 - [LinkedIn]({{organization.linkedin}})
 - [Twitter]({{organization.twitter}})
 
+{% if organization.funding_total_usd %}
 ## Funding ({{organization.funding_total_usd // 1000000}}M USD total)
 
 {% for funding_round in organization.filtered_funding_rounds -%}
 - {{funding_round.raised_usd // 1000000}}M USD on {{funding_round.announced_on}}
 {% endfor %}
+{% endif %}
 
 ## News
 

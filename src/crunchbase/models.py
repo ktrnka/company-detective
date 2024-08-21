@@ -35,15 +35,15 @@ class Organization(BaseModel):
     website: str
     ipo_status: str
     rank_org_company: int
-    semrush_global_rank: int
-    semrush_visits_latest_month: int
-    semrush_id: str
+    semrush_global_rank: Optional[int] = None
+    semrush_visits_latest_month: Optional[int] = None
+    semrush_id: Optional[str] = None
     categories: List[str]
     legal_name: str
     operating_status: str
     funding_rounds: List[FundingRound]
     timeline: List[Article]
-    funding_total_usd: int
+    funding_total_usd: Optional[int] = None
 
     @property
     def news(self):

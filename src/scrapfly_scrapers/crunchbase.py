@@ -44,13 +44,15 @@ def parse_company(result: ScrapeApiResponse) -> CompanyData:
     # Organization data can be found in this cache:
     data_cache_key = next(key for key in cache_keys if "entities/organizations/" in key)
     # Some employee/contact data can be found in this key:
-    people_cache_key = next(key for key in cache_keys if "/data/searches/contacts" in key)
+    # TODO: Consider refactoring this if we want to include employee data
+    # people_cache_key = next(key for key in cache_keys if "/data/searches/contacts" in key)
 
     organization = app_state_data["HttpState"][data_cache_key]["data"]
-    employees = app_state_data["HttpState"][people_cache_key]["data"]
+    # employees = app_state_data["HttpState"][people_cache_key]["data"]
     return {
         "organization": _reduce_organization_dataset(organization),
-        "employees": _reduce_employee_dataset(employees),
+        "employees": [],
+        # "employees": _reduce_employee_dataset(employees),
     }
 
 

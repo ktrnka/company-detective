@@ -20,7 +20,7 @@ class CompanyProduct(NamedTuple):
     @classmethod
     def same(cls, name: str):
         return cls(company=name, product=name)
-    
+
     def as_path(self) -> str:
         return re.sub(r"[^a-zA-Z0-9]", "_", f"{self.company} {self.product}")
 
@@ -36,6 +36,7 @@ def get_project_dir(relative_path: str, create_if_needed=True) -> str:
 
     return project_dir
 
+
 def make_experiment_dir(target: CompanyProduct) -> str:
     folder_name = re.sub(r"[^a-zA-Z0-9]", "_", f"{target.company} {target.product}")
     timestamp = datetime.now().strftime("%Y-%m-%d")
@@ -43,6 +44,7 @@ def make_experiment_dir(target: CompanyProduct) -> str:
     folder_path = f"output/{folder_name}/{timestamp}"
 
     return get_project_dir(folder_path)
+
 
 def eval_filename(target: CompanyProduct, extension="html") -> str:
     folder_path = get_project_dir(f"output/{target.as_path()}")
@@ -63,6 +65,7 @@ def init_langchain_cache():
 
     return cache_path
 
+
 def init_requests_cache():
     """Initialize the requests cache, which improves the speed of the requests library by caching in SQLite and should reduce risk around getting blocked"""
     cache_dir = get_project_dir(".cache")
@@ -81,6 +84,7 @@ def init_requests_cache():
 
     return cache_path
 
+
 def init():
     """
     Initialize for regular development: load the .env file, initialize the langchain cache, and initialize the requests cache
@@ -88,6 +92,7 @@ def init():
     load_dotenv()
     init_langchain_cache()
     init_requests_cache()
+
 
 def nest_markdown(markdown_doc: str, header_change: int) -> str:
     """Nest the headers in a markdown document by changing the header level"""
@@ -323,11 +328,13 @@ def extract_suspicious_urls(summary: str, source: str) -> Set[str]:
 
     return summary_urls.difference(source_urls)
 
+
 def citation_density(summary: str) -> float:
     summary_urls = extract_urls(summary)
 
     num_link_syntax_chars = 4
     return sum(len(url) + num_link_syntax_chars for url in summary_urls) / len(summary)
+
 
 def test_extractive_fraction_urls():
     example_source = "[a](b) [c](d) [e](f) [g](h)"
@@ -353,38 +360,69 @@ def test_num_cache_mentions():
 def cleanse_markdown(llm_markdown_output: str) -> str:
     return llm_markdown_output.strip().strip("```markdown").strip("```").strip()
 
+
 def log_summary_metrics(summary: str, summary_input: str):
     # Get a logger for higher up the call stack so that the log messages are associated with the right function
     caller_logger = logger.opt(depth=1)
-    
+
+    good_icon = "✅"
+    neutral_icon = ""
+    bad_icon = "❌"
+
     caller_logger.info(
-        "{:,} -> {:,} chars ({:.0%})",
+        "{:,} -> {:,} chars ({:.0%}) {}",
         len(summary_input),
         len(summary),
         len(summary) / len(summary_input),
+        neutral_icon if len(summary) / len(summary_input) < 1 else neutral_icon,
     )
 
     # Smoke tests
     try:
-        caller_logger.info("Extractive fraction: {:.0%}", extractive_fraction(summary, summary_input))
+        stat_extractive_fraction = extractive_fraction(summary, summary_input)
+        caller_logger.info(
+            "Extractive fraction: {:.0%} {}",
+            stat_extractive_fraction,
+            neutral_icon if stat_extractive_fraction > 0.2 else bad_icon,
+        )
     except ZeroDivisionError:
         caller_logger.info("Extractive fraction: Summary is too short for ngrams")
 
     try:
-        caller_logger.info("Percent of URLs in sources: {:.0%}", extractive_fraction_urls(summary, summary_input))
+        stat_extractive_fraction_urls = extractive_fraction_urls(summary, summary_input)
+        caller_logger.info(
+            "Percent of URLs in sources: {:.0%} {}",
+            stat_extractive_fraction_urls,
+            good_icon if stat_extractive_fraction_urls == 1.0 else bad_icon,
+        )
     except ZeroDivisionError:
         caller_logger.info("Percent of URLs in sources: No URLs in summary")
 
-    caller_logger.info("Citation density: {:.1%} (percent of output used by URLs/link syntax)", citation_density(summary))
+    stat_citation_density = citation_density(summary)
+    caller_logger.info(
+        "Citation density: {:.1%} (percent of output used by URLs/link syntax) {}",
+        stat_citation_density,
+        neutral_icon if stat_citation_density > 0.05 else bad_icon,
+    )
 
-    caller_logger.info("Suspicious URLs: {}", extract_suspicious_urls(summary, summary_input))
-    caller_logger.info("Cache mentions: {} (should be zero)", num_cache_mentions(summary))
+    caller_logger.info(
+        "Suspicious URLs: {}", extract_suspicious_urls(summary, summary_input)
+    )
+
+    cache_mentions = num_cache_mentions(summary)
+    caller_logger.info(
+        "Cache mentions: {} {}",
+        cache_mentions,
+        good_icon if cache_mentions == 0 else bad_icon,
+    )
+
 
 def test_log_summary_metrics():
     log_summary_metrics("a b c", "a b c")
     log_summary_metrics("a b c", "a b d")
     log_summary_metrics("a b c", "a b c d")
     log_summary_metrics("a b c", "a b c d e f g h i j k l m n o p q r s t u v w x y z")
+
 
 # Things to run ONCE
 cache = diskcache.Cache(directory=get_project_dir(".cache/diskcache"))
