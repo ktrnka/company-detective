@@ -147,6 +147,15 @@ This pipeline has been pretty solid.
 
 # General
 
+## Tests 8/20
+
+- Plaid: Worked fine
+- AKASA: 
+    - Run 1: The Scrapfly ASP failed on Glassdoor which raised an error and crashed it all!
+    - Run 2: There are multiple different companies and it mixed the results (healthcare and an airline)
+- Language I/O: There was a major malfunction in the Reddit module; The mappers reduced to almost 0% then the reducer hallucinated everything, then the overall hallucinated some links too. That said, everything else was really good
+- phData: Worked quite well! The Reddit pipeline looked a little suspicious; I'm not sure the quotes were about phData, or whether they were about something else. Also I really with the "what's changed" quotes from Glassdoor were highlighted in the overall summary.
+
 ## User research questions
 
 I should ask friends about their job searches and what they look for.

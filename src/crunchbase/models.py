@@ -31,7 +31,7 @@ class Organization(BaseModel):
     linkedin: str
     facebook: Optional[str]
     twitter: str
-    email: str
+    email: Optional[str] = None
     website: str
     ipo_status: str
     rank_org_company: int
