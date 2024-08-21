@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from langchain.globals import set_llm_cache
 from langchain_community.cache import SQLiteCache
 import requests_cache
+import diskcache
 
 import re
 import urllib.parse
@@ -61,7 +62,6 @@ def init_langchain_cache():
     set_llm_cache(SQLiteCache(database_path=cache_path))
 
     return cache_path
-
 
 def init_requests_cache():
     """Initialize the requests cache, which improves the speed of the requests library by caching in SQLite and should reduce risk around getting blocked"""
@@ -385,3 +385,6 @@ def test_log_summary_metrics():
     log_summary_metrics("a b c", "a b d")
     log_summary_metrics("a b c", "a b c d")
     log_summary_metrics("a b c", "a b c d e f g h i j k l m n o p q r s t u v w x y z")
+
+# Things to run ONCE
+cache = diskcache.Cache(directory=get_project_dir(".cache/diskcache"))
