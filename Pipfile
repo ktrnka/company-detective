@@ -23,6 +23,7 @@ pytz = "*"
 newspaper4k = "*"
 app-store-web-scraper = "*"
 google-play-scraper = "*"
+diskcache = "*"
 
 [dev-packages]
 jupyter = "*"
