@@ -147,7 +147,7 @@ This pipeline has been pretty solid.
 
 # General
 
-## Tests 8/20
+## Tests 8/21
 
 - Plaid: Worked fine
 - AKASA: 
@@ -155,6 +155,7 @@ This pipeline has been pretty solid.
     - Run 2: There are multiple different companies and it mixed the results (healthcare and an airline)
 - Language I/O: There was a major malfunction in the Reddit module; The mappers reduced to almost 0% then the reducer hallucinated everything, then the overall hallucinated some links too. That said, everything else was really good
 - phData: Worked quite well! The Reddit pipeline looked a little suspicious; I'm not sure the quotes were about phData, or whether they were about something else. Also I really with the "what's changed" quotes from Glassdoor were highlighted in the overall summary.
+- Signify Technology: Worked pretty well except the news sources. It looked like it merged all the attribution links into the generic Signify Tech link, so I'm not confident in the results. As far as I can tell, the information is correct even though the citations are broken (it's linking most of them to the overall /news page on their website). Funny enough, the smoke tests caught the URL as a suspicious URL but I didn't think much of it
 
 ## User research questions
 
