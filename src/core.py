@@ -361,7 +361,7 @@ def cleanse_markdown(llm_markdown_output: str) -> str:
     return llm_markdown_output.strip().strip("```markdown").strip("```").strip()
 
 
-def log_summary_metrics(summary: str, summary_input: str):
+def log_summary_metrics(summary: str, summary_input: str, extractive=True):
     # Get a logger for higher up the call stack so that the log messages are associated with the right function
     caller_logger = logger.opt(depth=1)
 
@@ -380,10 +380,11 @@ def log_summary_metrics(summary: str, summary_input: str):
     # Smoke tests
     try:
         stat_extractive_fraction = extractive_fraction(summary, summary_input)
+        quality_threshold = 0.4 if extractive else 0.05
         caller_logger.info(
             "Extractive fraction: {:.0%} {}",
             stat_extractive_fraction,
-            neutral_icon if stat_extractive_fraction > 0.2 else bad_icon,
+            neutral_icon if stat_extractive_fraction > quality_threshold else bad_icon,
         )
     except ZeroDivisionError:
         caller_logger.info("Extractive fraction: Summary is too short for ngrams")

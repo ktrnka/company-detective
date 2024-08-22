@@ -87,6 +87,6 @@ def summarize(target: CompanyProduct, article_markdowns: List[str]) -> AIMessage
         }
     )
 
-    log_summary_metrics(result.content, unified_markdown)
+    log_summary_metrics(result.content, unified_markdown, extractive=False)
 
     return result
