@@ -1,4 +1,5 @@
-from search import search
+from typing import Iterable
+from search import SearchResult, search
 from core import CompanyProduct
 import scrapfly_scrapers.crunchbase
 import jinja2
@@ -13,17 +14,36 @@ templates = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"))
 _response_cache = {}
 
 
-def find_people_url(target: CompanyProduct) -> str:
+def filter_url(search_iter: Iterable[SearchResult], url_substring: str) -> Iterable[SearchResult]:
+    """Filter search results by URL substring"""
+    for result in search_iter:
+        if url_substring in result.link:
+            yield result
+
+def filter_title_relevance(search_iter: Iterable[SearchResult], query: str, min_unigram_ratio=0.5) -> Iterable[SearchResult]:
+    """Filter search results by unigram overlap between the title and the query"""
+    query_unigrams = set(query.split())
+    for result in search_iter:
+        title_unigrams = set(result.title.split())
+        if len(title_unigrams & query_unigrams) / len(query_unigrams) > min_unigram_ratio:
+            yield result
+
+def find_people_url(target: CompanyProduct) -> Optional[str]:
     """Find the Crunchbase people page for a company using Google search"""
-    result = next(
-        search(f'site:www.crunchbase.com/organization "{target.company}"', num=1)
-    )
-    assert "/organization/" in result.link
 
-    return f"{result.link}/people"
+    results_iter = search(f'site:www.crunchbase.com/organization "{target.company}"', num=10)
+    results_iter = filter_url(results_iter, "/organization/")
+    results_iter = filter_title_relevance(results_iter, target.company)
+    
+    results = list(results_iter)
+
+    if not results:
+        return None
+
+    return f"{results[0].link}/people"
 
 
-async def run(target: CompanyProduct) -> str:
+async def run(target: CompanyProduct) -> Optional[str]:
     """
     Run the Crunchbase pipeline:
     1. Find the Crunchbase people page for the company
@@ -32,6 +52,8 @@ async def run(target: CompanyProduct) -> str:
     4. Format the response as markdown
     """
     url = find_people_url(target)
+    if not url:
+        return None
 
     # For whatever reason, Scrapfly doesn't cache all the time
     # TODO: Replace this with a sqlite cache

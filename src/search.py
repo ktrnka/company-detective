@@ -16,7 +16,7 @@ class SearchResult(BaseModel):
 
 
 def search(
-    query: str, dateRestrict=None, linkSite=None, num: int = 10, debug=False
+    query: str, dateRestrict=None, linkSite=None, num: int = 10
 ) -> Iterable[SearchResult]:
     """
     Wrapper for the Google Custom Search API to add parameters, types, and authentication with defaults that are appropriate for this project.

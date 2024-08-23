@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 from loguru import logger
 
 
@@ -39,11 +39,15 @@ class GlassdoorResult:
     @property
     def num_raw_reviews(self):
         return self.raw_reviews.get("allReviewsCount", 0)
+    
+    @classmethod
+    def empty_result(cls, company: CompanyProduct):
+        return cls(company, None, {}, [], [], "")
 
 
 async def run(
     target: CompanyProduct, max_review_pages=1, max_job_pages=0, url_override=None
-) -> GlassdoorResult:
+) -> Optional[GlassdoorResult]:
 
     # NOTE: This is necessary in rare cases where the Google search results don't contain the overview page at all, like Pomelo Care
     if url_override:
@@ -54,6 +58,12 @@ async def run(
         )
     else:
         review_page = find_review(target)
+
+        # If we don't find a review page, return None
+        if not review_page:
+            logger.warning("No Glassdoor review page found for {}", target)
+            return None
+
     company, company_id = UrlBuilder.parse_review_url(review_page.link)
 
     # job results, not 100% used yet

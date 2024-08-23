@@ -24,6 +24,7 @@ newspaper4k = "*"
 app-store-web-scraper = "*"
 google-play-scraper = "*"
 diskcache = "*"
+boto3 = "*"
 
 [dev-packages]
 jupyter = "*"

@@ -23,6 +23,14 @@ class CompanyProduct(NamedTuple):
 
     def as_path(self) -> str:
         return re.sub(r"[^a-zA-Z0-9]", "_", f"{self.company} {self.product}")
+    
+    def as_path_v2(self) -> str:
+        if self.company == self.product:
+            unescaped = self.company
+        else:
+            unescaped = f"{self.company} {self.product}"
+
+        return re.sub(r"[^a-zA-Z0-9]", "_", unescaped)
 
 
 def get_project_dir(relative_path: str, create_if_needed=True) -> str:
@@ -47,11 +55,11 @@ def make_experiment_dir(target: CompanyProduct) -> str:
 
 
 def eval_filename(target: CompanyProduct, extension="html") -> str:
-    folder_path = get_project_dir(f"output/{target.as_path()}")
+    folder_path = get_project_dir(f"output/{target.as_path_v2()}")
 
     # Create the filename using the current timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"{folder_path}/{timestamp}.{extension}"
+    filename = f"{folder_path}/{target.as_path_v2()}_{timestamp}.{extension}"
 
     return filename
 
@@ -184,6 +192,10 @@ class URLShortener:
         self.counter = 0
 
     def shorten_markdown(self, markdown: str) -> str:
+        # Prevent logger crash on empty string
+        if not markdown:
+            return markdown
+
         def replace_url(match):
             url = match.group(0)
             if url not in self.url_cache:
@@ -202,6 +214,10 @@ class URLShortener:
         return shortened_markdown
 
     def unshorten_markdown(self, markdown: str) -> str:
+        # Prevent logger crash on empty string
+        if not markdown:
+            return markdown
+
         def replace_short_url(match):
             short_url = match.group(0)
             for url, shortened in self.url_cache.items():
@@ -423,6 +439,40 @@ def test_log_summary_metrics():
     log_summary_metrics("a b c", "a b d")
     log_summary_metrics("a b c", "a b c d")
     log_summary_metrics("a b c", "a b c d e f g h i j k l m n o p q r s t u v w x y z")
+
+
+def fix_markdown_list(markdown_text: str) -> str:
+    fixed_text = re.sub(r"^([^-\n][^\n]*\n)(-)", r"\1\n\2", markdown_text, flags=re.MULTILINE)
+    return fixed_text
+
+
+def test_fix_markdown_list():
+    example_incorrect_markdown_list = """
+This needs a newline after it:
+- One
+- Two
+
+This one is ok:
+
+- Three
+- Four
+"""
+
+    fixed_example_incorrect_markdown_list = """
+This needs a newline after it:
+
+- One
+- Two
+
+This one is ok:
+
+- Three
+- Four
+"""
+    assert (
+        fix_markdown_list(example_incorrect_markdown_list)
+        == fixed_example_incorrect_markdown_list
+    )
 
 
 # Things to run ONCE
