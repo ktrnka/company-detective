@@ -179,6 +179,13 @@ def test_extract_core_domain():
     assert extract_core_domain("https://bit.ly/3P9HRMV") == "bit.ly"
     assert extract_core_domain("http://test") == "test"
 
+def repair_links(markdown: str) -> str:
+    """Repair links in the markdown that aren't proper markdown due to the LLM"""
+    return re.sub(r"\(([^)\]]+)]", r"(\1)", markdown)
+
+def test_repair_links():
+    # The most common situation is that the closing paren becomes a bracket
+    assert repair_links("[a](b) [c](d] [e](f)") == "[a](b) [c](d) [e](f)"
 
 class URLShortener:
     """
@@ -225,7 +232,7 @@ class URLShortener:
                     return url
             return short_url
 
-        unshortened_markdown = re.sub(r"cache://[^\s)]+", replace_short_url, markdown)
+        unshortened_markdown = re.sub(r"cache://[^\s)]+", replace_short_url, repair_links(markdown))
         logger.info(
             f"{len(markdown):,} -> {len(unshortened_markdown):,} chars ({len(unshortened_markdown) / len(markdown):.0%} of original)"
         )
