@@ -217,7 +217,7 @@ class URLShortener:
                 self.url_cache[url] = f"cache://{domain}/{self.counter}"
             return self.url_cache[url]
 
-        shortened_markdown = re.sub(r"(https?://[^\s)]+)", replace_url, markdown)
+        shortened_markdown = re.sub(r"(https?://[^\s)\]]+)", replace_url, markdown)
 
         logger.info(
             f"{len(markdown):,} -> {len(shortened_markdown):,} chars ({len(shortened_markdown) / len(markdown):.0%} of original)"
@@ -237,7 +237,7 @@ class URLShortener:
                     return url
             return short_url
 
-        unshortened_markdown = re.sub(r"cache://[^\s)]+", replace_short_url, markdown)
+        unshortened_markdown = re.sub(r"cache://[^\s)\]]+", replace_short_url, markdown)
         logger.info(
             f"{len(markdown):,} -> {len(unshortened_markdown):,} chars ({len(unshortened_markdown) / len(markdown):.0%} of original)"
         )
@@ -246,7 +246,7 @@ class URLShortener:
 
 
 def test_url_shortener():
-    example_md = """
+    example = """
 # Bibliography
 
 ### Reddit
@@ -283,22 +283,33 @@ def test_url_shortener():
 """
 
     url_shortener = URLShortener()
-    shortened_md = url_shortener.shorten_markdown(example_md)
-    print(shortened_md)
+    shortened = url_shortener.shorten_markdown(example)
+    print(shortened)
 
-    assert len(shortened_md) < len(example_md)
-    assert example_md == url_shortener.unshorten_markdown(shortened_md)
+    assert len(shortened) < len(example)
+    assert example == url_shortener.unshorten_markdown(shortened)
 
-    hard_example = """
+    example = """
 - ([Marketing, Glassdoor, 2024-02-24](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW84685389.htm))
 - [(Marketing, Glassdoor, 2024-02-25)](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW84685389.htm)
 - [https://www.glassdoor.com/](https://www.glassdoor.com/)
 """
 
-    shortened_hard_example = url_shortener.shorten_markdown(hard_example)
-    print(shortened_hard_example)
-    assert len(shortened_hard_example) < len(hard_example)
-    assert hard_example == url_shortener.unshorten_markdown(shortened_hard_example)
+    shortened = url_shortener.shorten_markdown(example)
+    print(shortened)
+    assert len(shortened) < len(example)
+    assert example == url_shortener.unshorten_markdown(shortened)
+
+    example = """[https://www.aainsure.net](https://www.aainsure.net)"""
+    shortened = url_shortener.shorten_markdown(example)
+
+    # test that it works
+    assert len(shortened) < len(example)
+    assert example == url_shortener.unshorten_markdown(shortened)
+
+    # NOTE: Originally I wanted it to only shorten the link part, but it's fine if it shortens both, separately
+    # test that it works the way I want it to
+    # assert shortened.startswith("[https://www.aainsure.net](cache://aainsure/")
 
 
 from typing import Iterable, Hashable, List
