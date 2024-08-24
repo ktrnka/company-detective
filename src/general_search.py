@@ -1,15 +1,13 @@
 from typing import List
 from core import CompanyProduct, cleanse_markdown, URLShortener, log_summary_metrics
-from src.google_search import search, SearchResult
+from google_search import search, SearchResult
 from typing import List
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages.ai import AIMessage
 from langchain_openai import ChatOpenAI
 
-from loguru import logger
 
 from typing import List
-from src.google_search import SearchResult
 
 
 def search_web(target: CompanyProduct) -> List[SearchResult]:
