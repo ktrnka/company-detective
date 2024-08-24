@@ -429,6 +429,8 @@ def log_summary_metrics(summary: str, summary_input: str, extractive=True):
         neutral_icon if stat_citation_density > 0.05 else bad_icon,
     )
 
+    caller_logger.info("Distinct URLs (summary / input): {} / {}", len(set(extract_urls(summary))), len(set(extract_urls(summary_input))))
+
     caller_logger.info(
         "Suspicious URLs: {}", extract_suspicious_urls(summary, summary_input)
     )

@@ -57,7 +57,7 @@ Do not extract information about other companies or products.
 If the text does not contain any relevant information about the COMPANY or PRODUCT, please return an empty string.
 
 Format the results as a Markdown list of quotes, each with a permalink to the source of the quote like so:
-- "quote" [Author, Reddit, Date](url)
+- "quote" [Author, Reddit, Date](cache://reddit/NUMBER)
 
 EXAMPLE for 98point6:
 

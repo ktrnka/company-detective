@@ -3,7 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages.ai import AIMessage
 from langchain_openai import ChatOpenAI
 
-from core import CompanyProduct, log_summary_metrics
+from core import CompanyProduct, URLShortener, log_summary_metrics
 
 
 _prompt = ChatPromptTemplate.from_messages(
@@ -31,7 +31,8 @@ When sharing information with others, you're careful to provide specific details
 You keep facts and opinions clearly separated but share both with your audience to provide a well-rounded perspective. Your goal is to offer as detailed and balanced a view as possible, allowing your audience to make well-informed decisions. You focus on specifics, such as numbers and concrete examples, to provide clarity and support your analysis.
 
 TASK
-Read the articles below and produce a detailed report on the COMPANY and PRODUCT of interest.
+Read the articles below and produce a comprehensive report on the COMPANY and PRODUCT of interest.
+Each paragraph or statement should cite the source or sources of information.
 Your target audiences are prospective candidates and investors.
 
 OUTPUT CONTENT
@@ -42,7 +43,7 @@ Examples of information that would be useful include:
 - Opinions about the company
 - The scale of the company in terms of employee, active users, or revenue
 - New product developments
-- Information about any key personnel including any relevant quotes
+- Information about any company executives including any relevant quotes
 - General information about the company
 - General information about the product
 - Any major changes in the company or product 
@@ -51,8 +52,8 @@ Include direct quotations from the articles as appropriate to highlight key poin
 
 OUTPUT FORMAT
 Format the output as a markdown document.
-To build trust, include the source of each statement with a markdown link, as in ([John Smith, New York Times, June 2021](https://example.com)).
-If the author name is not available, use the publication name.
+To build trust, include the source of each statement with a markdown link, as in [(Author, Publication, Date)](cache://...)
+If the author name is not available, omit it.
 If the statement is supported by multiple sources, include all of them in the citation.
             """,
         ),
@@ -78,14 +79,17 @@ def summarize(target: CompanyProduct, article_markdowns: List[str]) -> AIMessage
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
+    shortener = URLShortener()
+
     runnable = _prompt | llm
     result = runnable.invoke(
         {
-            "text": unified_markdown,
+            "text": shortener.shorten_markdown(unified_markdown),
             "company_name": target.company,
             "product_name": target.product,
         }
     )
+    result.content = shortener.unshorten_markdown(result.content)
 
     log_summary_metrics(result.content, unified_markdown, extractive=False)
 
