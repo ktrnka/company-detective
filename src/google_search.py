@@ -62,3 +62,19 @@ def search(
 
         for result in results["items"]:
             yield SearchResult(**result)
+
+
+def filter_url(search_iter: Iterable[SearchResult], url_substring: str) -> Iterable[SearchResult]:
+    """Filter search results by URL substring"""
+    for result in search_iter:
+        if url_substring in result.link:
+            yield result
+
+
+def filter_title_relevance(search_iter: Iterable[SearchResult], query: str, min_unigram_ratio=0.5) -> Iterable[SearchResult]:
+    """Filter search results by unigram overlap between the title and the query"""
+    query_unigrams = set(query.split())
+    for result in search_iter:
+        title_unigrams = set(result.title.split())
+        if len(title_unigrams & query_unigrams) / len(query_unigrams) > min_unigram_ratio:
+            yield result

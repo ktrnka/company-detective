@@ -1,5 +1,4 @@
-from typing import Iterable
-from src.google_search import SearchResult, search
+from google_search import filter_title_relevance, filter_url, search
 from core import CompanyProduct
 import scrapfly_scrapers.crunchbase
 import jinja2
@@ -13,20 +12,6 @@ templates = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"))
 
 _response_cache = {}
 
-
-def filter_url(search_iter: Iterable[SearchResult], url_substring: str) -> Iterable[SearchResult]:
-    """Filter search results by URL substring"""
-    for result in search_iter:
-        if url_substring in result.link:
-            yield result
-
-def filter_title_relevance(search_iter: Iterable[SearchResult], query: str, min_unigram_ratio=0.5) -> Iterable[SearchResult]:
-    """Filter search results by unigram overlap between the title and the query"""
-    query_unigrams = set(query.split())
-    for result in search_iter:
-        title_unigrams = set(result.title.split())
-        if len(title_unigrams & query_unigrams) / len(query_unigrams) > min_unigram_ratio:
-            yield result
 
 def find_people_url(target: CompanyProduct) -> Optional[str]:
     """Find the Crunchbase people page for a company using Google search"""
