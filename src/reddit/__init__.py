@@ -3,7 +3,7 @@ import reddit.search
 import reddit.fetch
 
 from core import CompanyProduct
-from search import SearchResult
+from google_search import SearchResult
 
 from dataclasses import dataclass
 from typing import List, Optional

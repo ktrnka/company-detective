@@ -2,7 +2,7 @@ from functools import lru_cache
 from typing import List
 
 from core import CompanyProduct
-from search import search, SearchResult
+from google_search import search, SearchResult
 
 
 @lru_cache(1000)

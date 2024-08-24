@@ -1,5 +1,5 @@
 from datetime import timedelta
-from search import search
+from src.google_search import search
 from core import CompanyProduct, cache
 import re
 from typing import Optional, List

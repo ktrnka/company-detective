@@ -4,7 +4,7 @@ from typing import Optional
 from loguru import logger
 
 from core import CompanyProduct
-from search import search, SearchResult
+from google_search import search, SearchResult
 
 
 @lru_cache(1000)

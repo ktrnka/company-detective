@@ -1,5 +1,5 @@
 from functools import lru_cache
-from search import search, SearchResult
+from src.google_search import search, SearchResult
 from core import CompanyProduct, log_summary_metrics
 import scrapfly_scrapers.indeed
 from .models import JobDetails, JobOverview

@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import requests
-from search import search
+from src.google_search import search
 from core import CompanyProduct, cache
 import re
 from typing import Iterable, List, Optional

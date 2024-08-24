@@ -7,7 +7,7 @@ import scrapfly_scrapers.glassdoor
 from scrapfly_scrapers.glassdoor import scrape_reviews, scrape_jobs
 
 from core import CompanyProduct
-from search import SearchResult
+from google_search import SearchResult
 
 
 from glassdoor.search import find_review

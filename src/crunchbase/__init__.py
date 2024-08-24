@@ -1,5 +1,5 @@
 from typing import Iterable
-from search import SearchResult, search
+from src.google_search import SearchResult, search
 from core import CompanyProduct
 import scrapfly_scrapers.crunchbase
 import jinja2

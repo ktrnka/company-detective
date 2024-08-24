@@ -1,7 +1,7 @@
 from typing import NamedTuple, List
 
 from core import CompanyProduct
-from search import SearchResult
+from google_search import SearchResult
 
 import news.search
 import news.scrape
