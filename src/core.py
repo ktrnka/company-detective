@@ -148,13 +148,18 @@ def simplify_markdown(markdown_doc: str) -> str:
 
 def extract_core_domain(url: str) -> str:
     """Extract the core part of a domain, e.g. 'reddit' from 'https://www.reddit.com/r/freelance/comments/p2cdrt/gunio_rejected_me_immediately/'"""
-    domain = urllib.parse.urlparse(url).hostname
-    domain_parts = domain.split(".")
-    if domain_parts[-1] in {"com", "net", "org"}:
-        domain_parts = domain_parts[:-1]
-    if domain_parts[0] == "www":
-        domain_parts = domain_parts[1:]
-    return ".".join(domain_parts)
+
+    try:
+        domain = urllib.parse.urlparse(url).hostname
+        domain_parts = domain.split(".")
+        if domain_parts[-1] in {"com", "net", "org"}:
+            domain_parts = domain_parts[:-1]
+        if domain_parts[0] == "www":
+            domain_parts = domain_parts[1:]
+        return ".".join(domain_parts)
+    except:
+        logger.warning(f"Failed to extract core domain from: {url}, defaulting to misc")
+        return "misc"
 
 
 def test_extract_core_domain():
@@ -232,7 +237,7 @@ class URLShortener:
                     return url
             return short_url
 
-        unshortened_markdown = re.sub(r"cache://[^\s)]+", replace_short_url, repair_links(markdown))
+        unshortened_markdown = re.sub(r"cache://[^\s)]+", replace_short_url, markdown)
         logger.info(
             f"{len(markdown):,} -> {len(unshortened_markdown):,} chars ({len(unshortened_markdown) / len(markdown):.0%} of original)"
         )
@@ -281,7 +286,19 @@ def test_url_shortener():
     shortened_md = url_shortener.shorten_markdown(example_md)
     print(shortened_md)
 
+    assert len(shortened_md) < len(example_md)
     assert example_md == url_shortener.unshorten_markdown(shortened_md)
+
+    hard_example = """
+- ([Marketing, Glassdoor, 2024-02-24](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW84685389.htm))
+- [(Marketing, Glassdoor, 2024-02-25)](https://www.glassdoor.com/Reviews/Employee-Review-Gun-io-RVW84685389.htm)
+- [https://www.glassdoor.com/](https://www.glassdoor.com/)
+"""
+
+    shortened_hard_example = url_shortener.shorten_markdown(hard_example)
+    print(shortened_hard_example)
+    assert len(shortened_hard_example) < len(hard_example)
+    assert hard_example == url_shortener.unshorten_markdown(shortened_hard_example)
 
 
 from typing import Iterable, Hashable, List
