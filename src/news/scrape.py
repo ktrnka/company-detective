@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 
 # NOTE: This is newpaper4k not newspaper3k
 import newspaper
-
+from loguru import logger
 
 def request_article(
     url: str, delay_seconds=1
@@ -30,7 +30,10 @@ def request_article(
 
         return response
     except requests.exceptions.ReadTimeout as e:
-        print(f"request_article: Timeout on {url}")
+        logger.exception(f"Timeout on {url}")
+        return None
+    except requests.exceptions.SSLError as e:
+        logger.exception(f"SSL error on {url}")
         return None
 
 

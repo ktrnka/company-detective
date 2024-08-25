@@ -26,7 +26,7 @@ class Organization(BaseModel):
     id: str
     name: str
     logo: str
-    description: str
+    description: Optional[str] = ""
     founded_on: date
     linkedin: str
     facebook: Optional[str]
