@@ -1,11 +1,12 @@
 from datetime import timedelta
-from src.google_search import search
+from google_search import search
 from core import CompanyProduct, cache
 import re
 from typing import Optional, List
 
 from app_store_web_scraper import AppStoreEntry, AppReview
 
+URL_PATTERN = re.compile(r"https://apps.apple.com/us/app/[^/]+/id(\d+)")
 
 def find_app_store_page(target: CompanyProduct) -> str:
     result = next(
@@ -18,8 +19,7 @@ def find_app_store_page(target: CompanyProduct) -> str:
 
 def extract_apple_app_store_id(url: str) -> Optional[int]:
     """Get the Apple App Store ID from an app store URL, or return None if not found."""
-    pattern = r"https://apps.apple.com/us/app/[^/]+/id(\d+)"
-    match = re.search(pattern, url)
+    match = URL_PATTERN.search(url)
     if match:
         return int(match.group(1))
     else:

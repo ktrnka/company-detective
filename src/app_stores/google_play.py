@@ -1,12 +1,14 @@
 from datetime import datetime, timedelta
-from src.google_search import search
+from google_search import search
 from core import CompanyProduct, cache
 from typing import List, Optional
 from urllib.parse import urlparse, parse_qs
 import google_play_scraper
 
 from pydantic import BaseModel
+import re
 
+URL_PATTERN = re.compile(r"https://play.google.com/store/apps/details.*")
 
 def find_google_play_page(target: CompanyProduct) -> str:
     result = next(

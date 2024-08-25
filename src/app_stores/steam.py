@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import requests
-from src.google_search import search
+from google_search import search
 from core import CompanyProduct, cache
 import re
 from typing import Iterable, List, Optional
@@ -19,12 +19,12 @@ def find_steam_page(target: CompanyProduct) -> str:
     return result.link
 
 
-STEAM_URL_PATTERN = re.compile(r"https://store.steampowered.com/app/(\d+)/(\w+)/")
+URL_PATTERN = re.compile(r"https://store.steampowered.com/app/(\d+)/(\w+)/")
 
 
 def extract_steam_id(url: str) -> Optional[int]:
-    if STEAM_URL_PATTERN.match(url):
-        return int(STEAM_URL_PATTERN.match(url).group(1))
+    if URL_PATTERN.match(url):
+        return int(URL_PATTERN.match(url).group(1))
     return None
 
 

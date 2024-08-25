@@ -1,3 +1,4 @@
+from typing import Mapping
 import jinja2
 from datetime import datetime
 import subprocess
@@ -21,6 +22,10 @@ from crunchbase import run as process_crunchbase
 from glassdoor import GlassdoorResult
 import general_search
 from loguru import logger
+
+import app_stores.apple
+import app_stores.google_play
+import app_stores.steam
 
 templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),
@@ -161,11 +166,15 @@ Crunchbase information:
 
 Additional search results:
 {search_text}
+
+{dynamic_contexts}
             """,
         ),
     ]
 )
 
+def contexts_to_markdown(contexts: Mapping[str, str]) -> str:
+    return "\n\n".join([f"{key}\n{value}" for key, value in contexts.items()])
 
 async def run(
     target: CompanyProduct,
@@ -178,10 +187,42 @@ async def run(
     """
     Search the web for information on the target company and product, then summarize it all.
     """
+
+    dynamic_contexts = {}
+
     general_search_results = general_search.search_web(target)
     general_search_summary = general_search.summarize(
         target, general_search_results
     ).content
+
+    apple_store_matches = [result for result in general_search_results if app_stores.apple.URL_PATTERN.match(result.link)]
+    logger.info(f"Apple Store URLs: {apple_store_matches}")
+    if apple_store_matches:
+        apple_store_url = apple_store_matches[0].link
+        apple_store_id = app_stores.apple.extract_apple_app_store_id(apple_store_url)
+        apple_reviews = app_stores.apple.scrape(apple_store_id)
+        apple_review_markdowns = [app_stores.apple.review_to_markdown(review) for review in apple_reviews]
+        apple_review_content = "\n\n".join(apple_review_markdowns)
+        dynamic_contexts["Apple App Store Reviews"] = apple_review_content
+
+    google_play_matches = [result for result in general_search_results if app_stores.google_play.URL_PATTERN.match(result.link)]
+    logger.info(f"Google Play URLs: {google_play_matches}")
+    if google_play_matches:
+        google_play_url = google_play_matches[0].link
+        google_play_id = app_stores.google_play.extract_google_play_app_id(google_play_url)
+        google_play_reviews = app_stores.google_play.scrape_reviews(google_play_id)
+        google_play_review_markdowns = [app_stores.google_play.review_to_markdown(review) for review in google_play_reviews]
+        google_play_review_content = "\n\n".join(google_play_review_markdowns)
+        dynamic_contexts["Google Play Store Reviews"] = google_play_review_content
+
+    steam_matches = [result for result in general_search_results if app_stores.steam.URL_PATTERN.match(result.link)]
+    logger.info(f"Steam URLs: {steam_matches}")
+    if steam_matches:
+        steam_url = steam_matches[0].link
+        steam_reviews = app_stores.steam.get_reviews(app_stores.steam.extract_steam_id(steam_url), num_reviews=20)
+        steam_review_markdowns = [app_stores.steam.review_to_markdown(review) for review in steam_reviews]
+        steam_review_content = "\n\n".join(steam_review_markdowns)
+        dynamic_contexts["Steam Reviews"] = steam_review_content
 
     crunchbase_markdown = await process_crunchbase(target)
     if not crunchbase_markdown:
@@ -208,7 +249,7 @@ async def run(
             news_result.summary_markdown,
             crunchbase_markdown,
             general_search_summary,
-        ]
+        ] + list(dynamic_contexts.values())
     )
 
     url_shortener = URLShortener()
@@ -229,6 +270,8 @@ async def run(
             "news_text": url_shortener.shorten_markdown(news_result.summary_markdown),
             "crunchbase_text": url_shortener.shorten_markdown(crunchbase_markdown),
             "search_text": url_shortener.shorten_markdown(general_search_summary),
+            # For now, don't bother with URL shortening for dynamic contexts; none of them have URLs
+            "dynamic_contexts": contexts_to_markdown(dynamic_contexts),
         }
     )
     result.content = url_shortener.unshorten_markdown(cleanse_markdown(result.content))
@@ -248,29 +291,25 @@ Note: The report above is an aggregation of all the information below. I like to
 
 ----
 
-# Reddit
-{nest_markdown(reddit_result.summary.output_text, 1)}
-
-----
-
-# Glassdoor
-{nest_markdown(glassdoor_result.summary_markdown, 1)}
-
-----
+# Crunchbase
+{nest_markdown(crunchbase_markdown, 1)}
 
 # News
 {nest_markdown(news_result.summary_markdown, 1)}
 
-----
+# Glassdoor Employee Reviews
+{nest_markdown(glassdoor_result.summary_markdown, 1)}
 
-# Crunchbase
-{nest_markdown(crunchbase_markdown, 1)}
-
-----
+# Reddit
+{nest_markdown(reddit_result.summary.output_text, 1)}
 
 # General Search
 {nest_markdown(general_search_summary, 1)}
+
 """)
+        
+        for source, content in dynamic_contexts.items():
+            f.write(f"# {source}\n{nest_markdown(content, 1)}\n")
 
         logger.info(f"Written to {f.name}")
 
