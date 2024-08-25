@@ -213,7 +213,6 @@ async def run(
 
     url_shortener = URLShortener()
 
-    # feed results into LLM for summarization
     llm = ChatOpenAI(model="gpt-4o", temperature=0)
 
     runnable = prompt | llm
@@ -237,49 +236,41 @@ async def run(
     log_summary_metrics(result.content, unshortened_context, extractive=False)
 
     with open(eval_filename(target, extension="md"), "w") as f:
-        f.write(result.content)
+        f.write(f"""
+{result.content}
 
-        f.write(generate_lineage_markdown())
+{generate_lineage_markdown()}
 
-        f.write(
-            """
-                
 ----
 
 # INTERMEDIATE RESULTS BELOW
 Note: The report above is an aggregation of all the information below. I like to include the intermediate outputs below for debugging and verification. For instance, if the final output has a very brief section on employee sentiment, I can refer to the Glassdoor and Reddit sections below to see if it's a problem in the overall summarization or if the intermediate results were lacking.
-"""
-        )
 
-        # Write the raw Reddit summary too
-        f.write(
-            f"\n----\n# Reddit\n{nest_markdown(reddit_result.summary.output_text, 1)}\n\n"
-        )
+----
 
-        # Write the individual Reddit threads
-        # for thread in reddit_result.threads:
-        #     f.write(f"{reddit.fetch.submission_to_markdown(thread)}\n\n")
+# Reddit
+{nest_markdown(reddit_result.summary.output_text, 1)}
 
-        # Write the raw Glassdoor summary too
-        f.write(
-            f"\n----\n# Glassdoor\n{nest_markdown(glassdoor_result.summary_markdown, 1)}\n\n"
-        )
+----
 
-        # Write the individual Glassdoor reviews
-        # for review in glassdoor_result.reviews:
-        #     review_md = templates.get_template("glassdoor_review.md").render(review=review)
-        #     f.write(f"{review_md}\n\n")
+# Glassdoor
+{nest_markdown(glassdoor_result.summary_markdown, 1)}
 
-        # Write the raw News summary too
-        f.write(f"\n----\n# News\n{nest_markdown(news_result.summary_markdown, 1)}\n\n")
+----
 
-        # Write the raw Crunchbase summary too
-        f.write(f"\n----\n# Crunchbase\n{nest_markdown(crunchbase_markdown, 1)}\n\n")
+# News
+{nest_markdown(news_result.summary_markdown, 1)}
 
-        # Write the raw General Search summary too
-        f.write(
-            f"\n----\n# General Search\n{nest_markdown(general_search_summary, 1)}\n\n"
-        )
+----
+
+# Crunchbase
+{nest_markdown(crunchbase_markdown, 1)}
+
+----
+
+# General Search
+{nest_markdown(general_search_summary, 1)}
+""")
 
         logger.info(f"Written to {f.name}")
 
