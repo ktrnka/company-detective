@@ -127,14 +127,15 @@ def scrape_app_info(app_id: str) -> GooglePlayAppInfo:
 
 
 @cache.memoize(expire=timedelta(days=5).total_seconds(), tag="google_play")
-def scrape_reviews(app_id: str) -> List[GooglePlayReview]:
+def scrape_reviews(app_id: str, num_reviews=100) -> List[GooglePlayReview]:
+    assert num_reviews <= 100, "Google Play scraping is only implemented to fetch 100 reviews at most"
     review_data, reviews_continuation_token = google_play_scraper.reviews(
         app_id,
         lang="en",
         country="us",
         sort=google_play_scraper.Sort.NEWEST,
         # TODO: See if there's any sort of throttling on this
-        count=100,
+        count=num_reviews,
     )
 
     return [GooglePlayReview(**review) for review in review_data]
@@ -147,9 +148,9 @@ def review_to_markdown(review: GooglePlayReview) -> str:
 """.strip()
 
 
-def run(google_play_url: str) -> str:
+def run(google_play_url: str, num_reviews=100) -> str:
     google_play_id = extract_google_play_app_id(google_play_url)
-    google_play_reviews = scrape_reviews(google_play_id)
+    google_play_reviews = scrape_reviews(google_play_id, num_reviews)
     google_play_review_markdowns = [review_to_markdown(review) for review in google_play_reviews]
     google_play_review_content = "\n\n".join(google_play_review_markdowns)
 
