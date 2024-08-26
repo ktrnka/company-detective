@@ -28,6 +28,10 @@ class SummaryResult(BaseModel):
     # Note: This can't be automatically deserialized because of the Document type, but the error is a cryptic one about the number of args to validate
     # input_documents: List[Document]
 
+    @classmethod
+    def empty_result(cls):
+        return cls(output_text=" ", intermediate_steps=[])
+
 
 def truncate_document(llm, document: str, max_tokens: int) -> str:
     """Helper to truncate long documents"""

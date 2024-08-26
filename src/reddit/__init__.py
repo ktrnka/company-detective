@@ -15,6 +15,10 @@ class RedditSummary:
     threads: List[reddit.fetch.Submission]
     summary: reddit.summarizer.SummaryResult
 
+    @classmethod
+    def empty_result(cls):
+        return cls([], [], reddit.summarizer.SummaryResult.empty_result())
+
 
 def run(
     target: CompanyProduct, num_threads: int = 2, min_comments: int = 2

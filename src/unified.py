@@ -14,7 +14,7 @@ from core import (
     cleanse_markdown,
 )
 
-from reddit import run as process_reddit
+from reddit import run as process_reddit, RedditSummary
 from glassdoor import run as process_glassdoor
 from news import run as process_news
 from crunchbase import run as process_crunchbase
@@ -223,6 +223,8 @@ async def run(
         crunchbase_markdown = ""
 
     reddit_result = process_reddit(target, num_threads=num_reddit_threads)
+    if not reddit_result:
+        reddit_result = RedditSummary.empty_result()
 
     glassdoor_result = await process_glassdoor(
         target,
