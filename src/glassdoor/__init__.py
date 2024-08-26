@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import List, Optional
 from loguru import logger
+import numpy as np
+from scipy import stats
 
 
 import scrapfly_scrapers.glassdoor
@@ -87,3 +89,27 @@ async def run(
     return GlassdoorResult(
         target, review_page, response, reviews, jobs, review_summary.content
     )
+
+
+
+def summarize_sampling(result: GlassdoorResult, alpha=0.05) -> str:
+    sample_scores = np.array([review.ratingOverall for review in result.reviews])
+    population_mean = result.raw_reviews["ratings"]["overallRating"]
+    t_statistic, p_value = stats.ttest_1samp(sample_scores, population_mean)
+    min_date = min(review.reviewDateTime for review in result.reviews)
+    max_date = max(review.reviewDateTime for review in result.reviews)
+    return f"""
+Overall stats
+Mean: {population_mean}
+Count: {result.raw_reviews["ratings"]["reviewCount"]}
+      
+Sample stats
+Mean: {sample_scores.mean()}
+Count: {len(sample_scores)}
+Date range: {min_date.strftime('%Y-%m-%d')} to {max_date.strftime('%Y-%m-%d')}
+
+Sample reliability
+T-statistic: {t_statistic:.3f}
+P-value: {p_value:.3f}
+{"Sample is significantly different" if p_value < alpha else "Sample is not significantly different"}
+"""

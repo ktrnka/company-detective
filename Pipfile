@@ -25,6 +25,8 @@ app-store-web-scraper = "*"
 google-play-scraper = "*"
 diskcache = "*"
 boto3 = "*"
+scipy = "*"
+numpy = "*"
 
 [dev-packages]
 jupyter = "*"

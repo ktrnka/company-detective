@@ -6,7 +6,9 @@ from core import CompanyProduct, cache
 import re
 from typing import Iterable, List, Optional
 from pydantic import BaseModel
-
+from scipy.stats import chi2_contingency
+import numpy as np
+from collections import Counter
 
 def find_steam_page(target: CompanyProduct) -> str:
     """Find the Steam page for a company using Google search"""
@@ -85,6 +87,20 @@ class SteamResponse(BaseModel):
     reviews: List[SteamReview]
     success: int
 
+def get_review_summary_stats(steam_id: int) -> QuerySummary:
+    response = requests.get(
+        f"https://store.steampowered.com/appreviews/{steam_id}",
+        params={
+            "json": 1,
+            "language": "english",
+            "purchase_type": "all",
+            "num_per_page": 1,
+        },
+    )
+    response.raise_for_status()
+
+    response_data = SteamResponse(**response.json())
+    return response_data.query_summary
 
 def iter_reviews(steam_id: int, num_reviews=100) -> Iterable[SteamReview]:
     num_per_page = 100 if num_reviews > 100 else num_reviews
@@ -152,3 +168,43 @@ def run(steam_url: str, num_reviews=50) -> str:
     logger.info(f"{len(steam_review_content):,} chars in {len(steam_reviews)} reviews")
 
     return steam_review_content
+
+def summarize_sampling(reviews: List[SteamReview], overall: QuerySummary, alpha=0.05) -> str:
+    sample_rating_counts = Counter(review.voted_up for review in reviews)
+
+    # Create a contingency table
+    observed = np.array([
+        [sample_rating_counts[True], sample_rating_counts[False]],
+        [overall.total_positive, overall.total_negative]
+    ])
+
+    # Perform the Chi-Square test
+    chi2, p_value, dof, expected = chi2_contingency(observed)
+
+    # Interpret the results
+    if p_value < alpha:
+        significance = "significantly different"
+    else:
+        significance = "not significantly different"
+
+    min_review_date = min(review.timestamp_created for review in reviews)
+    min_review_date = datetime.fromtimestamp(min_review_date)
+    max_review_date = max(review.timestamp_created for review in reviews)
+    max_review_date = datetime.fromtimestamp(max_review_date)
+
+    return f"""
+Overall
+- {overall.total_positive / overall.total_reviews:.1%} positive
+- Total: {overall.total_reviews}
+
+Sample
+- {sample_rating_counts[True] / len(reviews):.1%} positive
+- Total: {len(reviews)}
+- Date range {min_review_date.strftime('%Y-%m-%d')} to {max_review_date.strftime('%Y-%m-%d')}
+
+Sample representativeness
+- Chi-Square Statistic: {chi2:.3f}
+- p-value: {p_value:.3f}
+- The sample distribution is {significance} from the overall distribution
+"""
+

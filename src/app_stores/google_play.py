@@ -9,6 +9,10 @@ import google_play_scraper
 
 from pydantic import BaseModel
 import re
+import numpy as np
+import scipy.stats as stats
+from itertools import chain
+
 
 URL_PATTERN = re.compile(r"https://play.google.com/store/apps/details.*")
 
@@ -157,3 +161,45 @@ def run(google_play_url: str, num_reviews=100) -> str:
     logger.info(f"{len(google_play_review_content):,} chars in {len(google_play_reviews)} reviews")
 
     return google_play_review_content
+
+def histogram_to_array(histogram):
+    return np.asarray(list(chain(*[[num+1] * count for num, count in enumerate(histogram)])))
+
+def summarize_sampling(app_info: GooglePlayAppInfo, reviews: List[GooglePlayReview], alpha=0.05) -> str:
+    """Summarize the sampling of reviews compared to the overall distribution"""
+    sample_scores = np.array([review.score for review in reviews])
+    overall_scores = histogram_to_array(app_info.histogram)
+
+    # Perform the two-sample K-S test
+    ks_statistic, p_value = stats.ks_2samp(sample_scores, overall_scores)
+
+    # Interpret the results
+    if p_value < alpha:
+        significance = "significantly different"
+    else:
+        significance = "not significantly different"
+
+    sample_mean = sum(review.score for review in reviews) / len(reviews)
+    reviews_min_date = min(review.at for review in reviews)
+    reviews_max_date = max(review.at for review in reviews)
+
+    return f"""
+# {app_info.title}
+{app_info.summary}
+
+Overall
+- {app_info.score:.2f}
+- {app_info.ratings} ratings
+- Approximate date range {app_info.released} to {app_info.lastUpdatedOn}
+
+Sample
+- {sample_mean:.2f}
+- {len(reviews)} reviews
+- Date range {reviews_min_date.strftime('%Y-%m-%d')} to {reviews_max_date.strftime('%Y-%m-%d')}
+
+Sample representativeness
+- K-S Statistic: {ks_statistic:.3f}
+- p-value: {p_value:.3f}
+- The sample distribution is {significance} from the overall distribution
+"""
+
