@@ -198,31 +198,25 @@ async def run(
     apple_store_matches = [result for result in general_search_results if app_stores.apple.URL_PATTERN.match(result.link)]
     logger.info(f"Apple Store URLs: {apple_store_matches}")
     if apple_store_matches:
-        apple_store_url = apple_store_matches[0].link
-        apple_store_id = app_stores.apple.extract_apple_app_store_id(apple_store_url)
-        apple_reviews = app_stores.apple.scrape(apple_store_id)
-        apple_review_markdowns = [app_stores.apple.review_to_markdown(review) for review in apple_reviews]
-        apple_review_content = "\n\n".join(apple_review_markdowns)
+        apple_review_content = app_stores.apple.run(apple_store_matches[0].link)
         dynamic_contexts["Apple App Store Reviews"] = apple_review_content
 
     google_play_matches = [result for result in general_search_results if app_stores.google_play.URL_PATTERN.match(result.link)]
     logger.info(f"Google Play URLs: {google_play_matches}")
     if google_play_matches:
         google_play_url = google_play_matches[0].link
-        google_play_id = app_stores.google_play.extract_google_play_app_id(google_play_url)
-        google_play_reviews = app_stores.google_play.scrape_reviews(google_play_id)
-        google_play_review_markdowns = [app_stores.google_play.review_to_markdown(review) for review in google_play_reviews]
-        google_play_review_content = "\n\n".join(google_play_review_markdowns)
+        google_play_review_content = app_stores.google_play.run(google_play_url)
+
         dynamic_contexts["Google Play Store Reviews"] = google_play_review_content
+
 
     steam_matches = [result for result in general_search_results if app_stores.steam.URL_PATTERN.match(result.link)]
     logger.info(f"Steam URLs: {steam_matches}")
     if steam_matches:
         steam_url = steam_matches[0].link
-        steam_reviews = app_stores.steam.get_reviews(app_stores.steam.extract_steam_id(steam_url), num_reviews=20)
-        steam_review_markdowns = [app_stores.steam.review_to_markdown(review) for review in steam_reviews]
-        steam_review_content = "\n\n".join(steam_review_markdowns)
+        steam_review_content = app_stores.steam.run(steam_url)
         dynamic_contexts["Steam Reviews"] = steam_review_content
+
 
     crunchbase_markdown = await process_crunchbase(target)
     if not crunchbase_markdown:
@@ -251,6 +245,7 @@ async def run(
             general_search_summary,
         ] + list(dynamic_contexts.values())
     )
+    
 
     url_shortener = URLShortener()
 
@@ -314,3 +309,5 @@ Note: The report above is an aggregation of all the information below. I like to
         logger.info(f"Written to {f.name}")
 
         return f.name
+
+

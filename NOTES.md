@@ -79,6 +79,17 @@ Suhara et al 2020 OpinionDigest: A simple framework for opinion summarization
 - They have a pipeline like 1) extract opinions 2) cluster opinions 3) filter clusters 4) generate an abstractive summary
 - This is close to the approach I've started to explore, but A) I've been mixing facts and opinions B) I haven't tried a clustering step
 
+# App review pipeline (8/25)
+
+I set it up to scan the general search results for app store URLs, and if those are found then it'll fetch reviews from those stores and inject them into the prompt context.
+
+Tests
+
+- Quenza: This worked pretty well though there aren't all that many reviews. 
+    - It really struggled with citations because there aren't permalinks available on the reviews. It seemed to mess up the regular citations at times too. That said, it tended to cite both the person and then the app store.
+    - It seemed to really mess with the generation, to the point where it hallucinated the "working at" section, which should've been empty.
+- Singularity 6: The last time I've run this looks like 8/16. Something has changed since then, causing the context to greatly exceed limits. The problem isn't the gpt4o max context length (over 100k) but the gpt4o rate limit (30k tokens per second)
+
 # Indeed pipeline (8/19)
 
 The pipeline is in reasonably good shape but the information isn't actionable enough for use.

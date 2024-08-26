@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from loguru import logger
 import requests
 from google_search import search
 from core import CompanyProduct, cache
@@ -116,6 +117,7 @@ def iter_reviews(steam_id: int, num_reviews=100) -> Iterable[SteamReview]:
             break
 
         yield from response_data.reviews
+        reviews_collected += len(response_data.reviews)
 
         # We got partial results, which is a sign it's the last page
         if response_data.query_summary.num_reviews < num_per_page:
@@ -137,3 +139,16 @@ def review_to_markdown(review: SteamReview) -> str:
 # {'Thumbs Up' if review.voted_up else 'Thumbs Down'} ({review.author.steamid}, Steam, {review_dt.strftime('%Y-%m-%d')})
 {review.review.strip()}
 """.strip()
+
+
+def run(steam_url: str, num_reviews=50) -> str:
+    steam_reviews = get_reviews(extract_steam_id(steam_url), num_reviews=num_reviews)
+
+    # Override: A previous, cached version didn't use the limit so apply it a second time
+    steam_reviews = steam_reviews[:num_reviews]
+    steam_review_markdowns = [review_to_markdown(review) for review in steam_reviews]
+    steam_review_content = "\n\n".join(steam_review_markdowns)
+
+    logger.info(f"{len(steam_review_content):,} chars in {len(steam_reviews)} reviews")
+
+    return steam_review_content

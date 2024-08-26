@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+
+from loguru import logger
 from google_search import search
 from core import CompanyProduct, cache
 from typing import List, Optional
@@ -143,3 +145,14 @@ def review_to_markdown(review: GooglePlayReview) -> str:
 # {review.score} stars ({review.userName}, Google Play Store, {review.at.strftime("%Y-%m-%d")})
 {review.content}
 """.strip()
+
+
+def run(google_play_url: str) -> str:
+    google_play_id = extract_google_play_app_id(google_play_url)
+    google_play_reviews = scrape_reviews(google_play_id)
+    google_play_review_markdowns = [review_to_markdown(review) for review in google_play_reviews]
+    google_play_review_content = "\n\n".join(google_play_review_markdowns)
+
+    logger.info(f"{len(google_play_review_content):,} chars in {len(google_play_reviews)} reviews")
+
+    return google_play_review_content

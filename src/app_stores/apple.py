@@ -1,4 +1,6 @@
 from datetime import timedelta
+
+from loguru import logger
 from google_search import search
 from core import CompanyProduct, cache
 import re
@@ -57,3 +59,21 @@ def review_to_markdown(review: AppReview) -> str:
 # {review.title}, {review.rating} stars ({review.user_name}, Apple App Store, {review.date.strftime("%Y-%m-%d")})
 {review.content}
 """.strip()
+
+
+def run(apple_store_url: str, num_reviews=100) -> str:
+    if num_reviews > 500:
+        logger.warning("Apple App Store only supports up to 500 reviews, requested {}", num_reviews)
+
+    apple_store_id = extract_apple_app_store_id(apple_store_url)
+    apple_reviews = scrape(apple_store_id)
+
+    # Override: Limit to 100 reviews
+    apple_reviews = apple_reviews[:num_reviews]
+
+    apple_review_markdowns = [review_to_markdown(review) for review in apple_reviews]
+    apple_review_content = "\n\n".join(apple_review_markdowns)
+
+    logger.info(f"{len(apple_review_content):,} chars in {len(apple_reviews)} reviews")
+
+    return apple_review_content
