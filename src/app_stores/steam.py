@@ -10,6 +10,8 @@ from scipy.stats import chi2_contingency
 import numpy as np
 from collections import Counter
 
+from .util import synth_url
+
 def find_steam_page(target: CompanyProduct) -> str:
     """Find the Steam page for a company using Google search"""
     result = next(
@@ -152,7 +154,7 @@ def get_reviews(steam_id: int, num_reviews=100) -> List[SteamReview]:
 def review_to_markdown(review: SteamReview) -> str:
     review_dt = datetime.fromtimestamp(review.timestamp_created)
     return f"""
-# {'Thumbs Up' if review.voted_up else 'Thumbs Down'} ({review.author.steamid}, Steam, {review_dt.strftime('%Y-%m-%d')})
+# {'Thumbs Up' if review.voted_up else 'Thumbs Down'} [(Steam, {review_dt.strftime('%Y-%m-%d')})]({synth_url("steam", review.author.steamid)})
 {review.review.strip()}
 """.strip()
 

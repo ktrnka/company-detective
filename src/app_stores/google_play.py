@@ -13,6 +13,8 @@ import numpy as np
 import scipy.stats as stats
 from itertools import chain
 
+from .util import synth_url
+
 
 URL_PATTERN = re.compile(r"https://play.google.com/store/apps/details.*")
 
@@ -146,8 +148,9 @@ def scrape_reviews(app_id: str, num_reviews=100) -> List[GooglePlayReview]:
 
 
 def review_to_markdown(review: GooglePlayReview) -> str:
+    # NOTE: The permalink is fake; it's a placeholder for now
     return f"""
-# {review.score} stars ({review.userName}, Google Play Store, {review.at.strftime("%Y-%m-%d")})
+# {review.score} stars [({review.userName}, Google Play Store, {review.at.strftime("%Y-%m-%d")})]({synth_url("google_play", review.reviewId)})
 {review.content}
 """.strip()
 

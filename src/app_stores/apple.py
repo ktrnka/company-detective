@@ -8,6 +8,8 @@ from typing import Optional, List
 
 from app_store_web_scraper import AppStoreEntry, AppReview
 
+from .util import synth_url
+
 URL_PATTERN = re.compile(r"https://apps.apple.com/us/app/[^/]+/id(\d+)")
 
 def find_app_store_page(target: CompanyProduct) -> str:
@@ -56,7 +58,7 @@ def scrape(app_store_id: int, country="us") -> List[AppReview]:
 
 def review_to_markdown(review: AppReview) -> str:
     return f"""
-# {review.title}, {review.rating} stars ({review.user_name}, Apple App Store, {review.date.strftime("%Y-%m-%d")})
+# {review.title}, {review.rating} stars [({review.user_name}, Apple App Store, {review.date.strftime("%Y-%m-%d")})]({synth_url('apple', review.id)})
 {review.content}
 """.strip()
 
