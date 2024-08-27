@@ -1,4 +1,23 @@
-# Experiments done 8/20
+# Experiments done 8/27
+
+## Query reformulation
+
+Based on some writeups of Perplexity.ai I tried out search formulation. I'd input the original query then have the LLM generate Google searches with chain of thought. The initial results of this were promising.
+
+Then I also tried to diversify queries by following these steps:
+1. Reformulate the original query into 2 reformulated queries
+2. Google search 10 results for the two
+3. Generate 2 more formulated queries, but with access to the former queries as well as the results, also using chain of thought critique of the results
+
+The good:
+
+- It was able to decide things like "less results from X and Y" or "go further back in time"
+
+The bad:
+
+- It tended to lose focus on the company, partly because the query is longer and partly because the company isn't in quotes
+
+I think this approach has some potential but I may need to have more specific prompts for each type of query with few-shot examples to show it to add quotes, minus signs to remove certain types of results, etc.
 
 ## Company "About" page
 
