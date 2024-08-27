@@ -5,7 +5,12 @@ def heap_pair(doc: str) -> tuple:
     return (len(doc), doc)
 
 def pack_documents(documents: List[str], max_chars: int, sep="\n\n") -> List[str]:
-    """Pack documents into chunks of at most `max_chars` characters, unless there are some already over the limit"""
+    """
+    Pack documents into chunks of at most `max_chars` characters, unless there are some already over the limit
+    
+    This bin-packing algorithm will tend to make the bins all about the same size, but will tend to stop with many
+    of the bins about max_chars/2 in size. It needs improvement
+    """
 
     heap = [heap_pair(doc) for doc in documents]
     heapq.heapify(heap)
