@@ -1,4 +1,4 @@
-# [TFS Wealth Management](https://wealthtfs.com/www/team.htm) Citation: [1]
+# [TFS Wealth Management](https://wealthtfs.com/www/team.htm)
 Tom Hyland was raised in Hazlet, NJ, graduating from Raritan High School with High Honors in 1982. Tom attended Rutgers University in New Brunswick, NJ on a full academic scholarship, graduating Cum Laude in May 1986 with a Bachelor of Arts Degree in Communication and English.
 
 Upon graduation, Tom began his 26 year career in financial services as a Senior Fixed Income Specialist with McLaughlin, Piven, Vogel, Inc. on Wall Street, later rising to the position of Vice President. Tom left the firm in early 1987 to launch his own independent Wealth Management practice, which he has maintained for a select number of clients for the past 25 years, focusing on retirement planning for the emerging affluent.
@@ -47,14 +47,14 @@ As a Private Wealth Advisor of the TFS Wealth Management Team, Dan can help you 
 
 Dan joined Tomorrow’s Financial Services Inc. in 2018. Prior to joining TFS, his experience includes the positions of Regional Sales Manager Merrill Lynch, Regional VP for the Retirement Group at Merrill Lynch, Product wholesaler for Merrill Lynch, and started his career at Franklin Templeton Distributors as a mutual fund wholesaler. Dan graduated from Florida State State University with a B.S. Degree in Finance in 1997 and holds certificates from the College for Financial Planning that include Charted Retirement Plan Consultant and Chartered Mutual Fund Consultant. He Currently resides in Manasquan, New Jersey with his wife Adelle. When he’s not helping clients, Dan has his USCG Captains license and runs charters for clients. He enjoys spending time with family, boating and fishing, watching and playing sports, and volunteering within the community.
 
-# [TFS Wealth Management](https://wealthtfs.com/www/Daniel-Csontos.e1122407.htm) Citation: [5]
+# [TFS Wealth Management](https://wealthtfs.com/www/Daniel-Csontos.e1122407.htm)
 About Me
 
 As a Private Wealth Advisor of the TFS Wealth Management Team, Dan can help you define your current situation, look at your future goals, and outline a program to help you achieve them. He understands that each person’s position is unique. Together with clients’ valued input, he feels they can develop a strategy that is based on clients’ needs and objectives. This is just part of the relationship; the other part is making sure his clients are comfortable with and fully understand each decision that is implemented on their behalf. On behalf of our firm, Dominick will bring a wealth of experience, knowledge, and resources to his valued clients. He is registered in NJ and Fl.
 
 Dan joined Tomorrow’s Financial Services Inc. in 2018. Prior to joining TFS, his experience includes the positions of Regional Sales Manager Merrill Lynch, Regional VP for the Retirement Group at Merrill Lynch, Product wholesaler for Merrill Lynch, and started his career at Franklin Templeton Distributors as a mutual fund wholesaler. Dan graduated from Florida State State University with a B.S. Degree in Finance in 1997 and holds certificates from the College for Financial Planning that include Charted Retirement Plan Consultant and Chartered Mutual Fund Consultant. He Currently resides in Manasquan, New Jersey with his wife Adelle. When he’s not helping clients, Dan has his USCG Captains license and runs charters for clients. He enjoys spending time with family, boating and fishing, watching and playing sports, and volunteering within the community.
 
-# [TFS Wealth Management](https://wealthtfs.com/www/David-Vezina.e844253.htm) Citation: [8]
+# [TFS Wealth Management](https://wealthtfs.com/www/David-Vezina.e844253.htm)
 About Me
 
 David originally started his career here at TFS Wealth Management in 1997 whereas he won the prestigious TFS Rookie of the Year Award in his first year in the business and went on to not only have tremendous success at the firm as an advisor but also as a trainer and manager of others. After this successful stint with TFS, David went on to explore other opportunities in and out of the industry. During that time away David discovered his passion within the field of medicare planning. This area of Medicare planning gave him the opportunity to offer the unique but valuable advice and services that focuses on the needs within the senior marketplace. David carved a unique niche for himself in that area and has brought those talents to us here at TFS where he will be operating in the capacity of our Medicare Planning Specialist.
@@ -63,7 +63,7 @@ Realizing the growing need for these services in the complex and ever-changing w
 
 David lives in Toms River with his wife Christina and 2 daughters, Shea and Charlotte. When not working or spending time with his family, David could be found on the beach fishing. David also volunteers his time to many local senior centers educating on Medicare and Medicare related issues.
 
-# [TFS Wealth Management](https://wealthtfs.com/www/Eric-Edwards.e843920.htm) Citation: [11]
+# [TFS Wealth Management](https://wealthtfs.com/www/Eric-Edwards.e843920.htm)
 About Me
 
 Eric Edwards is a graduate of Monmouth University, where he earned a Bachelor of Science Degree in Bio-Chemistry. After a brief stint in his field of study, Eric joined Prudential Financial and rose to the position of Sales Manager before joining Tomorrow's Financial Services, Inc. in 1996. Eric has enjoyed a prolific career as Senior Private Wealth Advisor for TFS Wealth Management. He now holds the position of Executive Vice President for Tomorrow's Financial Services, Inc. In addition to managing his boutique Wealth Management practice, Eric is responsible for management, training, supervision, branch development, and broad oversight of all TFS affiliated companies.
@@ -74,7 +74,7 @@ Eric holds the FINRA Series 6, 62, 63, 65, 24, & 79 registrations. He holds Insu
 
 A resident of the Jersey Shore for more than 38 years, Eric is married to his wife Gail for the past 33 years. The father of two children and grandfather to one, Eric enjoys spending time with family, exercising, boating, traveling and dining out. He also dedicates his resources to support Fulfill for Monmouth and Ocean counties, the International Multiple Myeloma Foundation and various community youth organizations.
 
-# [TFS Wealth Management](https://wealthtfs.com/www/Robert-Bandura.e1122408.htm) Citation: [12]
+# [TFS Wealth Management](https://wealthtfs.com/www/Robert-Bandura.e1122408.htm)
 About Me
 
 Robert is a Wealth Management Advisor with the TFS Wealth Management Team. His passion is to help new as well as established families and businesses plan for their future goals, then implement strategies to ensure they are successful no matter what life brings them. This is accomplished with the help of his team of professionals and consistently monitoring, refining, and revising his client's plans when needed. Robert graduated from Towson University in 2013 and is a proud Husband to his wife Kaity and Father to their daughter Reagan.
@@ -105,7 +105,7 @@ Firm NMLS ID# 51460 • Personal NMLS ID# 272546
 
 Insurance Products offered through TFS Insurance Agency, Inc. D.B.A. TFS Insurance Brokerage
 
-# [TFS Wealth Management](https://wealthtfs.com/www/Client-Experience.4.htm) Citation: [14]
+# [TFS Wealth Management](https://wealthtfs.com/www/Client-Experience.4.htm)
 Client Experience
 
 THE TFS CLIENT EXPERIENCE
@@ -136,7 +136,7 @@ Ongoing attention to milestones and goals and a game plan for accomplishing thos
 
 We feel the accomplishment of your goals is the greatest evidence that you have made smart choices about your money. It allows you to focus on the things in life that are really important to you. That is the mission of Private Wealth Management.
 
-# [TFS Wealth Management](https://wealthtfs.com/www/Gregory-Calhoun.e843926.htm) Citation: [19]
+# [TFS Wealth Management](https://wealthtfs.com/www/Gregory-Calhoun.e843926.htm)
 About Me
 
 Gregory Calhoun is a Wealth Management Associate with TFS Wealth Management. He is a graduate of Rider University with a Bachelor Degree in Marketing Education. After a successful teaching career, Greg decided to switch careers towards his passion in Financial Services. Since then, he has been helping his clients maximize their wealth potential. Greg’s main focus is in working with retirees and business owners.
@@ -169,7 +169,7 @@ Firm NMLS ID# 51460 • Personal NMLS ID# 272546
 
 Insurance Products offered through TFS Insurance Agency, Inc. D.B.A. TFS Insurance Brokerage
 
-# [TFS Wealth Management](https://wealthtfs.com/www/Join-Our-Firm.10.htm) Citation: [20]
+# [TFS Wealth Management](https://wealthtfs.com/www/Join-Our-Firm.10.htm)
 ELEVATE YOUR CAREER.
 
 SEE WHERE TOMORROW TAKES YOU.
@@ -268,14 +268,14 @@ We are proud to help you meet clients’ complex investment needs through our Co
 
 Focus your time on gathering assets and managing key client relationships while enjoying a steady stream of fee revenue.
 
-# [TFS Wealth Management](https://wealthtfs.com/www/Ken-Ashka-CFP.e843925.htm) Citation: [22]
+# [TFS Wealth Management](https://wealthtfs.com/www/Ken-Ashka-CFP.e843925.htm)
 About Me
 
 Ken leads a unique team of professionals in and near the financial services industry to help create, implement, and monitor comprehensive financial plans and strategies. He feels strongly about the team approach to life and especially the team approach in regards to managing finances and making financial decisions. Critical members of his team include insurance professionals, investment professionals, business services providers, various attorneys, and tax professionals. Ken works diligently with his team to preserve and prepare his clients for a future filled with prosperity.
 
 Reach out to Ken today at (732) 852-5377 or start the journey below. He'll be happy to help you with any questions or concerns.
 
-# [TFS Wealth Management](https://wealthtfs.com/www/Products-and-Services.3.htm) Citation: [23]
+# [TFS Wealth Management](https://wealthtfs.com/www/Products-and-Services.3.htm)
 Why TFS? What Make Us Special!
 
 Personalized, Best in Class Service
@@ -392,7 +392,7 @@ Estate and Elder Care Planning
 
 Education and College Financial Aid Planning
 
-# [TFS Wealth Management](https://wealthtfs.com/www/Special-Concierge-Service.5.htm) Citation: [24]
+# [TFS Wealth Management](https://wealthtfs.com/www/Special-Concierge-Service.5.htm)
 Special Concierge Service
 
 TFS has assembled a team of professional resources available to serve a wide array of financial and "quality of life" needs. Our network of trusted professionals is available as a resource to our clients when requested. Our Wealth Management Team includes CFPs, CPAs, Estate Attorneys, as well as Insurance and Investment Professionals who help us implement Comprehensive Wealth Management Plans for our clients.
@@ -403,7 +403,7 @@ To be invited onto our Concierge Services Team, these professionals must be trus
 
 Should you need anything... anything at all that would free you to enjoy a higher quality of life... give us a call. If we don't have a trusted professional on hand... give us a little time, and we can usually find one. From our point of view... it's all about you!
 
-# [TFS Wealth Management](https://wealthtfs.com/www/TFS-Advisory-Services.15.htm) Citation: [25]
+# [TFS Wealth Management](https://wealthtfs.com/www/TFS-Advisory-Services.15.htm)
 TFS Advisory Services is an SEC-Registered Investment Advisor established in 1997 to offer unique Asset Allocation Strategies to our clients. We offer goal-oriented financial planning and consulting, asset management, daily account supervision and portfolio management services to individuals, corporations, pensions, retirement plans, estates, trusts, charitable organizations, and other institutional clients.
 
 We realize that you have complex financial needs. The TFS Managed Account Solutions Suite is our Comprehensive Investment Advisory Program. This open-architecture platform equips our advisors with the tools they need to manage your portfolios to provide the optimum return for your unique time horizon and risk tolerance. Our advisors can research thousands of money managers and investment solutions, generate a custom Integrated Asset Allocation and Financial Planning Proposal, while focusing their time on managing key client relationships.
@@ -436,19 +436,19 @@ Insurance Products offered through TFS Insurance Agency, Inc. D.B.A. TFS Insuran
 
 Visit us on social media
 
-# [TFS Wealth Management](https://wealthtfs.com/www/TFS-Insurance-Brokerage.17.htm) Citation: [26]
+# [TFS Wealth Management](https://wealthtfs.com/www/TFS-Insurance-Brokerage.17.htm)
 Insurance is an integral part of most wealth management strategies. At TFS, we feel that you should be free to choose the offerings that BEST suit your needs and goals — rather than having to push proprietary products or meet sales quotas. Founded in 1968, TFS Insurance Brokerage is a nationally-recognized Master General Agent and Independent Marketing Organization which represents more than 50 carriers for the distribution of Life Insurance, Annuities, Long Term Care Insurance, Disability Insurance, Health Insurance, Employee Benefits, Wellness Programs, and Medicare Supplements. We empower our advisors and offer the tools they need to help you find the options that fit your unique situations.
 
 Our high volume has earned our firm the top contractual arrangements with premier insurance carriers in each of these fields. TFS will deliver comprehensive coverage to our clients at a reasonable cost, while offering our associates the highest level of support and service available in the industry.
 
 TFS Insurance Brokerage – Available Services:
 
-# [TFS Wealth Management](https://wealthtfs.com/www/Lisa-Avilio-Meyer.e843936.htm) Citation: [27]
+# [TFS Wealth Management](https://wealthtfs.com/www/Lisa-Avilio-Meyer.e843936.htm)
 About Me
 
 Lisa started with Tomorrow’s Financial Services, Inc. in 1993 with a departure in 2000 to have her now eight year old son, Evan. In 2005, Lisa rejoined the TFS companies, filling in where needed. Currently she resides in her old chair as an Executive Administrative Assistant, serving as a Client Service Liaison for Thomas Hyland. She also assists the Marketing Team in overseeing and tracking marketing campaigns, print advertising and direct mail marketing. Lisa also manages the maintenance and tracking of the TFS recruitment database as well as executive New Account updates. Lisa lives in Brick Township with her husband of 13 years, Fred, and their son, Evan. She spends her free time enjoying her two guys or, in her rare moments alone, she is doing what she loves best reading or writing in her journal.
 
-# [TFS Wealth Management](https://wealthtfs.com/www/About-TFS-Wealth-Management.1.htm) Citation: [29]
+# [TFS Wealth Management](https://wealthtfs.com/www/About-TFS-Wealth-Management.1.htm)
 Small Firm Attention...Small Firm Feel
 
 Unlimited Resources at your fingertips
