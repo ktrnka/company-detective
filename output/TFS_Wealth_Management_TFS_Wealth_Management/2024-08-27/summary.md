@@ -1,49 +1,62 @@
 # Summary of TFS Wealth Management
 
-## Overview
-TFS Wealth Management, part of Tomorrow's Financial Services, Inc., is a full-service wealth management firm that provides a range of financial services including investment management, insurance, tax planning, and estate planning. The firm is known for its personalized approach, focusing on the unique needs of each client, particularly successful professionals and families entering retirement.
+TFS Wealth Management is a comprehensive financial services firm that offers a wide range of wealth management solutions tailored to meet the unique needs of its clients. The firm is led by experienced professionals who have extensive backgrounds in finance, investment, and client service.
 
 ## Key Personnel
-- **Tom Hyland**: Founder and President, with over 26 years in financial services. He has developed multiple subsidiaries under TFS, including TFS Securities, TFS Mortgage Corporation, and TFS Advisory Services. He has managed over 100,000 clients and trained over 500 financial advisors (TFS Wealth Management, n.d.).
-  
-- **Eric Edwards**: Executive Vice President and Senior Private Wealth Advisor, with nearly 30 years of experience. He focuses on helping clients achieve their financial goals and has been recognized as a Five Star Wealth Manager (TFS Wealth Management, n.d.).
 
-- **Dominick**: Vice President and Senior Private Wealth Advisor, who emphasizes a personalized strategy for each client based on their unique financial situation (TFS Wealth Management, n.d.).
+1. **Tom Hyland**: Founder and President of Tomorrow's Financial Services, Inc. (TFS). He has over 26 years of experience in financial services, focusing on retirement planning for the emerging affluent. Tom has been instrumental in the growth of TFS, which now manages over 100,000 clients through 300 independent advisors nationwide. He holds multiple FINRA registrations and has been recognized in various "Who's Who" publications [1].
 
-- **Bill Roberts**: Vice President and Wealth Advisor, with a focus on helping clients make informed decisions about their assets (TFS Wealth Management, n.d.).
+2. **Eric Edwards**: Executive Vice President and Senior Private Wealth Advisor at TFS. With nearly 30 years in the industry, Eric focuses on helping clients achieve their financial goals through personalized strategies. He has received the Five Star Wealth Manager award and authored a book on retirement investing [11].
 
-- **David Vezina**: Medicare Planning Specialist, who has a unique niche in advising seniors on Medicare-related issues (TFS Wealth Management, n.d.).
+3. **Dominick**: Vice President and Senior Private Wealth Advisor who emphasizes a personalized approach to financial planning. He has been with TFS since 1998 and has a background in sales management [1].
 
-- **Dan Csontos**: Private Wealth Advisor with a background in financial services, focusing on personalized client strategies (TFS Wealth Management, n.d.).
+4. **Bill Roberts**: Vice President and Wealth Advisor with 20 years at TFS, focusing on helping clients make informed financial decisions [1].
 
-- **Gregory Calhoun**: Wealth Management Associate, specializing in working with retirees and business owners (TFS Wealth Management, n.d.).
+5. **David**: Medicare Planning Specialist who has a unique niche in advising seniors on healthcare needs. He has been with TFS since 1997 and is actively involved in community education [8].
 
-## Client Experience
-TFS offers a comprehensive Private Wealth Management service that includes:
-- An annually updated Financial Road Map.
-- Implementation plans summarizing action items.
-- Periodic progress reports and estate plan reviews.
-- Assistance with cash management and insurance reviews (TFS Wealth Management, n.d.).
+6. **Dan**: Joined TFS in 2018, bringing experience from Merrill Lynch. He focuses on developing tailored strategies for clients [5].
+
+7. **Gregory Calhoun**: Wealth Management Associate with a background in education, now helping clients maximize their wealth potential [19].
+
+8. **Ken**: Leads a team of professionals to create and implement comprehensive financial plans [22].
 
 ## Services Offered
-- **Investment Products**: Stocks, bonds, mutual funds, ETFs, and alternative investments.
-- **Insurance Products**: Life, health, long-term care, and disability insurance.
-- **Tax Planning**: Annual tax return preparation and business tax consultations.
-- **Wealth Management**: Comprehensive financial planning, retirement income planning, and estate planning (TFS Wealth Management, n.d.).
 
-## Special Concierge Service
-TFS provides a network of professionals to enhance clients' quality of life, including legal experts, health professionals, and event planners (TFS Wealth Management, n.d.).
+TFS Wealth Management provides a variety of services, including:
 
-## TFS Advisory Services
-An SEC-Registered Investment Advisor that offers asset allocation strategies, portfolio management, and financial planning services tailored to individual client needs (TFS Wealth Management, n.d.).
+- **Private Wealth Management**: Tailored financial planning for successful professionals, focusing on values and goals [14].
+- **Investment Advisory Services**: Comprehensive asset management and portfolio management services [25].
+- **Insurance Solutions**: A wide range of insurance products, including life, health, and long-term care insurance [26].
+- **Tax Planning and Preparation**: Services to minimize tax liabilities and ensure compliance [23].
+- **Concierge Services**: A network of professionals to enhance clients' quality of life [24].
+
+## Client Experience
+
+The TFS client experience is characterized by personalized service, ongoing financial advice, and a commitment to achieving clients' financial goals. This includes regular updates, progress reports, and comprehensive reviews of financial and estate plans [14].
 
 ## Career Opportunities
-TFS promotes a supportive environment for financial professionals, offering independence, competitive compensation, and resources to help advisors grow their practices (TFS Wealth Management, n.d.).
+
+TFS offers a supportive environment for financial professionals, emphasizing independence, competitive compensation, and access to sophisticated resources. The firm is committed to helping advisors grow their practices while maintaining control over their client relationships [20].
 
 ## Conclusion
-TFS Wealth Management is dedicated to providing personalized financial services that empower clients to achieve their financial goals while maintaining a high quality of life. The firm’s experienced team and comprehensive service offerings position it as a leader in the wealth management industry.
+
+TFS Wealth Management stands out for its personalized approach to wealth management, extensive range of services, and a team of experienced professionals dedicated to helping clients achieve their financial goals.
 
 ---
 
-### Citations
-- TFS Wealth Management. (n.d.). Retrieved from [TFS Wealth Management](https://www.wealthtfs.com)
+## Citations
+
+1. [TFS Wealth Management - Team](https://wealthtfs.com/www/team.htm)
+2. [TFS Wealth Management - Daniel Csontos](https://wealthtfs.com/www/Daniel-Csontos.e1122407.htm)
+3. [TFS Wealth Management - David Vezina](https://wealthtfs.com/www/David-Vezina.e844253.htm)
+4. [TFS Wealth Management - Eric Edwards](https://wealthtfs.com/www/Eric-Edwards.e843920.htm)
+5. [TFS Wealth Management - Robert Bandura](https://wealthtfs.com/www/Robert-Bandura.e1122408.htm)
+6. [TFS Wealth Management - Client Experience](https://wealthtfs.com/www/Client-Experience.4.htm)
+7. [TFS Wealth Management - Gregory Calhoun](https://wealthtfs.com/www/Gregory-Calhoun.e843926.htm)
+8. [TFS Wealth Management - Join Our Firm](https://wealthtfs.com/www/Join-Our-Firm.10.htm)
+9. [TFS Wealth Management - About TFS Wealth Management](https://wealthtfs.com/www/About-TFS-Wealth-Management.1.htm)
+10. [TFS Wealth Management - Products and Services](https://wealthtfs.com/www/Products-and-Services.3.htm)
+11. [TFS Wealth Management - Special Concierge Service](https://wealthtfs.com/www/Special-Concierge-Service.5.htm)
+12. [TFS Wealth Management - TFS Advisory Services](https://wealthtfs.com/www/TFS-Advisory-Services.15.htm)
+13. [TFS Wealth Management - TFS Insurance Brokerage](https://wealthtfs.com/www/TFS-Insurance-Brokerage.17.htm)
+14. [TFS Wealth Management - Lisa Avilio Meyer](https://wealthtfs.com/www/Lisa-Avilio-Meyer.e843936.htm)
