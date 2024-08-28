@@ -1,5 +1,20 @@
 # Experiments done 8/27
 
+## Generic summary of the company webpage
+
+I just did a site search for 20-30 pages, scraped them all, then used a very minimal prompt for summarization. The results were very useful.
+
+Good:
+
+- It's how the company describes themselves
+- It works even for companies with very little data in the news (like TFS)
+- Companies often have "meet the people" types of info on them
+
+Bad:
+
+- It's somewhat biased
+- I was lazy about citations so that would need to be improved
+
 ## Query reformulation
 
 Based on some writeups of Perplexity.ai I tried out search formulation. I'd input the original query then have the LLM generate Google searches with chain of thought. The initial results of this were promising.
