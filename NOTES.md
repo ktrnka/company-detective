@@ -1,4 +1,15 @@
-# Experiments done 8/27
+# Experiments done 8/29
+
+## Revisiting Indeed job dsecriptions
+
+I've been mulling over a major refactor that would use google searches to build up a list of URLs, then have URLs bucketed and processed by individual modules. The app store pipelines are implemented this way already, and it felt like a clean-ish way to dynamically integrate those data sources.
+
+I took a look for a few companies and found:
+
+- The Indeed job page was not present in any results, though in 3/4 cases there was something that likely linked to it.
+- The Google API is returning drastically different results than regular Google search, to the point that it often does not return a company's page AT ALL
+
+In theory I could call `indeed.scrape_search`, pull those results, filter them to the company, then scrape. But there isn't a good way to search by company unless you have the company ID already.
 
 ## Generic summary of the company webpage
 
@@ -13,7 +24,11 @@ Good:
 Bad:
 
 - It's somewhat biased
-- I was lazy about citations so that would need to be improved
+- The citations and bibliography aren't always useful.
+
+I also integrated it into the overall pipeline and it's likely an improvement for companies like TFS which have very ilttle third-party info, but it seems to be a degradation for other companies because it seems to compete with other information for space in the output.
+
+My takeaway is that I really like the company webpage summary by itself, but I'm unsatisfied with how it's integrated into the overall summary.
 
 ## Query reformulation
 

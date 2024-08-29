@@ -1,5 +1,5 @@
 from functools import lru_cache
-from src.google_search import search, SearchResult
+from google_search import search, SearchResult
 from core import Seed, log_summary_metrics
 import scrapfly_scrapers.indeed
 from .models import JobDetails, JobOverview
@@ -43,28 +43,27 @@ _prompt = ChatPromptTemplate.from_messages(
             "system",
             """
 You're an expert in gleaning information from corporate job descriptions, and you'll be provided with several open job descriptions from a single company in markdown format. 
-You'll also be provided with a recent job title of a prospective candidate.
 
-Review all job descriptions and summarize key information and insights that may be relevant for this candidate.
-Examples of information that would be useful include:
-- For highly relevant roles, a summary of what's special or unique about the roles at this company compared to other companies working in the same field
-- If there are different seniority levels of relevant roles, a summary of general expectations for each level
-- In a software engineering role, a summary of technologies used or skills required separated by type (e.g, machine learning, data engineering, backend engineering, frontend engineering)
-- A summary of any unique benefits or perks offered by the company
-- A summary of the company's culture and values as reflected in the job descriptions
-- A summary of the company's growth and expansion plans as reflected in the job descriptions
+Use the following markdown structure to summarize information from the job descriptions:
 
-Format the output as a markdown document.
-When summarizing, reference the source of the information with a markdown link, as in ([Job Title](https://permalink)).
+# About the Company
 
-At the end of the document, include a list of the sources that were used to generate the summary as a list of markdown links.
+# Benefits
+
+# Culture and Values
+
+# Technologies by Role
+
+# Bibliography
+
+- [Job Title 1](https://permalink)
+...
             """,
         ),
         (
             "human",
             """
 Company: {company_name}
-Recent job title(s) of the candidate: {candidate_title}
 
 Job descriptions: 
 {text}
@@ -75,7 +74,7 @@ Job descriptions:
 
 
 def summarize(
-    target: Seed, candidate_title: str, job_details: List[JobDetails]
+    target: Seed, job_details: List[JobDetails]
 ) -> AIMessage:
     """Summarize a list of job descriptions"""
     unified_markdown = "\n\n".join(job_to_markdown(job) for job in job_details)
@@ -87,7 +86,6 @@ def summarize(
         {
             "text": unified_markdown,
             "company_name": target.company,
-            "candidate_title": candidate_title,
         }
     )
 
@@ -96,7 +94,7 @@ def summarize(
     return result
 
 
-async def run(target: Seed, candidate_title: str) -> AIMessage:
+async def run(target: Seed) -> AIMessage:
     company_result = find_indeed_jobs(target)
 
     # get the job overviews from the company page
@@ -108,4 +106,4 @@ async def run(target: Seed, candidate_title: str) -> AIMessage:
     raw_job_details = await scrapfly_scrapers.indeed.scrape_jobs(job_keys)
     job_details = [JobDetails(**job) for job in raw_job_details]
 
-    return summarize(target, candidate_title, job_details)
+    return summarize(target, job_details)
