@@ -106,6 +106,8 @@ def summarize(
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     unified_markdown = results_to_markdown(search_results)
 
+    assert len(unified_markdown) > 0, "No search results: Maybe there's a typo in the company or product name?"
+
     url_shortener = URLShortener()
 
     runnable = _prompt | llm

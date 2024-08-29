@@ -18,6 +18,7 @@ from reddit import run as process_reddit, RedditSummary
 from glassdoor import run as process_glassdoor
 from news import run as process_news
 from crunchbase import run as process_crunchbase
+import company_webpage
 
 from glassdoor import GlassdoorResult
 import general_search
@@ -94,6 +95,14 @@ An ideal section should at least incorporate the answers to the following questi
 - How are the company's products distributed or sold to users?
 - How has the company changed over time?
 
+## According to {company_name}
+
+This subsection should summarize the company but only using information from the company's own website or official statements.
+
+## According to third-party sources
+
+This subsection should summarize the company in accordance with above questions, but NOT using information from the company's own website.
+
 # Key personnel
 
 Include the names and roles of any key personnel at the company. If possible, provide a brief summary of their background and experience as well as any sentiments expressed about them in the sources.
@@ -152,6 +161,9 @@ Citations should follow the format [(Author or Title, Source, Date)](url).
 Company: {company_name}
 Product: {product_name}
 
+Summary of {company_domain}:
+{company_webpage_text}
+
 Reddit sources: 
 {reddit_text}
 
@@ -189,6 +201,8 @@ async def run(
     """
 
     dynamic_contexts = {}
+
+    webpage_summary = company_webpage.run(target.domain)
 
     general_search_results = general_search.search_web(target)
     general_search_summary = general_search.summarize(
@@ -240,6 +254,7 @@ async def run(
 
     unshortened_context = "\n\n".join(
         [
+            webpage_summary.summary_markdown,
             reddit_result.summary.output_text,
             glassdoor_result.summary_markdown,
             news_result.summary_markdown,
@@ -258,6 +273,8 @@ async def run(
         {
             "company_name": target.company,
             "product_name": target.product,
+            "company_domain": target.domain,
+            "company_webpage_text": url_shortener.shorten_markdown(webpage_summary.summary_markdown),
             "reddit_text": url_shortener.shorten_markdown(
                 reddit_result.summary.output_text
             ),

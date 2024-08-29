@@ -46,6 +46,8 @@ def run(website: str, num_pages=30) -> WebpageResult:
     search_results = list(search(f"site:{website}", num=num_pages))
 
     responses = [request_article(result.link) for result in search_results]
+    responses = [response for response in responses if response and response.ok]
+
     articles = [response_to_article(response) for response in responses]
     article_markdowns = [article_to_markdown(article) for article in articles]
 
@@ -60,7 +62,7 @@ def run(website: str, num_pages=30) -> WebpageResult:
         }
     )
 
-    log_summary_metrics(result.content, joined_markdowns)
+    log_summary_metrics(result.content, joined_markdowns, extractive=False)
 
     return WebpageResult(
         summary_markdown=result.content,
