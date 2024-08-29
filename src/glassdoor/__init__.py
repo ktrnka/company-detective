@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import timedelta
 from typing import List, Optional
 from loguru import logger
 import numpy as np
@@ -8,7 +9,7 @@ from scipy import stats
 import scrapfly_scrapers.glassdoor
 from scrapfly_scrapers.glassdoor import scrape_reviews, scrape_jobs
 
-from core import Seed
+from core import Seed, cache
 from google_search import SearchResult
 
 
@@ -77,9 +78,12 @@ async def run(
         jobs = [GlassdoorJob(**result) for result in job_results]
         jobs = sorted(jobs, key=lambda job: job.jobTitleText)
 
-    response = await scrape_reviews(review_page.link, max_pages=max_review_pages)
+    response = cache.get(review_page.link)
+    if not response:
+        response = await scrape_reviews(review_page.link, max_pages=max_review_pages)
+        cache.set(review_page.link, response, expire=timedelta(days=10).total_seconds())
 
-    logger.debug("Glassdoor response: {}", response)
+        logger.debug("Glassdoor response: {}", response)
 
     reviews = GlassdoorReview.parse_reviews(company, response)
 

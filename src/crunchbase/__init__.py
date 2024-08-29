@@ -1,16 +1,14 @@
 from google_search import filter_title_relevance, filter_url, search
-from core import Seed
+from core import Seed, cache
 import scrapfly_scrapers.crunchbase
 import jinja2
-from datetime import datetime
+from datetime import datetime, timedelta
 from .models import *
 
 from loguru import logger
 
 scrapfly_scrapers.crunchbase.BASE_CONFIG["cache"] = True
 templates = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"))
-
-_response_cache = {}
 
 
 def find_people_url(target: Seed) -> Optional[str]:
@@ -40,13 +38,13 @@ async def run(target: Seed) -> Optional[str]:
     if not url:
         return None
 
-    # For whatever reason, Scrapfly doesn't cache all the time
-    # TODO: Replace this with a sqlite cache
-    if url not in _response_cache:
-        _response_cache[url] = await scrapfly_scrapers.crunchbase.scrape_company(url)
+    crunchbase_raw_response = cache.get(url)
+    if not crunchbase_raw_response:
+        crunchbase_raw_response = await scrapfly_scrapers.crunchbase.scrape_company(url)
+        cache.set(url, crunchbase_raw_response, expire=timedelta(days=14).total_seconds())
 
-    crunchbase_raw_response = _response_cache[url]
-    logger.debug("Crunchbase response: {}", crunchbase_raw_response)
+        logger.debug("Updating cache with Crunchbase response: {}", crunchbase_raw_response)
+
     organization, employees = parse(crunchbase_raw_response)
 
     return templates.get_template("crunchbase.md").render(
