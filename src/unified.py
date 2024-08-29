@@ -6,7 +6,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 
 from core import (
-    CompanyProduct,
+    Seed,
     log_summary_metrics,
     eval_filename,
     nest_markdown,
@@ -177,7 +177,7 @@ def contexts_to_markdown(contexts: Mapping[str, str]) -> str:
     return "\n\n".join([f"{key}\n{value}" for key, value in contexts.items()])
 
 async def run(
-    target: CompanyProduct,
+    target: Seed,
     num_reddit_threads=2,
     max_glassdoor_review_pages=1,
     max_glassdoor_job_pages=1,

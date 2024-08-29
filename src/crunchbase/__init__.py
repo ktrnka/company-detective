@@ -1,5 +1,5 @@
 from google_search import filter_title_relevance, filter_url, search
-from core import CompanyProduct
+from core import Seed
 import scrapfly_scrapers.crunchbase
 import jinja2
 from datetime import datetime
@@ -13,7 +13,7 @@ templates = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"))
 _response_cache = {}
 
 
-def find_people_url(target: CompanyProduct) -> Optional[str]:
+def find_people_url(target: Seed) -> Optional[str]:
     """Find the Crunchbase people page for a company using Google search"""
 
     results_iter = search(f'site:www.crunchbase.com/organization "{target.company}"', num=10)
@@ -28,7 +28,7 @@ def find_people_url(target: CompanyProduct) -> Optional[str]:
     return f"{results[0].link}/people"
 
 
-async def run(target: CompanyProduct) -> Optional[str]:
+async def run(target: Seed) -> Optional[str]:
     """
     Run the Crunchbase pipeline:
     1. Find the Crunchbase people page for the company

@@ -41,6 +41,8 @@ class WebpageResult:
 
 
 def run(website: str, num_pages=30) -> WebpageResult:
+    assert website, "Website must be non-empty"
+
     search_results = list(search(f"site:{website}", num=num_pages))
 
     responses = [request_article(result.link) for result in search_results]

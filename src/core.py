@@ -13,13 +13,21 @@ import urllib.parse
 from loguru import logger
 
 
-class CompanyProduct(NamedTuple):
+class Seed(NamedTuple):
     company: str
     product: str
+    domain: str
 
     @classmethod
     def same(cls, name: str):
         return cls(company=name, product=name)
+    
+    @classmethod
+    def init(cls, company: str, product: str = None, domain: str = None):
+        """Helper to initialize with optional fields"""
+        if not product:
+            product = company
+        return cls(company, product, domain)
 
     def as_path(self) -> str:
         return re.sub(r"[^a-zA-Z0-9]", "_", f"{self.company} {self.product}")
@@ -45,7 +53,7 @@ def get_project_dir(relative_path: str, create_if_needed=True) -> str:
     return project_dir
 
 
-def make_experiment_dir(target: CompanyProduct) -> str:
+def make_experiment_dir(target: Seed) -> str:
     folder_name = re.sub(r"[^a-zA-Z0-9]", "_", f"{target.company} {target.product}")
     timestamp = datetime.now().strftime("%Y-%m-%d")
 
@@ -54,7 +62,7 @@ def make_experiment_dir(target: CompanyProduct) -> str:
     return get_project_dir(folder_path)
 
 
-def eval_filename(target: CompanyProduct, extension="html") -> str:
+def eval_filename(target: Seed, extension="html") -> str:
     folder_path = get_project_dir(f"output/{target.as_path_v2()}")
 
     # Create the filename using the current timestamp

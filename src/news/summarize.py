@@ -3,7 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages.ai import AIMessage
 from langchain_openai import ChatOpenAI
 
-from core import CompanyProduct, URLShortener, log_summary_metrics
+from core import Seed, URLShortener, log_summary_metrics
 
 
 _prompt = ChatPromptTemplate.from_messages(
@@ -73,7 +73,7 @@ COMPREHENSIVE ANALYST REPORT, MARKDOWN FORMAT:
 )
 
 
-def summarize(target: CompanyProduct, article_markdowns: List[str]) -> AIMessage:
+def summarize(target: Seed, article_markdowns: List[str]) -> AIMessage:
     """Summarize a list of news articles"""
     unified_markdown = "\n\n".join(article for article in article_markdowns)
 

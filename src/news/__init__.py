@@ -1,6 +1,6 @@
 from typing import NamedTuple, List
 
-from core import CompanyProduct
+from core import Seed
 from google_search import SearchResult
 
 import news.search
@@ -9,7 +9,7 @@ import news.summarize
 
 class NewsSummary(NamedTuple):
     # input
-    target: CompanyProduct
+    target: Seed
 
     # intermediates
     search_results: List[SearchResult]
@@ -19,7 +19,7 @@ class NewsSummary(NamedTuple):
     summary_markdown: str
 
 
-def run(target: CompanyProduct, max_results=30) -> NewsSummary:
+def run(target: Seed, max_results=30) -> NewsSummary:
     """
     Run the News pipeline:
     1. Find news articles

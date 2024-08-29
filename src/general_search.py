@@ -1,5 +1,5 @@
 from typing import List
-from core import CompanyProduct, cleanse_markdown, URLShortener, log_summary_metrics
+from core import Seed, cleanse_markdown, URLShortener, log_summary_metrics
 from google_search import search, SearchResult
 from typing import List
 from langchain_core.prompts import ChatPromptTemplate
@@ -10,7 +10,7 @@ from langchain_openai import ChatOpenAI
 from typing import List
 
 
-def search_web(target: CompanyProduct) -> List[SearchResult]:
+def search_web(target: Seed) -> List[SearchResult]:
     # Search for the company
     search_results = list(search(f'"{target.company}"', num=100))
 
@@ -100,7 +100,7 @@ def results_to_markdown(search_results: List[SearchResult]) -> str:
 
 
 def summarize(
-    target: CompanyProduct,
+    target: Seed,
     search_results: List[SearchResult],
 ) -> AIMessage:
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)

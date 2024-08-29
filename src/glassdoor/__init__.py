@@ -8,7 +8,7 @@ from scipy import stats
 import scrapfly_scrapers.glassdoor
 from scrapfly_scrapers.glassdoor import scrape_reviews, scrape_jobs
 
-from core import CompanyProduct
+from core import Seed
 from google_search import SearchResult
 
 
@@ -23,7 +23,7 @@ scrapfly_scrapers.glassdoor.BASE_CONFIG["cache"] = True
 @dataclass
 class GlassdoorResult:
     # inputs
-    company: CompanyProduct
+    company: Seed
 
     # intermediate data
     review_page: SearchResult
@@ -43,12 +43,12 @@ class GlassdoorResult:
         return self.raw_reviews.get("allReviewsCount", 0)
     
     @classmethod
-    def empty_result(cls, company: CompanyProduct):
+    def empty_result(cls, company: Seed):
         return cls(company, None, {}, [], [], "")
 
 
 async def run(
-    target: CompanyProduct, max_review_pages=1, max_job_pages=0, url_override=None
+    target: Seed, max_review_pages=1, max_job_pages=0, url_override=None
 ) -> Optional[GlassdoorResult]:
 
     # NOTE: This is necessary in rare cases where the Google search results don't contain the overview page at all, like Pomelo Care

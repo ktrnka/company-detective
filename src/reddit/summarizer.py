@@ -9,7 +9,7 @@ from praw.models import Submission
 from pydantic import BaseModel
 from loguru import logger
 
-from core import CompanyProduct, URLShortener, log_summary_metrics
+from core import Seed, URLShortener, log_summary_metrics
 from .fetch import submission_to_markdown
 
 
@@ -98,7 +98,7 @@ combine_prompt_template = PromptTemplate(
 )
 
 
-def summarize(target: CompanyProduct, threads: List[Submission]) -> SummaryResult:
+def summarize(target: Seed, threads: List[Submission]) -> SummaryResult:
     """Summarize a list of Reddit threads"""
     thread_markdowns = [submission_to_markdown(thread) for thread in threads]
     url_shortener = URLShortener()

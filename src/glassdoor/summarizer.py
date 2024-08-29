@@ -5,7 +5,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages.ai import AIMessage
 
 
-from core import CompanyProduct, log_summary_metrics
+from core import Seed, log_summary_metrics
 from .models import GlassdoorReview
 
 templates = jinja2.Environment(
@@ -40,7 +40,7 @@ EMPLOYEE REVIEWS:
 )
 
 
-def summarize(target: CompanyProduct, reviews: List[GlassdoorReview]) -> AIMessage:
+def summarize(target: Seed, reviews: List[GlassdoorReview]) -> AIMessage:
     """Summarize a list of Glassdoor reviews"""
     combined_markdown = "\n\n".join(
         templates.get_template("glassdoor_review.md").render(review=review)

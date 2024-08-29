@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from loguru import logger
 from google_search import search
-from core import CompanyProduct, cache
+from core import Seed, cache
 import re
 from typing import Optional, List
 
@@ -12,7 +12,7 @@ from .util import synth_url
 
 URL_PATTERN = re.compile(r"https://apps.apple.com/us/app/[^/]+/id(\d+)")
 
-def find_app_store_page(target: CompanyProduct) -> str:
+def find_app_store_page(target: Seed) -> str:
     result = next(
         search(f'site:apps.apple.com "{target.company}" "{target.product}"', num=1)
     )

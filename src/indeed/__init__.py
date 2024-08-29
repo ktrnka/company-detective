@@ -1,6 +1,6 @@
 from functools import lru_cache
 from src.google_search import search, SearchResult
-from core import CompanyProduct, log_summary_metrics
+from core import Seed, log_summary_metrics
 import scrapfly_scrapers.indeed
 from .models import JobDetails, JobOverview
 from markdownify import markdownify as md
@@ -15,7 +15,7 @@ scrapfly_scrapers.indeed.BASE_CONFIG["cache"] = True
 
 
 @lru_cache
-def find_indeed_jobs(target: CompanyProduct) -> SearchResult:
+def find_indeed_jobs(target: Seed) -> SearchResult:
     # URL format https://www.indeed.com/cmp/Pomelo-Care/jobs
     results = list(search(f'site:www.indeed.com/cmp "{target.company}"', num=10))
     results = [
@@ -75,7 +75,7 @@ Job descriptions:
 
 
 def summarize(
-    target: CompanyProduct, candidate_title: str, job_details: List[JobDetails]
+    target: Seed, candidate_title: str, job_details: List[JobDetails]
 ) -> AIMessage:
     """Summarize a list of job descriptions"""
     unified_markdown = "\n\n".join(job_to_markdown(job) for job in job_details)
@@ -96,7 +96,7 @@ def summarize(
     return result
 
 
-async def run(target: CompanyProduct, candidate_title: str) -> AIMessage:
+async def run(target: Seed, candidate_title: str) -> AIMessage:
     company_result = find_indeed_jobs(target)
 
     # get the job overviews from the company page

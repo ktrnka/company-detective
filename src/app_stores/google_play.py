@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from loguru import logger
 from google_search import search
-from core import CompanyProduct, cache
+from core import Seed, cache
 from typing import List, Optional
 from urllib.parse import urlparse, parse_qs
 import google_play_scraper
@@ -18,7 +18,7 @@ from .util import synth_url
 
 URL_PATTERN = re.compile(r"https://play.google.com/store/apps/details.*")
 
-def find_google_play_page(target: CompanyProduct) -> str:
+def find_google_play_page(target: Seed) -> str:
     result = next(
         search(
             f'site:play.google.com/store/apps/ "{target.company}" "{target.product}"',

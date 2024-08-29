@@ -2,7 +2,7 @@ import reddit.summarizer
 import reddit.search
 import reddit.fetch
 
-from core import CompanyProduct
+from core import Seed
 from google_search import SearchResult
 
 from dataclasses import dataclass
@@ -21,7 +21,7 @@ class RedditSummary:
 
 
 def run(
-    target: CompanyProduct, num_threads: int = 2, min_comments: int = 2
+    target: Seed, num_threads: int = 2, min_comments: int = 2
 ) -> Optional[RedditSummary]:
     """
     Run the full Reddit pipeline:

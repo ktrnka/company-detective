@@ -4,18 +4,18 @@ import re
 from functools import lru_cache
 from typing import Iterable
 
-from core import CompanyProduct
+from core import Seed
 from google_search import search
 
 
 REDDIT_COMMENTS_URL_PATTERN = re.compile(r".*/comments/.+")
 
 
-def find_submission_urls(target: CompanyProduct, num_results=10) -> Iterable[str]:
+def find_submission_urls(target: Seed, num_results=10) -> Iterable[str]:
     return [result.link for result in find_submissions(target, num_results=num_results)]
 
 @lru_cache(1000)
-def find_submissions(target: CompanyProduct, num_results=10):
+def find_submissions(target: Seed, num_results=10):
     query = f'site:reddit.com "{target.company}""'
     if target.product != target.company:
         query += f' "{target.product}"'
@@ -29,6 +29,6 @@ def find_submissions(target: CompanyProduct, num_results=10):
 def test_search():
     """Test that we can issue a Google search against Reddit and get some results"""
     for url in find_submission_urls(
-        CompanyProduct("Singularity 6", "Palia"), num_results=10
+        Seed("Singularity 6", "Palia"), num_results=10
     ):
         print(url)

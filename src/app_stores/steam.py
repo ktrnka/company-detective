@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from loguru import logger
 import requests
 from google_search import search
-from core import CompanyProduct, cache
+from core import Seed, cache
 import re
 from typing import Iterable, List, Optional
 from pydantic import BaseModel
@@ -12,7 +12,7 @@ from collections import Counter
 
 from .util import synth_url
 
-def find_steam_page(target: CompanyProduct) -> str:
+def find_steam_page(target: Seed) -> str:
     """Find the Steam page for a company using Google search"""
     result = next(
         search(

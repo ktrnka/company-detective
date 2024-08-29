@@ -3,12 +3,12 @@ from functools import lru_cache
 from typing import Optional
 from loguru import logger
 
-from core import CompanyProduct
+from core import Seed
 from google_search import search, SearchResult
 
 
 @lru_cache(1000)
-def find_review(target: CompanyProduct) -> Optional[SearchResult]:
+def find_review(target: Seed) -> Optional[SearchResult]:
     """Find the Glassdoor review page for a company"""
     query = f'site:www.glassdoor.com/Reviews/ "{target.company}"'
 
@@ -27,7 +27,7 @@ def find_review(target: CompanyProduct) -> Optional[SearchResult]:
 
 
 
-def find_review_url(target: CompanyProduct, debug=False) -> str:
+def find_review_url(target: Seed, debug=False) -> str:
     """Find the URL Glassdoor review page for a company"""
 
     return find_review(target, debug=debug).link
