@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import jinja2
 from langchain_core.documents import Document
@@ -154,5 +154,12 @@ def summarize(target: Seed, threads: List[Submission]) -> SummaryResult:
     # Smoke tests
     unshortened_context = "\n\n".join(thread_markdowns)
     log_summary_metrics(result.output_text, unshortened_context)
+
+    if summary_length / intermediate_length > 1.5:
+        logger.warning(
+            "Summarization looks fishy, returning empty result. URLs: {}",
+            [thread.permalink for thread in threads],
+        )
+        result.output_text = ""
 
     return result
