@@ -82,7 +82,7 @@ REDDIT THREAD:
 
 MARKDOWN LIST OF QUOTES ABOUT THE COMPANY {company} AND PRODUCT {product} (markdown only, don't wrap in backticks):
 """
-map_prompt_template = PromptTemplate(template=map_prompt, input_variables=["text"])
+map_prompt_template = PromptTemplate(template=map_prompt, input_variables=["text", "company", "product"])
 
 combine_prompt = """
 Please organize all of the quotes below into topics about the COMPANY {company} and PRODUCT {product}.
