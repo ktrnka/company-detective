@@ -1,5 +1,21 @@
 # Experiments done 8/31
 
+## Crunchbase workarounds 8/31
+
+Crunchbase started blocking everything. Things tried (none worked):
+
+- Other companies
+- ASP with cost_budget set to 50
+- Residential pool
+- Country US, CA
+
+Nothing worked so I'm exploring alternatives. Here's a list of the ones I've found:
+
+- [builtin.com](https://builtin.com/company/98point6)
+- https://leadiq.com/c/point-technologies-inc/5a1d98e42300005400877e7d
+- https://www.cbinsights.com/company/98point6
+- https://notice.co/c/98point6 (This one's more about stock price estimation)
+
 ## App store review summarization 8/31
 
 I tried unifying the app store reviews, then packing them into documents, then using an extract-then-organize map-reduce pipeline. The results were excellent for 98point6. Observations:

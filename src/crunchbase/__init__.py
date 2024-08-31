@@ -7,7 +7,13 @@ from .models import *
 
 from loguru import logger
 
+# CONFIGURE SCRAPFLY
 scrapfly_scrapers.crunchbase.BASE_CONFIG["cache"] = True
+
+# Cost budget to allow ASP to automatically tweak things to get a response
+scrapfly_scrapers.crunchbase.BASE_CONFIG["cost_budget"] = 50
+
+
 templates = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"))
 
 
