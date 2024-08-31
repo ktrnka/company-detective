@@ -141,10 +141,6 @@ Please group information thematically within each section. If there's a wide dat
 
 This section could include general, neutral statements about the product, its features, distribution, key product changes, pricing, and so on.
 
-# Bibliography
-
-The Bibliography should include a list of all the sources used to compile the summary. If there are many sources, group them by type (e.g., Reddit, Glassdoor, News, Crunchbase).
-
 # Additional reading
 
 This section should organize any additional links that the reader might find useful for further research.
@@ -152,7 +148,7 @@ This section should organize any additional links that the reader might find use
 
 Feel free to create subheadings or additional sections as needed to capture all relevant information about the company and its product.
 Format the output as a markdown document, using markdown links for citations.
-Citations should follow the format [(Author or Title, Source, Date)](url).
+Citations should follow the format [(Author or Title, Source, Date)](cache:/source/number).
             """,
         ),
         (
@@ -176,9 +172,6 @@ News sources:
 Crunchbase information:
 {crunchbase_text}
 
-Additional search results:
-{search_text}
-
 {dynamic_contexts}
             """,
         ),
@@ -192,7 +185,7 @@ async def run(
     target: Seed,
     num_reddit_threads=2,
     max_glassdoor_review_pages=1,
-    max_glassdoor_job_pages=1,
+    max_glassdoor_job_pages=0,
     max_news_articles=10,
     glassdoor_url=None,
 ):
@@ -210,13 +203,11 @@ async def run(
     ).content
 
     apple_store_matches = [result for result in general_search_results if app_stores.apple.URL_PATTERN.match(result.link)]
-    logger.info(f"Apple Store URLs: {apple_store_matches}")
     if apple_store_matches:
         apple_review_content = app_stores.apple.run(apple_store_matches[0].link)
         dynamic_contexts["Apple App Store Reviews"] = apple_review_content
 
     google_play_matches = [result for result in general_search_results if app_stores.google_play.URL_PATTERN.match(result.link)]
-    logger.info(f"Google Play URLs: {google_play_matches}")
     if google_play_matches:
         google_play_url = google_play_matches[0].link
         google_play_review_content = app_stores.google_play.run(google_play_url)
@@ -225,7 +216,6 @@ async def run(
 
 
     steam_matches = [result for result in general_search_results if app_stores.steam.URL_PATTERN.match(result.link)]
-    logger.info(f"Steam URLs: {steam_matches}")
     if steam_matches:
         steam_url = steam_matches[0].link
         steam_review_content = app_stores.steam.run(steam_url)
@@ -259,7 +249,7 @@ async def run(
             glassdoor_result.summary_markdown,
             news_result.summary_markdown,
             crunchbase_markdown,
-            general_search_summary,
+            # general_search_summary,
         ] + list(dynamic_contexts.values())
     )
     
@@ -283,9 +273,9 @@ async def run(
             ),
             "news_text": url_shortener.shorten_markdown(news_result.summary_markdown),
             "crunchbase_text": url_shortener.shorten_markdown(crunchbase_markdown),
-            "search_text": url_shortener.shorten_markdown(general_search_summary),
-            # For now, don't bother with URL shortening for dynamic contexts; none of them have URLs
-            "dynamic_contexts": contexts_to_markdown(dynamic_contexts),
+            # "search_text": url_shortener.shorten_markdown(general_search_summary),
+            # "dynamic_contexts": url_shortener.shorten_markdown(contexts_to_markdown(dynamic_contexts)),
+            "dynamic_contexts": "",
         }
     )
     result.content = url_shortener.unshorten_markdown(cleanse_markdown(result.content))
@@ -305,19 +295,32 @@ Note: The report above is an aggregation of all the information below. I like to
 
 ----
 
+# Company webpage
+{nest_markdown(webpage_summary.summary_markdown, 1)}
+
+----
+
 # Crunchbase
 {nest_markdown(crunchbase_markdown, 1)}
+
+----
 
 # News
 {nest_markdown(news_result.summary_markdown, 1)}
 
+----
+
 # Glassdoor Employee Reviews
 {nest_markdown(glassdoor_result.summary_markdown, 1)}
+
+----
 
 # Reddit
 {nest_markdown(reddit_result.summary.output_text, 1)}
 
-# General Search
+----
+
+# Additional search results
 {nest_markdown(general_search_summary, 1)}
 
 """)
