@@ -4,6 +4,7 @@ from datetime import datetime
 import subprocess
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
+from scrapfly import ScrapflyAspError
 
 from core import (
     Seed,
@@ -160,17 +161,8 @@ Product: {product_name}
 Summary of {company_domain}:
 {company_webpage_text}
 
-Reddit sources: 
-{reddit_text}
-
-Glassdoor sources:
-{glassdoor_text}
-
 News sources:
 {news_text}
-
-Crunchbase information:
-{crunchbase_text}
 
 {dynamic_contexts}
             """,
@@ -221,14 +213,20 @@ async def run(
         steam_review_content = app_stores.steam.run(steam_url)
         dynamic_contexts["Steam Reviews"] = steam_review_content
 
-
-    crunchbase_markdown = await process_crunchbase(target)
-    if not crunchbase_markdown:
-        crunchbase_markdown = ""
+    try:
+        crunchbase_markdown = await process_crunchbase(target)
+        if crunchbase_markdown:
+            dynamic_contexts["Crunchbase"] = crunchbase_markdown
+        else:
+            logger.warning("No Crunchbase info found")
+    except ScrapflyAspError:
+        logger.warning("Failed to process Crunchbase (ScrapflyAspError), skipping")
 
     reddit_result = process_reddit(target, num_threads=num_reddit_threads)
-    if not reddit_result:
-        reddit_result = RedditSummary.empty_result()
+    if reddit_result:
+        dynamic_contexts["Reddit"] = reddit_result.summary.output_text
+    else:
+        logger.warning("No Reddit info found")
 
     glassdoor_result = await process_glassdoor(
         target,
@@ -236,19 +234,17 @@ async def run(
         max_job_pages=max_glassdoor_job_pages,
         url_override=glassdoor_url,
     )
-    if not glassdoor_result:
-        # Hack to make the rest of the code simpler
-        glassdoor_result = GlassdoorResult.empty_result(target)
+    if glassdoor_result:
+        dynamic_contexts["Glassdoor"] = glassdoor_result.summary_markdown
+    else:
+        logger.warning("No Glassdoor info found")
 
     news_result = process_news(target, max_results=max_news_articles)
 
     unshortened_context = "\n\n".join(
         [
             webpage_summary.summary_markdown,
-            reddit_result.summary.output_text,
-            glassdoor_result.summary_markdown,
             news_result.summary_markdown,
-            crunchbase_markdown,
             # general_search_summary,
         ] + list(dynamic_contexts.values())
     )
@@ -265,17 +261,9 @@ async def run(
             "product_name": target.product,
             "company_domain": target.domain,
             "company_webpage_text": url_shortener.shorten_markdown(webpage_summary.summary_markdown),
-            "reddit_text": url_shortener.shorten_markdown(
-                reddit_result.summary.output_text
-            ),
-            "glassdoor_text": url_shortener.shorten_markdown(
-                glassdoor_result.summary_markdown
-            ),
             "news_text": url_shortener.shorten_markdown(news_result.summary_markdown),
-            "crunchbase_text": url_shortener.shorten_markdown(crunchbase_markdown),
             # "search_text": url_shortener.shorten_markdown(general_search_summary),
-            # "dynamic_contexts": url_shortener.shorten_markdown(contexts_to_markdown(dynamic_contexts)),
-            "dynamic_contexts": "",
+            "dynamic_contexts": url_shortener.shorten_markdown(contexts_to_markdown(dynamic_contexts)),
         }
     )
     result.content = url_shortener.unshorten_markdown(cleanse_markdown(result.content))
@@ -300,23 +288,8 @@ Note: The report above is an aggregation of all the information below. I like to
 
 ----
 
-# Crunchbase
-{nest_markdown(crunchbase_markdown, 1)}
-
-----
-
 # News
 {nest_markdown(news_result.summary_markdown, 1)}
-
-----
-
-# Glassdoor Employee Reviews
-{nest_markdown(glassdoor_result.summary_markdown, 1)}
-
-----
-
-# Reddit
-{nest_markdown(reddit_result.summary.output_text, 1)}
 
 ----
 

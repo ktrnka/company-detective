@@ -30,10 +30,10 @@ def request_article(
 
         return response
     except requests.exceptions.ReadTimeout as e:
-        logger.exception(f"Timeout on {url}")
+        logger.warning(f"Timeout on {url}")
         return None
     except requests.exceptions.SSLError as e:
-        logger.exception(f"SSL error on {url}")
+        logger.warning(f"SSL error on {url}")
         return None
 
 
