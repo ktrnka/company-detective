@@ -1,4 +1,22 @@
-# Experiments done 8/29
+# Experiments done 8/31
+
+## App store review summarization 8/31
+
+I tried unifying the app store reviews, then packing them into documents, then using an extract-then-organize map-reduce pipeline. The results were excellent for 98point6. Observations:
+
+- I had 500ish Apple reviews and 100ish Google Play reviews so the quotes came more from Apple than Google, which is unfortunate
+- The reviews come from many different years which may make it tougher to spot trends
+- I'm not sure how to include the sample-quality test
+- It looks like the orgnanize step dropped many comments
+- I found a bug in the original Reddit code in which company and product were not being passed through to the mapper
+- It took about 2 minutes to run
+- The citation format drops the parens which makes it a little harder
+
+To try, to consider:
+
+- See how it fares with Steam reviews
+- See how it would work if we mix together app reviews and Reddit threads
+- Revise the prompt to be more UX/CX oriented rather than "company and product"
 
 ## Revisiting Indeed job dsecriptions
 
