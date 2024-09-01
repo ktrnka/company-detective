@@ -154,7 +154,7 @@ def get_reviews(steam_id: int, num_reviews=100) -> List[SteamReview]:
 def review_to_markdown(review: SteamReview) -> str:
     review_dt = datetime.fromtimestamp(review.timestamp_created)
     return f"""
-# {'Thumbs Up' if review.voted_up else 'Thumbs Down'} [(Steam, {review_dt.strftime('%Y-%m-%d')})]({synth_url("steam", review.author.steamid)})
+# {'Thumbs Up' if review.voted_up else 'Thumbs Down'} [(Anonymous, Steam, {review_dt.strftime('%Y-%m-%d')})]({synth_url("steam", review.author.steamid)})
 {review.review.strip()}
 """.strip()
 
