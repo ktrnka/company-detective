@@ -11,10 +11,14 @@ Crunchbase started blocking everything. Things tried (none worked):
 
 Nothing worked so I'm exploring alternatives. Here's a list of the ones I've found:
 
-- [builtin.com](https://builtin.com/company/98point6)
+- https://builtin.com/company/98point6
 - https://leadiq.com/c/point-technologies-inc/5a1d98e42300005400877e7d
 - https://www.cbinsights.com/company/98point6
 - https://notice.co/c/98point6 (This one's more about stock price estimation)
+
+Of these four, leadIQ works the best with Scrapfly's markdown formatter, though the links are weird in it, so I may need to do the no link format. The others really mix up everything on the page. I tried running one of them through newspaper but it doesn't quite get the right div tags.
+
+The best option would be something that's adaptable if I get blocked by a new website, and also I should put a little more effort into not getting blocked (like more caching, etc)
 
 ## App store review summarization 8/31
 
