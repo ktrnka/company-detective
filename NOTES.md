@@ -38,6 +38,11 @@ To try, to consider:
 - See how it would work if we mix together app reviews and Reddit threads
 - Revise the prompt to be more UX/CX oriented rather than "company and product"
 
+Steam reviews:
+
+- The extract then organize pattern works really well
+- The citation pattern failed horribly, probably because Steam doesn't have author IDs
+
 ## Revisiting Indeed job dsecriptions
 
 I've been mulling over a major refactor that would use google searches to build up a list of URLs, then have URLs bucketed and processed by individual modules. The app store pipelines are implemented this way already, and it felt like a clean-ish way to dynamically integrate those data sources.
