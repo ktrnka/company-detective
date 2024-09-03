@@ -6,19 +6,21 @@ This module produces a unified customer experience summary from multiple differe
 - Steam
 """
 
-from typing import List, Optional
-import app_stores.steam as steam
-import app_stores.google_play as google_play
-import app_stores.apple as apple_app_store
-from llm_utils import pack_documents
+from typing import Dict, List, Optional
+
 from langchain_core.documents import Document
 from langchain.chains.summarize import load_summarize_chain
 from langchain import PromptTemplate
 from langchain_openai import ChatOpenAI
-import reddit.fetch
+from loguru import logger
 
 from core import Seed, URLShortener, log_summary_metrics
-from loguru import logger
+import reddit.fetch
+from google_search import SearchResult
+import app_stores.steam as steam
+import app_stores.google_play as google_play
+import app_stores.apple as apple_app_store
+from llm_utils import pack_documents
 
 map_prompt = """
 Please read the following customer comments and extract all opinions and facts relating to the user experience of the PRODUCT {product} by the COMPANY {company} from the perspective of current users.
@@ -142,3 +144,33 @@ def run(
     log_summary_metrics(result["output_text"], "\n".join(packed_reviews))
 
     return result
+
+
+def extract_app_store_urls(search_results: List[SearchResult]) -> Dict[str, str]:
+    """Helper to extract app store URLs from search results, compatible with the run function"""
+    return {
+        "apple_store_url": next(
+            (
+                result.link
+                for result in search_results
+                if apple_app_store.URL_PATTERN.match(result.link)
+            ),
+            None,
+        ),
+        "google_play_url": next(
+            (
+                result.link
+                for result in search_results
+                if google_play.URL_PATTERN.match(result.link)
+            ),
+            None,
+        ),
+        "steam_url": next(
+            (
+                result.link
+                for result in search_results
+                if steam.URL_PATTERN.match(result.link)
+            ),
+            None,
+        ),
+    }

@@ -15,7 +15,7 @@ from core import (
     cleanse_markdown,
 )
 
-from reddit import run as process_reddit
+import reddit.search
 from glassdoor import run as process_glassdoor
 from news import run as process_news
 from crunchbase import run as process_crunchbase
@@ -24,9 +24,7 @@ import company_webpage
 import general_search
 from loguru import logger
 
-import app_stores.apple
-import app_stores.google_play
-import app_stores.steam
+import customer_experience
 
 templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),
@@ -94,52 +92,15 @@ An ideal section should at least incorporate the answers to the following questi
 - Describe the scale of the company if possible, including the number of customers, users, or clients.
 - How are the company's products distributed or sold to users?
 - How has the company changed over time?
-
-## According to {company_name}
-
-This subsection should summarize the company but only using information from the company's own website or official statements.
-
-## According to third-party sources
-
-This subsection should summarize the company in accordance with above questions, but NOT using information from the company's own website.
+- How do third parties describe the company, compared to how the company describes itself?
 
 # Key personnel
 
 Include the names and roles of any key personnel at the company. If possible, provide a brief summary of their background and experience as well as any sentiments expressed about them in the sources.
 
-# News (reverse chronological, grouped by event)
+# News
 
-# Working at {company_name}
-
-The section should include answers to the following questions and more, if available:
-- Why do people like working here?
-- Why do people dislike working here?
-- What benefits are provided?
-- How do employees feel about the leadership team?
-- Are there any concerning signs about DEI, such as a lack of diversity in certain roles or systematic issues for underrepresented groups?
-- How do employees feel about work-life balance?
-- How has the company changed over time?
-- How does employee sentiment vary by job function? Are certain roles more satisfying than others?
-
-## Positive sentiments and experiences
-
-## Negative sentiments and experiences
-
-## Neutral statements about working at {company_name}
-
-This section might include general statements about location, benefits, and other factual information that could be verified.
-
-# User reviews, sentiments, and feedback about {product_name}
-
-Please group information thematically within each section. If there's a wide date range for the information, group by year.
-
-## Positive sentiments and experiences
-
-## Negative sentiments and experiences
-
-## Neutral statements about {product_name}
-
-This section could include general, neutral statements about the product, its features, distribution, key product changes, pricing, and so on.
+This section should include news articles about the company in reverse chronological order, grouped by topic or event as needed.
 
 # Additional reading
 
@@ -148,7 +109,7 @@ This section should organize any additional links that the reader might find use
 
 Feel free to create subheadings or additional sections as needed to capture all relevant information about the company and its product.
 Format the output as a markdown document, using markdown links for citations.
-Citations should follow the format [(Author or Title, Source, Date)](cache:/source/number).
+Citations should follow the format [(Author or Title, Source, Date)](cache://source/number).
             """,
         ),
         (
@@ -169,8 +130,10 @@ News sources:
     ]
 )
 
+
 def contexts_to_markdown(contexts: Mapping[str, str]) -> str:
     return "\n\n".join([f"{key}\n{value}" for key, value in contexts.items()])
+
 
 async def run(
     target: Seed,
@@ -193,25 +156,6 @@ async def run(
         target, general_search_results
     ).content
 
-    apple_store_matches = [result for result in general_search_results if app_stores.apple.URL_PATTERN.match(result.link)]
-    if apple_store_matches:
-        apple_review_content = app_stores.apple.run(apple_store_matches[0].link)
-        dynamic_contexts["Apple App Store Reviews"] = apple_review_content
-
-    google_play_matches = [result for result in general_search_results if app_stores.google_play.URL_PATTERN.match(result.link)]
-    if google_play_matches:
-        google_play_url = google_play_matches[0].link
-        google_play_review_content = app_stores.google_play.run(google_play_url)
-
-        dynamic_contexts["Google Play Store Reviews"] = google_play_review_content
-
-
-    steam_matches = [result for result in general_search_results if app_stores.steam.URL_PATTERN.match(result.link)]
-    if steam_matches:
-        steam_url = steam_matches[0].link
-        steam_review_content = app_stores.steam.run(steam_url)
-        dynamic_contexts["Steam Reviews"] = steam_review_content
-
     try:
         crunchbase_markdown = await process_crunchbase(target)
         if crunchbase_markdown:
@@ -221,11 +165,16 @@ async def run(
     except ScrapflyAspError:
         logger.warning("Failed to process Crunchbase (ScrapflyAspError), skipping")
 
-    reddit_result = process_reddit(target, num_threads=num_reddit_threads)
-    if reddit_result:
-        dynamic_contexts["Reddit"] = reddit_result.summary.output_text
-    else:
-        logger.warning("No Reddit info found")
+    app_store_urls = customer_experience.extract_app_store_urls(general_search_results)
+    reddit_urls = [
+        result.link
+        for result in reddit.search.find_submissions(
+            target, num_results=num_reddit_threads
+        )
+    ]
+    customer_experience_result = customer_experience.run(
+        target, reddit_urls=reddit_urls, **app_store_urls
+    )
 
     glassdoor_result = await process_glassdoor(
         target,
@@ -233,10 +182,6 @@ async def run(
         max_job_pages=max_glassdoor_job_pages,
         url_override=glassdoor_url,
     )
-    if glassdoor_result:
-        dynamic_contexts["Glassdoor"] = glassdoor_result.summary_markdown
-    else:
-        logger.warning("No Glassdoor info found")
 
     news_result = process_news(target, max_results=max_news_articles)
 
@@ -245,9 +190,9 @@ async def run(
             webpage_summary.summary_markdown,
             news_result.summary_markdown,
             # general_search_summary,
-        ] + list(dynamic_contexts.values())
+        ]
+        + list(dynamic_contexts.values())
     )
-    
 
     url_shortener = URLShortener()
 
@@ -259,19 +204,41 @@ async def run(
             "company_name": target.company,
             "product_name": target.product,
             "company_domain": target.domain,
-            "company_webpage_text": url_shortener.shorten_markdown(webpage_summary.summary_markdown),
+            "company_webpage_text": url_shortener.shorten_markdown(
+                webpage_summary.summary_markdown
+            ),
             "news_text": url_shortener.shorten_markdown(news_result.summary_markdown),
             # "search_text": url_shortener.shorten_markdown(general_search_summary),
-            "dynamic_contexts": url_shortener.shorten_markdown(contexts_to_markdown(dynamic_contexts)),
+            "dynamic_contexts": url_shortener.shorten_markdown(
+                contexts_to_markdown(dynamic_contexts)
+            ),
         }
     )
     result.content = url_shortener.unshorten_markdown(cleanse_markdown(result.content))
 
     log_summary_metrics(result.content, unshortened_context, extractive=False)
 
+    if customer_experience_result:
+        customer_experience_markdown = customer_experience_result["output_text"]
+    else:
+        customer_experience_markdown = "No customer experience information found."
+
+    if glassdoor_result:
+        glassdoor_markdown = glassdoor_result.summary_markdown
+    else:
+        glassdoor_markdown = "No Glassdoor information found."
+
     with open(eval_filename(target, extension="md"), "w") as f:
-        f.write(f"""
+        f.write(
+            f"""
 {result.content}
+
+# Employee sentiment
+
+{nest_markdown(glassdoor_markdown, 1)}
+
+# Customer experience
+{nest_markdown(customer_experience_markdown, 1)}
 
 {generate_lineage_markdown()}
 
@@ -295,13 +262,12 @@ Note: The report above is an aggregation of all the information below. I like to
 # Additional search results
 {nest_markdown(general_search_summary, 1)}
 
-""")
-        
+"""
+        )
+
         for source, content in dynamic_contexts.items():
             f.write(f"# {source}\n{nest_markdown(content, 1)}\n")
 
         logger.info(f"Written to {f.name}")
 
         return f.name
-
-
