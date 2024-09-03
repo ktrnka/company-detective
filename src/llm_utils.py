@@ -1,13 +1,15 @@
 import heapq
 from typing import List
 
+
 def heap_pair(doc: str) -> tuple:
     return (len(doc), doc)
+
 
 def pack_documents(documents: List[str], max_chars: int, sep="\n\n") -> List[str]:
     """
     Pack documents into chunks of at most `max_chars` characters, unless there are some already over the limit
-    
+
     This bin-packing algorithm will tend to make the bins all about the same size, but will tend to stop with many
     of the bins about max_chars/2 in size. It needs improvement
     """
@@ -29,6 +31,7 @@ def pack_documents(documents: List[str], max_chars: int, sep="\n\n") -> List[str
             heapq.heappush(heap, heap_pair(merged))
 
     return [doc for _, doc in heap]
+
 
 def test_pack_documents():
     documents = [
@@ -58,3 +61,16 @@ def test_pack_documents():
     assert all(len(doc) <= 10 for doc in packed)
     joined_packed = "\n\n".join(packed)
     assert all(doc in joined_packed for doc in documents)
+
+
+def debug_around(substring: str, documents: List[str], context_chars=300):
+    """Debug helper to find mangled URL sources in a list of documents"""
+    for doc in documents:
+        if substring in doc:
+            i = doc.index(substring)
+            start_index = max(0, i - context_chars // 2)
+            end_index = min(len(doc), i + len(substring) + context_chars // 2)
+
+            print("----")
+            print(doc[start_index:end_index])
+            print("----")
