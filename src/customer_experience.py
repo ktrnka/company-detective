@@ -64,7 +64,7 @@ def run(
     google_play_url: Optional[str] = None,
     apple_store_url: Optional[str] = None,
     reddit_urls: Optional[List[str]] = None,
-) -> dict:
+) -> Optional[dict]:
     review_markdowns = []
 
     if steam_url:
@@ -102,6 +102,8 @@ def run(
         )
 
     logger.info("Total reviews: {}", len(review_markdowns))
+    if not review_markdowns:
+        return None
 
     # Pack the documents then truncate any very-long ones
     packed_reviews = pack_documents(review_markdowns, max_chars=70000)
