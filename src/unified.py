@@ -156,14 +156,11 @@ async def run(
         target, general_search_results
     ).content
 
-    try:
-        crunchbase_markdown = await process_crunchbase(target)
-        if crunchbase_markdown:
-            dynamic_contexts["Crunchbase"] = crunchbase_markdown
-        else:
-            logger.warning("No Crunchbase info found")
-    except ScrapflyAspError:
-        logger.warning("Failed to process Crunchbase (ScrapflyAspError), skipping")
+    crunchbase_markdown = await process_crunchbase(target)
+    if crunchbase_markdown:
+        dynamic_contexts["Crunchbase"] = crunchbase_markdown
+    else:
+        logger.warning("No Crunchbase info found")
 
     app_store_urls = customer_experience.extract_app_store_urls(general_search_results)
     reddit_urls = [
