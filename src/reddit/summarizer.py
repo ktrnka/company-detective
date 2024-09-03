@@ -53,7 +53,7 @@ def truncate_document(llm, document: str, max_tokens: int) -> str:
     else:
         return document
 
-
+# TODO: MarketWorldly9908 on 2022-01-07 isn't the right input format
 map_prompt = """
 Please read the following Reddit thread and extract all opinions and facts relating to the user experience of the PRODUCT {product} by the COMPANY {company} from the perspective of current users.
 Only include information about the COMPANY {company} and PRODUCT {product}. 
@@ -61,7 +61,7 @@ Do not extract information about other companies or products.
 If the text does not contain any relevant information about the COMPANY or PRODUCT, please return an empty string.
 
 Format the results as a Markdown list of quotes, each with a permalink to the source of the quote like so:
-- "quote" [Author, Reddit, Date](cache://reddit/NUMBER)
+- "quote" [(Author, Reddit, Date)](cache://reddit/NUMBER)
 
 EXAMPLE for 98point6:
 
@@ -70,7 +70,7 @@ Input comment:
 My husband and I have used 98.6 three times. All three times they did not prescribe the needed antibiotic to get better. I had an ear infection, my husband had an ear infection, then I had a sinus infection. We had to wait and get into our family doctor, so we paid 98.6 and our family doctor. I would not recommend them!
 
 Example output:
-- "All three times they did not prescribe the needed antibiotic to get better." [MarketWorldly9908, Reddit, 2022-01-07](cache://reddit/42)
+- "All three times they did not prescribe the needed antibiotic to get better." [(MarketWorldly9908, Reddit, 2022-01-07)](cache://reddit/42)
 
 ----
 

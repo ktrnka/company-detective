@@ -24,7 +24,7 @@ Organize the quotes into categories as appropriate.
 Take extra care to find quotes of 1) explanations why employees like or dislike working for the company, 2) key events or changes in the company, and 3) any verifyable facts about working at the company.
 Format the response as Markdown.
 
-Format quotations as: "quote" [(Job title, Glassdoor, date)](url)
+Format quotations as: "quote" [(Job title, Glassdoor, Date)](url)
             """,
         ),
         (
