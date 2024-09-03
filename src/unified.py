@@ -15,13 +15,12 @@ from core import (
     cleanse_markdown,
 )
 
-from reddit import run as process_reddit, RedditSummary
+from reddit import run as process_reddit
 from glassdoor import run as process_glassdoor
 from news import run as process_news
 from crunchbase import run as process_crunchbase
 import company_webpage
 
-from glassdoor import GlassdoorResult
 import general_search
 from loguru import logger
 
