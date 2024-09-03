@@ -14,7 +14,7 @@ from langchain import PromptTemplate
 from langchain_openai import ChatOpenAI
 from loguru import logger
 
-from core import Seed, URLShortener, log_summary_metrics
+from core import Seed, URLShortener, extract_urls, log_summary_metrics
 import reddit.fetch
 from google_search import SearchResult
 import app_stores.steam as steam
@@ -90,6 +90,13 @@ def run(
             apple_app_store.review_to_markdown(review) for review in apple_reviews
         )
 
+    # Index all non-Reddit reviews because their URLs are fake
+    url_to_review = {}
+    for review in review_markdowns:
+        links = extract_urls(review)
+        for link in links:
+            url_to_review[link] = review
+
     if reddit_urls:
         reddit_client = reddit.fetch.init()
         reddit_threads = [reddit_client.submission(url=url) for url in reddit_urls]
@@ -142,6 +149,8 @@ def run(
 
     result["output_text"] = shortener.unshorten_markdown(result["output_text"])
     log_summary_metrics(result["output_text"], "\n".join(packed_reviews))
+
+    result["url_to_review"] = url_to_review
 
     return result
 
