@@ -6,6 +6,7 @@ This module produces a unified customer experience summary from multiple differe
 - Steam
 """
 
+from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 from langchain_core.documents import Document
@@ -13,6 +14,7 @@ from langchain.chains.summarize import load_summarize_chain
 from langchain import PromptTemplate
 from langchain_openai import ChatOpenAI
 from loguru import logger
+from pydantic import BaseModel
 
 from core import Seed, URLShortener, extract_urls, log_summary_metrics
 import reddit.fetch
@@ -59,6 +61,11 @@ combine_prompt_template = PromptTemplate(
     template=combine_prompt, input_variables=["text", "company", "product"]
 )
 
+class CustomerExperienceResult(BaseModel):
+    output_text: str
+    intermediate_steps: List[str]
+    url_to_review: Dict[str, Optional[str]]
+
 
 def run(
     target: Seed,
@@ -66,7 +73,7 @@ def run(
     google_play_url: Optional[str] = None,
     apple_store_url: Optional[str] = None,
     reddit_urls: Optional[List[str]] = None,
-) -> Optional[dict]:
+) -> Optional[CustomerExperienceResult]:
     review_markdowns = []
 
     if steam_url:
@@ -152,10 +159,9 @@ def run(
 
     result["url_to_review"] = url_to_review
 
-    return result
+    return CustomerExperienceResult(**result)
 
-
-def extract_app_store_urls(search_results: List[SearchResult]) -> Dict[str, str]:
+def extract_app_store_urls(search_results: List[SearchResult]) -> Dict[str, Optional[str]]:
     """Helper to extract app store URLs from search results, compatible with the run function"""
     return {
         "apple_store_url": next(

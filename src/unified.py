@@ -216,7 +216,7 @@ async def run(
     log_summary_metrics(result.content, unshortened_context, extractive=False)
 
     if customer_experience_result:
-        customer_experience_markdown = customer_experience_result["output_text"]
+        customer_experience_markdown = customer_experience_result.output_text
     else:
         customer_experience_markdown = "No customer experience information found."
 
