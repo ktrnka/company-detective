@@ -1,10 +1,12 @@
-from typing import Mapping
+import re
+from typing import Mapping, Optional
 import jinja2
 from datetime import datetime
 import subprocess
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
-from scrapfly import ScrapflyAspError
+import markdown
+from pydantic import BaseModel
 
 from core import (
     Seed,
@@ -16,9 +18,10 @@ from core import (
 )
 
 import reddit.search
-from glassdoor import run as process_glassdoor
-from news import run as process_news
-from crunchbase import run as process_crunchbase
+
+import glassdoor
+import news
+import crunchbase
 import company_webpage
 
 import general_search
@@ -134,6 +137,131 @@ News sources:
 def contexts_to_markdown(contexts: Mapping[str, str]) -> str:
     return "\n\n".join([f"{key}\n{value}" for key, value in contexts.items()])
 
+class Review(BaseModel):
+    header: str
+    body: str
+
+def split_review(markdown_review: str) -> Review:
+    # Split the markdown review into header and body
+    header, body = markdown_review.strip().split("\n", 1)
+
+    # Remove the markdown header
+    header = re.sub(r'#.*?\s+', '', header)
+
+    # Remove the link from the header
+    header = re.sub(r'\[(.*?)\]\(.*?\)', '\\1', header)
+        
+    return Review(header=header, body=body)
+
+def test_split_review():
+    example_md = """
+    # 5 stars [(Pancho, Google Play Store, 2022-12-21)](https://google_play/bfc47476-7378-4727-b0b1-66d76e817be6)
+    I was waiting 2 hrs at the urgent care ..."""
+
+    review = split_review(example_md)
+
+    assert review.header.startswith("5 stars")
+    assert review.body.startswith("I was waiting 2 hrs")
+    assert "http" not in review.header
+
+def url_to_div_id(url: str) -> str:
+    """Helper to convert a fake-url to a page-internal div ID for modals"""
+    _, url = url.split("://")
+    return re.sub(r'\W', '_', url)
+
+class UnifedResult(BaseModel):
+    summary_markdown: str
+    target: Seed
+
+    webpage_result: company_webpage.WebpageResult
+    general_search_markdown: str
+    crunchbase_markdown: Optional[str]
+    customer_experience_result: Optional[customer_experience.CustomerExperienceResult]
+    glassdoor_result: Optional[glassdoor.GlassdoorResult]
+    news_result: news.NewsSummary
+
+    @property
+    def customer_experience_markdown(self) -> str:
+        if self.customer_experience_result:
+            return self.customer_experience_result.output_text
+        else:
+            return "No customer experience information found."
+        
+    @property
+    def glassdoor_markdown(self) -> str:
+        if self.glassdoor_result:
+            return self.glassdoor_result.summary_markdown
+        else:
+            return "No Glassdoor information found."
+
+    def to_markdown_file(self) -> str:
+        with open(eval_filename(self.target, extension="md"), "w") as f:
+            f.write(f"""
+{self.summary_markdown}
+
+# Employee sentiment
+
+{nest_markdown(self.glassdoor_markdown, 1)}
+
+# Customer experience
+{nest_markdown(self.customer_experience_markdown, 1)}
+
+{generate_lineage_markdown()}
+
+----
+
+# INTERMEDIATE RESULTS BELOW
+Note: The report above is an aggregation of all the information below. I like to include the intermediate outputs below for debugging and verification. For instance, if the final output has a very brief section on employee sentiment, I can refer to the Glassdoor and Reddit sections below to see if it's a problem in the overall summarization or if the intermediate results were lacking.
+
+----
+
+# Company webpage
+{nest_markdown(self.webpage_result.summary_markdown, 1)}
+
+----
+
+# News
+{nest_markdown(self.news_result.summary_markdown, 1)}
+
+----
+
+# Crunchbase
+
+{nest_markdown(self.crunchbase_markdown or "No Crunchbase info found", 1)}
+
+----
+
+# Additional search results
+{nest_markdown(self.general_search_markdown, 1)}
+
+"""
+        )
+
+        logger.info(f"Written to {f.name}")
+
+        return f.name
+    
+    def to_html_file(self) -> str:
+        urls_to_div_ids = {url: url_to_div_id(url) for url in self.customer_experience_result.url_to_review.keys()}
+        div_ids_to_reviews = {url_to_div_id(url): split_review(markdown_review) for url, markdown_review in self.customer_experience_result.url_to_review.items()}
+
+
+        with open(eval_filename(self.target, extension="html"), "w") as f:
+
+            html = templates.get_template("basic_report.html").render(
+                summary=markdown.markdown(self.summary_markdown),
+                customer_experience_summary=markdown.markdown(nest_markdown(self.customer_experience_markdown, 1)),
+                employee_experience_summary=markdown.markdown(nest_markdown(self.glassdoor_markdown, 1)),
+                div_ids_to_reviews=div_ids_to_reviews,
+                urls_to_div_ids=urls_to_div_ids,
+            )
+            f.write(html)
+
+        logger.info(f"Written to {f.name}")
+
+        return f.name
+    
+
 
 async def run(
     target: Seed,
@@ -142,7 +270,7 @@ async def run(
     max_glassdoor_job_pages=0,
     max_news_articles=10,
     glassdoor_url=None,
-):
+) -> UnifedResult:
     """
     Search the web for information on the target company and product, then summarize it all.
     """
@@ -156,7 +284,7 @@ async def run(
         target, general_search_results
     ).content
 
-    crunchbase_markdown = await process_crunchbase(target)
+    crunchbase_markdown = await crunchbase.run(target)
     if crunchbase_markdown:
         dynamic_contexts["Crunchbase"] = crunchbase_markdown
     else:
@@ -173,14 +301,14 @@ async def run(
         target, reddit_urls=reddit_urls, **app_store_urls
     )
 
-    glassdoor_result = await process_glassdoor(
+    glassdoor_result = await glassdoor.run(
         target,
         max_review_pages=max_glassdoor_review_pages,
         max_job_pages=max_glassdoor_job_pages,
         url_override=glassdoor_url,
     )
 
-    news_result = process_news(target, max_results=max_news_articles)
+    news_result = news.run(target, max_results=max_news_articles)
 
     unshortened_context = "\n\n".join(
         [
@@ -215,56 +343,15 @@ async def run(
 
     log_summary_metrics(result.content, unshortened_context, extractive=False)
 
-    if customer_experience_result:
-        customer_experience_markdown = customer_experience_result.output_text
-    else:
-        customer_experience_markdown = "No customer experience information found."
+    return UnifedResult(
+        target=target,
+        summary_markdown=result.content,
+        webpage_result=webpage_summary,
+        general_search_markdown=general_search_summary,
+        crunchbase_markdown=crunchbase_markdown,
+        customer_experience_result=customer_experience_result,
+        glassdoor_result=glassdoor_result,
+        news_result=news_result,
+    )
 
-    if glassdoor_result:
-        glassdoor_markdown = glassdoor_result.summary_markdown
-    else:
-        glassdoor_markdown = "No Glassdoor information found."
 
-    with open(eval_filename(target, extension="md"), "w") as f:
-        f.write(
-            f"""
-{result.content}
-
-# Employee sentiment
-
-{nest_markdown(glassdoor_markdown, 1)}
-
-# Customer experience
-{nest_markdown(customer_experience_markdown, 1)}
-
-{generate_lineage_markdown()}
-
-----
-
-# INTERMEDIATE RESULTS BELOW
-Note: The report above is an aggregation of all the information below. I like to include the intermediate outputs below for debugging and verification. For instance, if the final output has a very brief section on employee sentiment, I can refer to the Glassdoor and Reddit sections below to see if it's a problem in the overall summarization or if the intermediate results were lacking.
-
-----
-
-# Company webpage
-{nest_markdown(webpage_summary.summary_markdown, 1)}
-
-----
-
-# News
-{nest_markdown(news_result.summary_markdown, 1)}
-
-----
-
-# Additional search results
-{nest_markdown(general_search_summary, 1)}
-
-"""
-        )
-
-        for source, content in dynamic_contexts.items():
-            f.write(f"# {source}\n{nest_markdown(content, 1)}\n")
-
-        logger.info(f"Written to {f.name}")
-
-        return f.name

@@ -65,6 +65,7 @@ class CustomerExperienceResult(BaseModel):
     output_text: str
     intermediate_steps: List[str]
     url_to_review: Dict[str, Optional[str]]
+    review_markdowns: List[str]
 
 
 def run(
@@ -159,7 +160,7 @@ def run(
 
     result["url_to_review"] = url_to_review
 
-    return CustomerExperienceResult(**result)
+    return CustomerExperienceResult(review_markdowns=review_markdowns, **result)
 
 def extract_app_store_urls(search_results: List[SearchResult]) -> Dict[str, Optional[str]]:
     """Helper to extract app store URLs from search results, compatible with the run function"""
