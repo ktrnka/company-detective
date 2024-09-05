@@ -252,6 +252,7 @@ Note: The report above is an aggregation of all the information below. I like to
                 summary=markdown.markdown(self.summary_markdown),
                 customer_experience_summary=markdown.markdown(nest_markdown(self.customer_experience_markdown, 1)),
                 employee_experience_summary=markdown.markdown(nest_markdown(self.glassdoor_markdown, 1)),
+                general_search_summary=markdown.markdown(nest_markdown(self.general_search_markdown, 1)),
                 div_ids_to_reviews=div_ids_to_reviews,
                 urls_to_div_ids=urls_to_div_ids,
             )
