@@ -1,5 +1,29 @@
 # Experiments done 8/31
 
+## Unified customer experience summary 9/5
+
+Lots of iteration here... I should've taken better notes as I went.
+
+Summary of changes:
+- Fetch all CX reviews into a single list of markdowns (Reddit, Steam, Google Play, Apple store)
+- Use the generic search to get the app store links instead of separate Google searches
+- Bin-pack them
+- Single map-reduce
+- Built out a new way to generate HTML that includes modals for app store data sources, because they don't have permalinks
+- Redid a good amount of the HTML output report
+
+Summary of results:
+- Generally faster
+- Less summarization code overall
+- Consistent processing
+
+Challenges:
+- It'll be skewed towards the most frequent source of reviews (Apple reviews or Steam reviews, usually)
+
+Sub-experiments:
+- Reducing the bin packing seemed to get a more fair sample by source, but shortened the overall review
+- Giving examples of filtering and extraction seemed to help, though it didn't work to edit the quotes
+
 ## Crunchbase workarounds 8/31
 
 Crunchbase started blocking everything. Things tried (none worked):
