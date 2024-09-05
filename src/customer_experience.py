@@ -164,7 +164,7 @@ def run(
         return None
 
     # Pack the documents then truncate any very-long ones
-    packed_reviews = pack_documents(review_markdowns, max_chars=70000)
+    packed_reviews = pack_documents(review_markdowns, max_chars=40000)
     packed_reviews = [doc[:100000] for doc in packed_reviews]
 
     logger.info("Packed reviews: {}", len(packed_reviews))
