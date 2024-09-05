@@ -29,14 +29,55 @@ Please read the following customer comments and extract all opinions and facts r
 Only include information about {product}. 
 If the text does not contain any relevant information, return an empty string.
 
+Approach this in two steps: First identify reviews with useful information (filtering step), then extract quotes from those reviews (extracting step).
+
+FILTERING STEP:
+
+Only consider reviews that express a sentiment along with details about the sentiment.
+
+Example reviews to include:
+
+- I enjoy the characters and setting
+- I found the game to be enjoyable and relaxing
+- Cute, stress free game! Love the games color and graphics, design your home, build up your skills (gardening, fishing, mining, hunting, furniture making, cooking etc.) and befriend fellow Palians
+- ALL cosmetic items and pets are paid for with real money and are expensive
+- I connected with the doctor right away. The physician was super kind and understanding and took care of my needs immediately.
+- Great and easy app
+- Don't waste your time or money just to be told to go to a clinic in the morning
+
+Example reviews to exclude:
+
+- There are certainly big performance issues that come with it
+- The cash shop is pretty toxic, I'm not sure Palia even has nice intentions
+- I hope Singularity 6 addresses us about this soon, if we can help I want to start on it as soon as possible
+- My e-visit was fantastic
+- Great resource for banner employees! Highly recommend
+- Thanks for wasting my time
+
+
+EXTRACTING STEP:
+
+Extract detail-oriented quotes that capture the sentiment and the explanation of the sentiment. Here are some example input/output pairs:
+
+Input: A lovely game reminds me of the Disney game, with lovely graphics, and music.
+Output: ... lovely graphics, and music
+
+Input: Really relaxed, friendly and helpful community. Lots of quests and goals to work towards. Safe environment for children to play. Slightly buggy sometimes but the game is absolutely free so happy to deal with a few glitches here and there :)
+Output: Really relaxed, friendly and helpful community. Lots of quests and goals to work towards. Safe environment for children to play. Slightly buggy sometimes ...
+
+Input: My e-visit was fantastic. I connected with the doctor right away. The physician was super kind and understanding and took care of my needs immediately.
+Output: The physician was super kind and understanding and took care of my needs immediately.
+
+Input: This service is amazing! It has really helped me and my family get the care we need quickly.
+Output: It has really helped me and my family get the care we need quickly.
+
+
+OUTPUT FORMATTING:
 Format the results as a Markdown list of quotes, each with a permalink to the source of the quote like so:
 - "quote" [(Author, Source, Date)](cache://source/NUM)
 
-If the author is not available, use "Anonymous".
-
 ----
 
-Each quote should be a brief statement that captures the essence of the sentiment or information.
 Be sure to extract a comprehensive sample of both positive and negative opinions, as well as any factual statements about the product.
 
 REVIEWS: 
