@@ -428,6 +428,14 @@ def log_summary_metrics(summary: str, summary_input: str, extractive=True):
     neutral_icon = ""
     bad_icon = "❌"
 
+    if not summary:
+        caller_logger.warning("No summary")
+        return
+    
+    if not summary_input:
+        caller_logger.warning("No summary input")
+        return
+
     caller_logger.info(
         "{:,} -> {:,} chars ({:.0%}) {}",
         len(summary_input),

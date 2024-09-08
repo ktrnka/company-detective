@@ -17,7 +17,7 @@ def pack_documents(documents: List[str], max_chars: int, sep="\n\n") -> List[str
     heap = [heap_pair(doc) for doc in documents]
     heapq.heapify(heap)
 
-    while True:
+    while len(heap) >= 2:
         _, doc_a = heapq.heappop(heap)
         _, doc_b = heapq.heappop(heap)
 
@@ -61,6 +61,9 @@ def test_pack_documents():
     assert all(len(doc) <= 10 for doc in packed)
     joined_packed = "\n\n".join(packed)
     assert all(doc in joined_packed for doc in documents)
+
+    # check that it doesn't crash when there are not enough docs for packing
+    pack_documents(documents[:2], 60, sep="")
 
 
 def debug_around(substring: str, documents: List[str], context_chars=300):
