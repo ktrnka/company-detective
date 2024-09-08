@@ -3,5 +3,10 @@
         "src"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "github.copilot.chat.experimental.codeGeneration.instructions": [
+        {
+            "file": "STYLE.md"
+        }
+    ]
 }
