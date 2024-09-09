@@ -16,7 +16,7 @@ from langchain_openai import ChatOpenAI
 from loguru import logger
 from pydantic import BaseModel
 
-from core import Seed, URLShortener, extract_urls, log_summary_metrics
+from core import Seed, URLShortener, extract_urls, extractive_fraction, log_map_reduce_metrics, log_summary_metrics
 import reddit.fetch
 from google_search import SearchResult
 import app_stores.steam as steam
@@ -196,8 +196,23 @@ def run(
         }
     )
 
+    # Log the map-reduce metrics on the shortened texts
+    log_map_reduce_metrics([doc.page_content for doc in documents], result["intermediate_steps"], result["output_text"])
+
     result["output_text"] = shortener.unshorten_markdown(result["output_text"])
     log_summary_metrics(result["output_text"], "\n".join(packed_reviews))
+
+    intermediate_length = sum(len(text) for text in result["intermediate_steps"])
+    if intermediate_length == 0 or len(result["output_text"]) / intermediate_length > 1.5:
+        logger.warning(
+            "Summarization expanded too much, which is a sign of hallucination, returning empty result.",
+        )
+        result["output_text"] = ""
+    elif extractive_fraction(result["output_text"], "\n".join(packed_reviews)) < 0.05:
+        logger.warning(
+            "Summarization looks far too abstractive, which can indicate massive hallucination for this pipeline, returning empty result.",
+        )
+        result["output_text"] = ""
 
     result["url_to_review"] = url_to_review
 

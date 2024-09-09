@@ -493,6 +493,27 @@ def test_log_summary_metrics():
     log_summary_metrics("a b c", "a b c d")
     log_summary_metrics("a b c", "a b c d e f g h i j k l m n o p q r s t u v w x y z")
 
+def log_map_reduce_metrics(input_documents: List[str], intermediate_steps: List[str], output_text: str):
+    """Log the metrics for a map-reduce summarization process"""
+    caller_logger = logger.opt(depth=1)
+
+    input_length = sum(len(doc) for doc in input_documents)
+    intermediate_length = sum(len(text) for text in intermediate_steps)
+    summary_length = len(output_text)
+
+    caller_logger.info(
+        "Map stage {:,} chars -> {:,} chars ({:.0%})",
+        input_length,
+        intermediate_length,
+        intermediate_length / input_length,
+    )
+
+    caller_logger.info(
+        "Reduce stage {:,} chars -> {:,} chars ({:.0%})",
+        intermediate_length,
+        summary_length,
+        summary_length / intermediate_length if intermediate_length > 0 else -1,
+    )
 
 def fix_markdown_list(markdown_text: str) -> str:
     fixed_text = re.sub(r"^([^-\n][^\n]*\n)(-)", r"\1\n\2", markdown_text, flags=re.MULTILINE)
