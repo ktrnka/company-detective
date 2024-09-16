@@ -82,7 +82,7 @@ def summarize(
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
     runnable = _prompt | llm
-    result = runnable.invoke(
+    result = runnable.with_config({"run_name": "Summarize Indeed Job Descriptions"}).invoke(
         {
             "text": unified_markdown,
             "company_name": target.company,

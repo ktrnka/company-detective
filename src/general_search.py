@@ -111,7 +111,7 @@ def summarize(
     url_shortener = URLShortener()
 
     runnable = _prompt | llm
-    result = runnable.invoke(
+    result = runnable.with_config({"run_name": "Organize General Search Results"}).invoke(
         {
             "text": url_shortener.shorten_markdown(unified_markdown),
             "company_name": target.company,

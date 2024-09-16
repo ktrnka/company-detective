@@ -82,7 +82,7 @@ def summarize(target: Seed, article_markdowns: List[str]) -> AIMessage:
     shortener = URLShortener()
 
     runnable = _prompt | llm
-    result = runnable.invoke(
+    result = runnable.with_config({"run_name": "Summarize News"}).invoke(
         {
             "text": shortener.shorten_markdown(unified_markdown),
             "company_name": target.company,

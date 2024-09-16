@@ -55,7 +55,7 @@ def run(website: str, num_pages=30) -> WebpageResult:
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     runnable = _prompt | llm
-    result = runnable.invoke(
+    result = runnable.with_config({"run_name": "Summarize Company Webpage"}).invoke(
         {
             # NOTE: I tried the URL shortener initially but had an issue with a dangling cache reference
             "context": joined_markdowns,

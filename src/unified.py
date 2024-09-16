@@ -325,7 +325,7 @@ async def run(
     llm = ChatOpenAI(model="gpt-4o", temperature=0)
 
     runnable = prompt | llm
-    result = runnable.invoke(
+    result = runnable.with_config({"run_name": "Combine All Summaries"}).invoke(
         {
             "company_name": target.company,
             "product_name": target.product,

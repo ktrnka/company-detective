@@ -49,7 +49,7 @@ def summarize(target: Seed, reviews: List[GlassdoorReview]) -> AIMessage:
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     runnable = _prompt | llm
-    result = runnable.invoke(
+    result = runnable.with_config({"run_name": "Summarize Glassdoor"}).invoke(
         {
             "text": combined_markdown,
             "company": target.company,

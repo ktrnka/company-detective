@@ -169,7 +169,7 @@ def run(
 
     logger.info("Packed reviews: {}", len(packed_reviews))
 
-    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0).with_config({"run_name": "Summarize Customer Experience"})
 
     shortener = URLShortener()
 

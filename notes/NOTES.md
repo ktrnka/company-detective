@@ -1,4 +1,4 @@
-# Experiments done 8/31
+# Experiments done
 
 ## Unified customer experience summary 9/5
 
