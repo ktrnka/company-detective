@@ -196,6 +196,7 @@ def run(
             "input_documents": documents,
         },
         # TODO: There's a bug; the langchain config isn't propagated to the map steps so those aren't grouped in the output
+        # There's an arg to load_summarize_chain (callbacks) that looks like it should work, but it didn't work when I tried it
         langchain_config,
     )
 
