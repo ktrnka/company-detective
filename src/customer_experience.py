@@ -166,6 +166,8 @@ def run(
 
     # Pack the documents then truncate any very-long ones
     packed_reviews = pack_documents(review_markdowns, max_chars=40000)
+
+    # TODO: Make a document splitter or otherwise warn when truncating
     packed_reviews = [doc[:100000] for doc in packed_reviews]
 
     logger.info("Packed reviews: {}", len(packed_reviews))
@@ -180,7 +182,10 @@ def run(
     ]
 
     summary_chain = load_summarize_chain(
-        llm=llm,
+        # This is necessary to trace in the same group, otherwise it isn't propagated correctly
+        # TODO: I really hate the way I'm attaching the dicts this way
+        llm=llm.with_config({"run_name": "Customer experience mapper", **(langchain_config or {})}),
+        reduce_llm=llm.with_config({"run_name": "Customer experience reducer"}),
         chain_type="map_reduce",
         map_prompt=map_prompt_template,
         combine_prompt=combine_prompt_template,
@@ -195,8 +200,7 @@ def run(
             "product": target.product,
             "input_documents": documents,
         },
-        # TODO: There's a bug; the langchain config isn't propagated to the map steps so those aren't grouped in the output
-        # There's an arg to load_summarize_chain (callbacks) that looks like it should work, but it didn't work when I tried it
+        # NOTE: This will propagate correctly to the reducer but not the mapper
         langchain_config,
     )
 
