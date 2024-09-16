@@ -169,7 +169,7 @@ def url_to_div_id(url: str) -> str:
     _, url = url.split("://")
     return re.sub(r'\W', '_', url)
 
-class UnifedResult(BaseModel):
+class UnifiedResult(BaseModel):
     summary_markdown: str
     target: Seed
 
@@ -271,7 +271,7 @@ async def run(
     max_glassdoor_job_pages=0,
     max_news_articles=10,
     glassdoor_url=None,
-) -> UnifedResult:
+) -> UnifiedResult:
     """
     Search the web for information on the target company and product, then summarize it all.
     """
@@ -344,7 +344,7 @@ async def run(
 
     log_summary_metrics(result.content, unshortened_context, extractive=False)
 
-    return UnifedResult(
+    return UnifiedResult(
         target=target,
         summary_markdown=result.content,
         webpage_result=webpage_summary,
