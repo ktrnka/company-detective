@@ -40,7 +40,7 @@ EMPLOYEE REVIEWS:
 )
 
 
-def summarize(target: Seed, reviews: List[GlassdoorReview]) -> AIMessage:
+def summarize(target: Seed, reviews: List[GlassdoorReview], langchain_config=None) -> AIMessage:
     """Summarize a list of Glassdoor reviews"""
     combined_markdown = "\n\n".join(
         templates.get_template("glassdoor_review.md").render(review=review)
@@ -53,7 +53,8 @@ def summarize(target: Seed, reviews: List[GlassdoorReview]) -> AIMessage:
         {
             "text": combined_markdown,
             "company": target.company,
-        }
+        },
+        langchain_config,
     )
 
     log_summary_metrics(result.content, combined_markdown)

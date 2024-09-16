@@ -115,6 +115,7 @@ def run(
     google_play_url: Optional[str] = None,
     apple_store_url: Optional[str] = None,
     reddit_urls: Optional[List[str]] = None,
+    langchain_config = None,
 ) -> Optional[CustomerExperienceResult]:
     review_markdowns = []
 
@@ -169,7 +170,7 @@ def run(
 
     logger.info("Packed reviews: {}", len(packed_reviews))
 
-    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0).with_config({"run_name": "Summarize Customer Experience"})
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
     shortener = URLShortener()
 
@@ -188,12 +189,14 @@ def run(
         return_intermediate_steps=True,
     )
 
-    result = summary_chain.invoke(
+    result = summary_chain.with_config({"run_name": "Summarize Customer Experience"}).invoke(
         {
             "company": target.company,
             "product": target.product,
             "input_documents": documents,
-        }
+        },
+        # TODO: There's a bug; the langchain config isn't propagated to the map steps so those aren't grouped in the output
+        langchain_config,
     )
 
     # Log the map-reduce metrics on the shortened texts

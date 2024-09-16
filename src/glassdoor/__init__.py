@@ -49,7 +49,7 @@ class GlassdoorResult:
 
 
 async def run(
-    target: Seed, max_review_pages=1, max_job_pages=0, url_override=None
+    target: Seed, max_review_pages=1, max_job_pages=0, url_override=None, langchain_config=None
 ) -> Optional[GlassdoorResult]:
 
     # NOTE: This is necessary in rare cases where the Google search results don't contain the overview page at all, like Pomelo Care
@@ -87,7 +87,7 @@ async def run(
 
     reviews = GlassdoorReview.parse_reviews(company, response)
 
-    review_summary = summarize(target, reviews)
+    review_summary = summarize(target, reviews, langchain_config)
 
     # TODO: Pull out allReviewsCount from glassdoor_results
     return GlassdoorResult(

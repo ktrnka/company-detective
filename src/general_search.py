@@ -102,6 +102,7 @@ def results_to_markdown(search_results: List[SearchResult]) -> str:
 def summarize(
     target: Seed,
     search_results: List[SearchResult],
+    langchain_config=None,
 ) -> AIMessage:
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     unified_markdown = results_to_markdown(search_results)
@@ -116,7 +117,8 @@ def summarize(
             "text": url_shortener.shorten_markdown(unified_markdown),
             "company_name": target.company,
             "product_name": target.product,
-        }
+        },
+        langchain_config,
     )
 
     result.content = url_shortener.unshorten_markdown(cleanse_markdown(result.content))

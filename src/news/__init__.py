@@ -19,7 +19,7 @@ class NewsSummary(NamedTuple):
     summary_markdown: str
 
 
-def run(target: Seed, max_results=30) -> NewsSummary:
+def run(target: Seed, max_results=30, langchain_config=None) -> NewsSummary:
     """
     Run the News pipeline:
     1. Find news articles
@@ -37,7 +37,7 @@ def run(target: Seed, max_results=30) -> NewsSummary:
     articles = [news.scrape.response_to_article(response) for response in responses]
     article_markdowns = [news.scrape.article_to_markdown(article) for article in articles]
 
-    llm_result = news.summarize.summarize(target, article_markdowns)
+    llm_result = news.summarize.summarize(target, article_markdowns, langchain_config)
 
     return NewsSummary(
         target=target, 

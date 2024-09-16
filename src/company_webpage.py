@@ -40,7 +40,7 @@ class WebpageResult:
     page_markdowns: List[str]
 
 
-def run(website: str, num_pages=30) -> WebpageResult:
+def run(website: str, num_pages=30, langchain_config=None) -> WebpageResult:
     assert website, "Website must be non-empty"
 
     search_results = list(search(f"site:{website}", num=num_pages))
@@ -59,7 +59,8 @@ def run(website: str, num_pages=30) -> WebpageResult:
         {
             # NOTE: I tried the URL shortener initially but had an issue with a dangling cache reference
             "context": joined_markdowns,
-        }
+        },
+        langchain_config
     )
 
     log_summary_metrics(result.content, joined_markdowns, extractive=False)

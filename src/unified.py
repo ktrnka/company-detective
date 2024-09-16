@@ -262,7 +262,7 @@ Note: The report above is an aggregation of all the information below. I like to
 
         return f.name
     
-
+from langchain_core.callbacks.manager import trace_as_chain_group
 
 async def run(
     target: Seed,
@@ -276,83 +276,92 @@ async def run(
     Search the web for information on the target company and product, then summarize it all.
     """
 
-    dynamic_contexts = {}
+    with trace_as_chain_group("Summarize Company", inputs={"seed": target}) as tracing_callback:
+        langchain_config = {"callbacks": tracing_callback}
+        # # Use the callback manager for the chain group
+        # res = llm.invoke(llm_input, {"callbacks": manager})
+        # manager.on_chain_end({"output": res})
 
-    webpage_summary = company_webpage.run(target.domain)
 
-    general_search_results = general_search.search_web(target)
-    general_search_summary = general_search.summarize(
-        target, general_search_results
-    ).content
+        dynamic_contexts = {}
 
-    crunchbase_markdown = await crunchbase.run(target)
-    if crunchbase_markdown:
-        dynamic_contexts["Crunchbase"] = crunchbase_markdown
-    else:
-        logger.warning("No Crunchbase info found")
+        webpage_summary = company_webpage.run(target.domain, langchain_config=langchain_config)
 
-    app_store_urls = customer_experience.extract_app_store_urls(general_search_results)
-    reddit_urls = [
-        result.link
-        for result in reddit.search.find_submissions(
-            target, num_results=num_reddit_threads
-        )
-    ]
-    customer_experience_result = customer_experience.run(
-        target, reddit_urls=reddit_urls, **app_store_urls
-    )
+        general_search_results = general_search.search_web(target)
+        general_search_summary = general_search.summarize(
+            target, general_search_results, langchain_config=langchain_config
+        ).content
 
-    glassdoor_result = await glassdoor.run(
-        target,
-        max_review_pages=max_glassdoor_review_pages,
-        max_job_pages=max_glassdoor_job_pages,
-        url_override=glassdoor_url,
-    )
+        crunchbase_markdown = await crunchbase.run(target)
+        if crunchbase_markdown:
+            dynamic_contexts["Crunchbase"] = crunchbase_markdown
+        else:
+            logger.warning("No Crunchbase info found")
 
-    news_result = news.run(target, max_results=max_news_articles)
-
-    unshortened_context = "\n\n".join(
-        [
-            webpage_summary.summary_markdown,
-            news_result.summary_markdown,
-            # general_search_summary,
+        app_store_urls = customer_experience.extract_app_store_urls(general_search_results)
+        reddit_urls = [
+            result.link
+            for result in reddit.search.find_submissions(
+                target, num_results=num_reddit_threads
+            )
         ]
-        + list(dynamic_contexts.values())
-    )
+        customer_experience_result = customer_experience.run(
+            target, reddit_urls=reddit_urls, langchain_config=langchain_config, **app_store_urls
+        )
 
-    url_shortener = URLShortener()
+        glassdoor_result = await glassdoor.run(
+            target,
+            max_review_pages=max_glassdoor_review_pages,
+            max_job_pages=max_glassdoor_job_pages,
+            url_override=glassdoor_url,
+            langchain_config=langchain_config,
+        )
 
-    llm = ChatOpenAI(model="gpt-4o", temperature=0)
+        news_result = news.run(target, max_results=max_news_articles, langchain_config=langchain_config)
 
-    runnable = prompt | llm
-    result = runnable.with_config({"run_name": "Combine All Summaries"}).invoke(
-        {
-            "company_name": target.company,
-            "product_name": target.product,
-            "company_domain": target.domain,
-            "company_webpage_text": url_shortener.shorten_markdown(
-                webpage_summary.summary_markdown
-            ),
-            "news_text": url_shortener.shorten_markdown(news_result.summary_markdown),
-            # "search_text": url_shortener.shorten_markdown(general_search_summary),
-            "dynamic_contexts": url_shortener.shorten_markdown(
-                contexts_to_markdown(dynamic_contexts)
-            ),
-        }
-    )
-    result.content = url_shortener.unshorten_markdown(cleanse_markdown(result.content))
+        unshortened_context = "\n\n".join(
+            [
+                webpage_summary.summary_markdown,
+                news_result.summary_markdown,
+                # general_search_summary,
+            ]
+            + list(dynamic_contexts.values())
+        )
 
-    log_summary_metrics(result.content, unshortened_context, extractive=False)
+        url_shortener = URLShortener()
 
-    return UnifiedResult(
-        target=target,
-        summary_markdown=result.content,
-        webpage_result=webpage_summary,
-        general_search_markdown=general_search_summary,
-        crunchbase_markdown=crunchbase_markdown,
-        customer_experience_result=customer_experience_result,
-        glassdoor_result=glassdoor_result,
-        news_result=news_result,
-    )
+        llm = ChatOpenAI(model="gpt-4o", temperature=0)
+
+        runnable = prompt | llm
+        result = runnable.with_config({"run_name": "Combine All Summaries"}).invoke(
+            {
+                "company_name": target.company,
+                "product_name": target.product,
+                "company_domain": target.domain,
+                "company_webpage_text": url_shortener.shorten_markdown(
+                    webpage_summary.summary_markdown
+                ),
+                "news_text": url_shortener.shorten_markdown(news_result.summary_markdown),
+                # "search_text": url_shortener.shorten_markdown(general_search_summary),
+                "dynamic_contexts": url_shortener.shorten_markdown(
+                    contexts_to_markdown(dynamic_contexts)
+                ),
+            },
+            langchain_config,
+        )
+        result.content = url_shortener.unshorten_markdown(cleanse_markdown(result.content))
+
+        log_summary_metrics(result.content, unshortened_context, extractive=False)
+
+        return UnifiedResult(
+            target=target,
+            summary_markdown=result.content,
+            webpage_result=webpage_summary,
+            general_search_markdown=general_search_summary,
+            crunchbase_markdown=crunchbase_markdown,
+            customer_experience_result=customer_experience_result,
+            glassdoor_result=glassdoor_result,
+            news_result=news_result,
+        )
 
 

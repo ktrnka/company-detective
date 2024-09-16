@@ -73,7 +73,7 @@ COMPREHENSIVE ANALYST REPORT, MARKDOWN FORMAT:
 )
 
 
-def summarize(target: Seed, article_markdowns: List[str]) -> AIMessage:
+def summarize(target: Seed, article_markdowns: List[str], langchain_config=None) -> AIMessage:
     """Summarize a list of news articles"""
     unified_markdown = "\n\n".join(article for article in article_markdowns)
 
@@ -87,7 +87,8 @@ def summarize(target: Seed, article_markdowns: List[str]) -> AIMessage:
             "text": shortener.shorten_markdown(unified_markdown),
             "company_name": target.company,
             "product_name": target.product,
-        }
+        },
+        langchain_config,
     )
     result.content = shortener.unshorten_markdown(result.content)
 
