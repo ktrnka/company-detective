@@ -1,5 +1,20 @@
 # Experiments done
 
+## Using LLMs to improve Reddit search 9/19
+
+For S6/Palia, we get more customer feedback when searching for Palia. For Rad.ai/Omni, we need to search for both together to get any results at all. For Akili/EndeavorRx, we get nothing at all if we search for both but get great results if we only search for EndeavorRx.
+
+At first I tried designing an LLM stage to select which query to run. That didn't work well at all. It always preferred the longer more detailed query.
+
+Then I tried a reranking approach, in which we'd search both ways: '"Singularity 6" Palia' and 'Palia', then join the results together, then rerank based on the titles/snippets. That generally worked well but had some issues. The biggest issue was latency so I spent time optimizing the LLM step and was able to get it to a reasonable speed but that altered the quality and I'm still working on quality.
+
+Subjective evaluation:
+- S6/Palia: Reranking is good. It's a big improvement over searching for S6/Palia together
+- Akili/EndeavorRx: Reranking is good (though it's not strictly necessary), and is a big improvement over searching for the terms together
+- Rad.ai/Omni: Reranking is not quite right, and is a little worse than searching for the terms together because a ChatGPT Omni gets a relevance of 5. This might be solved with a one-line description of Rad.ai and Omni
+
+If I add a one-line description of the company and product, that Rad.ai/Omni results are better though the ChatGPT thread still gets a product relevance of 4
+
 ## Unified customer experience summary 9/5
 
 Lots of iteration here... I should've taken better notes as I went.
