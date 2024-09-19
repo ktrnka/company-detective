@@ -13,7 +13,7 @@ Subjective evaluation:
 - Akili/EndeavorRx: Reranking is good (though it's not strictly necessary), and is a big improvement over searching for the terms together
 - Rad.ai/Omni: Reranking is not quite right, and is a little worse than searching for the terms together because a ChatGPT Omni gets a relevance of 5. This might be solved with a one-line description of Rad.ai and Omni
 
-If I add a one-line description of the company and product, that Rad.ai/Omni results are better though the ChatGPT thread still gets a product relevance of 4
+If I add a one-line description of the company and product, that Rad.ai/Omni results are better though the ChatGPT thread still gets a product relevance of 3, which is much higher than I'd expect
 
 ## Unified customer experience summary 9/5
 
