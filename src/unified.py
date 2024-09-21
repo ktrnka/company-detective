@@ -21,7 +21,6 @@ import reddit.search
 
 import glassdoor
 import news
-import crunchbase
 import company_webpage
 
 import general_search
@@ -292,12 +291,6 @@ async def run(
             target, general_search_results, langchain_config=langchain_config
         ).content
 
-        crunchbase_markdown = await crunchbase.run(target)
-        if crunchbase_markdown:
-            dynamic_contexts["Crunchbase"] = crunchbase_markdown
-        else:
-            logger.warning("No Crunchbase info found")
-
         app_store_urls = customer_experience.extract_app_store_urls(general_search_results)
         reddit_urls = [
             result.link
@@ -358,10 +351,10 @@ async def run(
             summary_markdown=result.content,
             webpage_result=webpage_summary,
             general_search_markdown=general_search_summary,
-            crunchbase_markdown=crunchbase_markdown,
             customer_experience_result=customer_experience_result,
             glassdoor_result=glassdoor_result,
             news_result=news_result,
+            crunchbase_markdown=None
         )
 
 
