@@ -34,9 +34,11 @@ ipykernel = "*"
 diagrams = "*"
 pytest = "*"
 pipenv-check = "*"
+vulture = "*"
 
 [requires]
 python_version = "3.10"
 
 [scripts]
 check-dependencies = "pipenv-check"
+find-dead-code = "vulture --ignore-names 'test_*' src/"
