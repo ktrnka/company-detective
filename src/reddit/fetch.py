@@ -77,29 +77,3 @@ def test_submission():
         url="https://www.reddit.com/r/ChatGPT/comments/11twe7z/prompt_to_summarize/"
     )
     print(submission_to_markdown(submission))
-
-
-def index_comment_forest_permalinks(comment: Comment, depth_remaining=3) -> dict:
-    """
-    Index all the permalinks in a Reddit comment tree.
-    """
-    if depth_remaining <= 0 or not include_comment(comment):
-        return {}
-
-    permalinks = {}
-    for reply in comment.replies:
-        permalinks.update(index_comment_forest_permalinks(reply, depth_remaining - 1))
-    permalinks[comment.id] = comment.permalink
-    return permalinks
-
-
-def index_permalinks(submission: Submission) -> dict:
-    """
-    Index all the permalinks in a Reddit submission.
-    """
-    permalinks = {}
-    for comment in submission.comments.list():
-        if include_comment(comment):
-            permalinks.update(index_comment_forest_permalinks(comment))
-    permalinks[submission.id] = submission.permalink
-    return permalinks

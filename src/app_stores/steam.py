@@ -90,6 +90,9 @@ class SteamResponse(BaseModel):
     success: int
 
 def get_review_summary_stats(steam_id: int) -> QuerySummary:
+    """
+    Get the summary statistics for a Steam game by querying the review API for one result and returning the query_summary on the first page of results.
+    """
     response = requests.get(
         f"https://store.steampowered.com/appreviews/{steam_id}",
         params={

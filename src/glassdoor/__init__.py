@@ -97,6 +97,7 @@ async def run(
 
 
 def summarize_sampling(result: GlassdoorResult, alpha=0.05) -> str:
+    """Summarize the review stats compared to the overall distribution"""
     sample_scores = np.array([review.ratingOverall for review in result.reviews])
     population_mean = result.raw_reviews["ratings"]["overallRating"]
     t_statistic, p_value = stats.ttest_1samp(sample_scores, population_mean)

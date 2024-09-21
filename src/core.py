@@ -17,10 +17,6 @@ class Seed(NamedTuple):
     company: str
     product: str
     domain: str
-
-    @classmethod
-    def same(cls, name: str):
-        return cls(company=name, product=name)
     
     @classmethod
     def init(cls, company: str, product: str = None, domain: str = None):
@@ -30,6 +26,7 @@ class Seed(NamedTuple):
         return cls(company, product, domain)
 
     def as_path(self) -> str:
+        # TODO: Delete this function and merge any callers to the other one
         return re.sub(r"[^a-zA-Z0-9]", "_", f"{self.company} {self.product}")
     
     def as_path_v2(self) -> str:
@@ -150,6 +147,7 @@ This # might be harder
 
 
 def simplify_markdown(markdown_doc: str) -> str:
+    """Remove any code block formatting that's wrapping a markdown document"""
     # TODO: Improve this, write tests, etc
     return markdown_doc.strip().strip("```markdown").strip("```")
 

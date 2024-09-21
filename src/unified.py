@@ -194,6 +194,9 @@ class UnifiedResult(BaseModel):
             return "No Glassdoor information found."
 
     def to_markdown_file(self) -> str:
+        """
+        Format the result into a markdown file and return the filename.
+        """
         with open(eval_filename(self.target, extension="md"), "w") as f:
             f.write(f"""
 {self.summary_markdown}
@@ -241,6 +244,9 @@ Note: The report above is an aggregation of all the information below. I like to
         return f.name
     
     def to_html_file(self) -> str:
+        """
+        Format the result into an HTML file and return the filename.
+        """
         urls_to_div_ids = {url: url_to_div_id(url) for url in self.customer_experience_result.url_to_review.keys()}
         div_ids_to_reviews = {url_to_div_id(url): split_review(markdown_review) for url, markdown_review in self.customer_experience_result.url_to_review.items()}
 

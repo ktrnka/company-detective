@@ -169,7 +169,7 @@ def histogram_to_array(histogram):
     return np.asarray(list(chain(*[[num+1] * count for num, count in enumerate(histogram)])))
 
 def summarize_sampling(app_info: GooglePlayAppInfo, reviews: List[GooglePlayReview], alpha=0.05) -> str:
-    """Summarize the sampling of reviews compared to the overall distribution"""
+    """Summarize the review stats compared to the overall distribution"""
     sample_scores = np.array([review.score for review in reviews])
     overall_scores = histogram_to_array(app_info.histogram)
 
