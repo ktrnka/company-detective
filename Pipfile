@@ -27,6 +27,9 @@ diskcache = "*"
 boto3 = "*"
 scipy = "*"
 numpy = "*"
+scikit-learn = "*"
+eli5 = "*"
+pandas = "*"
 
 [dev-packages]
 jupyter = "*"
