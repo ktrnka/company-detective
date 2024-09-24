@@ -9,3 +9,9 @@ It requires API keys for:
 - (Optional) Langsmith
 
 ![System diagram](src/system_diagram.png)
+
+# Setup
+
+Make sure you have Python 3.10 available, then run
+
+`pipenv install --dev`
