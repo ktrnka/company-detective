@@ -41,36 +41,17 @@ Ensure you have obtained the necessary API keys before proceeding with the setup
    pipenv install --dev
    ```
 
-3. Set up your API keys as environment variables or in a configuration file (refer to the project documentation for specific instructions on how to set up API keys).
+3. Set up your API keys in a `.env` file.
 
 ## Usage
 
 The main entry point for running the company analysis is the `src/unified_summary.ipynb` Jupyter notebook.
 
-To run the analysis:
-
-1. Activate the Pipenv shell:
-   ```
-   pipenv shell
-   ```
-
-2. Launch Jupyter Notebook:
-   ```
-   jupyter notebook
-   ```
-
-3. Navigate to `src/unified_summary.ipynb` and open the notebook.
-
-4. Follow the instructions within the notebook to input the company name and run the analysis.
-
 ## Contributing
 
-Contributions to improve Company Detective are welcome. Please refer to the `CONTRIBUTING.md` file (if available) for guidelines on how to contribute to this project.
+Talk to Keith! The repo isn't currently setup for open contributions yet.
 
 ## License
 
-[Include license information here]
+To be determined
 
-## Contact
-
-[Include contact information or link to issues page for questions and support]
