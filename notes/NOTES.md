@@ -1,5 +1,10 @@
 # Experiments done
 
+## Linkedin data source 9/27
+
+- I tried setting up a Linkedin app and logging into OAuth via Colab + Chrome. That failed with an unknown code about the response URL. I added the response URL but it didn't resolve the issue.
+- I tried the Scrapfly scraper for Linkedin but that didn't have much information on the company. I tried to add scraping for the company's recent posts but it looks like that's dynamically injected via Javascript.
+
 ## Using LLMs to improve Reddit search 9/19
 
 For S6/Palia, we get more customer feedback when searching for Palia. For Rad.ai/Omni, we need to search for both together to get any results at all. For Akili/EndeavorRx, we get nothing at all if we search for both but get great results if we only search for EndeavorRx.
