@@ -154,15 +154,18 @@ def parse_job_search(response: ScrapeApiResponse) -> List[Dict]:
     total_results = int(total_results.replace(",", "").replace("+", "")) if total_results else None
     data = []
     for element in selector.xpath("//section[contains(@class, 'results-list')]/ul/li"):
-        data.append({
-            "title": element.xpath(".//div/a/span/text()").get().strip(),
-            "company": element.xpath(".//div/div[contains(@class, 'info')]/h4/a/text()").get().strip(),
-            "address": element.xpath(".//div/div[contains(@class, 'info')]/div/span/text()").get().strip(),
-            "timeAdded": element.xpath(".//div/div[contains(@class, 'info')]/div/time/@datetime").get(),
-            "jobUrl": element.xpath(".//div/a/@href").get().split("?")[0],
-            "companyUrl": element.xpath(".//div/div[contains(@class, 'info')]/h4/a/@href").get().split("?")[0],
-            "salary": strip_text(element.xpath(".//span[contains(@class, 'salary')]/text()").get())
-        })
+        try:
+            data.append({
+                "title": element.xpath(".//div/a/span/text()").get().strip(),
+                "company": element.xpath(".//div/div[contains(@class, 'info')]/h4/a/text()").get().strip(),
+                "address": element.xpath(".//div/div[contains(@class, 'info')]/div/span/text()").get().strip(),
+                "timeAdded": element.xpath(".//div/div[contains(@class, 'info')]/div/time/@datetime").get(),
+                "jobUrl": element.xpath(".//div/a/@href").get().split("?")[0],
+                "companyUrl": element.xpath(".//div/div[contains(@class, 'info')]/h4/a/@href").get().split("?")[0],
+                "salary": strip_text(element.xpath(".//span[contains(@class, 'salary')]/text()").get())
+            })
+        except AttributeError:
+            log.warning("Job element is missing some data, skipping")
     return {"data": data, "total_results": total_results}
 
 
