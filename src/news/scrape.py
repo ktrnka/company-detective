@@ -35,6 +35,9 @@ def request_article(
     except requests.exceptions.SSLError as e:
         logger.warning(f"SSL error on {url}")
         return None
+    except requests.exceptions.ConnectionError as e:
+        logger.warning(f"Connection error on {url}, usually this means max retries exceeded")
+        return None
 
 
 def remove_img_tags(html_str: str) -> str:
