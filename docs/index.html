@@ -1,8 +1,10 @@
-<html></html>
+<html>
+
+</html>
 
 <head>
     <meta charset="UTF-8">
-    
+
     <title></title>
 
     <!-- materialize css dependencies -->
@@ -10,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- TODO: Factor this out into a shared style file -->
     <style>
         li {
             margin-bottom: 10px;
@@ -25,12 +28,61 @@
 
     <div class="container">
 
-This is a test of the static index.html
+        <div class="row">
+            <div class="col s12">
+                <div class="card-panel">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <!-- <i class="material-icons prefix">textsms</i> -->
+                            <input type="text" id="autocomplete-input" class="autocomplete">
+                            <label for="autocomplete-input">Business name</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 
     <!-- materialize css dependencies -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script>
+        // TODO: Build a better way to represent this data
+        var autocompleteData = {
+            "98point6": "companies/98point6_20240917_091623.html",
+            "Kevala": "docs/companies/Kevala_20240917_123232.html",
+            "Akili Interactive": "companies/Akili_Interactive_20240916_154811.html",
+            "Synthesize Bio": "companies/Synthesize_Bio_20240908_192847.html",
+            "Imagine Pediatics": "companies/Imagine_Pediatrics_20240903_155259.html",
+            "Pomelo Care": "companies/Pomelo_Care_20240829_100431.html",
+            "Singularity 6": "companies/Singularity_6_Palia_20240904_181315.html"
+        };
+
+        // The automcomplete widget interpret the values as icons, so we need to set them to null
+        var autocompleteDataNovals = {};
+        for (var key in autocompleteData) {
+            if (autocompleteData.hasOwnProperty(key)) {
+                autocompleteDataNovals[key] = null;
+            }
+        }
+
+        $(document).ready(function () {
+            $('input.autocomplete').autocomplete({
+                minLength: 0,
+                data: autocompleteDataNovals,
+                onAutocomplete: function (val) {
+                    // navigate to the specified URL
+                    window.location.href = autocompleteData[val];
+                },
+                sortFunction: function (a, b, inputString) {
+                    return a.localeCompare(b);
+                }
+            });
+        });
+    </script>
 
 
 </body>
