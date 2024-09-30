@@ -168,6 +168,10 @@ def url_to_div_id(url: str) -> str:
     _, url = url.split("://")
     return re.sub(r'\W', '_', url)
 
+class Lineage(BaseModel):
+    run_at: datetime
+    git_sha: str
+
 class UnifiedResult(BaseModel):
     summary_markdown: str
     target: Seed
@@ -178,6 +182,8 @@ class UnifiedResult(BaseModel):
     customer_experience_result: Optional[customer_experience.CustomerExperienceResult]
     glassdoor_result: Optional[glassdoor.GlassdoorResult]
     news_result: news.NewsSummary
+
+    lineage: Lineage
 
     @property
     def customer_experience_markdown(self) -> str:
@@ -243,15 +249,18 @@ Note: The report above is an aggregation of all the information below. I like to
 
         return f.name
     
-    def to_html_file(self) -> str:
+    def to_html_file(self, path: Optional[str] = None) -> str:
         """
         Format the result into an HTML file and return the filename.
         """
+        # TODO: Refactor this whole thing to not do the file I/O, so that it's testable, etc
         urls_to_div_ids = {url: url_to_div_id(url) for url in self.customer_experience_result.url_to_review.keys()}
         div_ids_to_reviews = {url_to_div_id(url): split_review(markdown_review) for url, markdown_review in self.customer_experience_result.url_to_review.items()}
 
+        if not path:
+            path = eval_filename(self.target, extension="html")
 
-        with open(eval_filename(self.target, extension="html"), "w") as f:
+        with open(path, "w") as f:
 
             html = templates.get_template("basic_report.html").render(
                 summary=markdown.markdown(self.summary_markdown),
@@ -260,6 +269,7 @@ Note: The report above is an aggregation of all the information below. I like to
                 general_search_summary=markdown.markdown(nest_markdown(self.general_search_markdown, 1)),
                 div_ids_to_reviews=div_ids_to_reviews,
                 urls_to_div_ids=urls_to_div_ids,
+                title=self.target.company,
             )
             f.write(html)
 
@@ -360,7 +370,8 @@ async def run(
             customer_experience_result=customer_experience_result,
             glassdoor_result=glassdoor_result,
             news_result=news_result,
-            crunchbase_markdown=None
+            crunchbase_markdown=None,
+            lineage=Lineage(run_at=datetime.now(), git_sha=git_sha()),
         )
 
 
