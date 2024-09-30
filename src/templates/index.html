@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<!-- The About section -->
+<div class="row">
+    <div class="col s12">
+        <div class="card-panel">
+            <h3>About</h3>
+            <p>
+                This is a beta tool to assist me in researching companies, particularly when I'm in 
+                the late stages of the interview process. It isn't polished yet but I'm packaging it up
+                on the web to share and demo more easily.
+            </p>
+            <p>
+                The data is sourced from a variety of places, including Glassdoor, news sources, Reddit, app stores, and the company's own website.
+            </p>
+            <p>
+                It works best for medium-sized tech companies right now, though I'm working on expanding the coverage to different company sizes and different industries.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- The widget to find companies -->
+<div class="row">
+    <div class="col s12">
+        <div class="card-panel">
+            <div class="row">
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">search</i>
+                    <input type="text" id="autocomplete-input" class="autocomplete">
+                    <label for="autocomplete-input">Enter a business name:</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var autocompleteData = {{ names_to_relative_urls | tojson}};
+
+    // The autocomplete widget interpret the values as icons, so we need to set them to null
+    var autocompleteWidgetData = {};
+    for (var key in autocompleteData) {
+        if (autocompleteData.hasOwnProperty(key)) {
+            autocompleteWidgetData[key] = null;
+        }
+    }
+
+    $(document).ready(function () {
+        $('input.autocomplete').autocomplete({
+            minLength: 0,
+            data: autocompleteWidgetData,
+            onAutocomplete: function (val) {
+                // navigate to the specified URL
+                window.location.href = autocompleteData[val];
+            },
+            sortFunction: function (a, b, inputString) {
+                return a.localeCompare(b);
+            }
+        });
+    });
+</script>
+{% endblock %}

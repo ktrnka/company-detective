@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     
-    <title></title>
+    <title>{{title}}</title>
 
     <!-- materialize css dependencies -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -16,13 +16,24 @@
         }
 
         body {
-            background-color: #e0eaf1;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
+
+        footer.page-footer {
+            padding-top: 0px;
         }
     </style>
 </head>
 
-<body>
+<body class="indigo lighten-4">
 
+    <main>
     <div class="container">
 
         {% block body %}
@@ -30,8 +41,25 @@
         {% endblock %}
 
     </div>
+    </main>
+
+    <footer class="page-footer indigo darken-4">
+        <div class="footer-copyright">
+            <div class="container">
+                Company Detective beta
+
+                <!-- Elements on the right -->
+                <span class="grey-text text-lighten-4 right">
+                    <a class="grey-text text-lighten-4" href="#!">Add a company</a> |
+                    <a class="grey-text text-lighten-4" href="https://github.com/ktrnka/company-detective">Github</a>
+                </span>
+            </div>
+        </div>
+    </footer>
 
     <!-- materialize css dependencies -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
     {% block scripts %}

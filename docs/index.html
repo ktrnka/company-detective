@@ -1,25 +1,21 @@
 <html>
 
-</html>
-
 <head>
     <meta charset="UTF-8">
-
-    <title></title>
+    
+    <title>Company Detective beta</title>
 
     <!-- materialize css dependencies -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- TODO: Factor this out into a shared style file -->
     <style>
         li {
             margin-bottom: 10px;
         }
 
         body {
-            background-color: #e0eaf1;
             display: flex;
             min-height: 100vh;
             flex-direction: column;
@@ -35,44 +31,57 @@
     </style>
 </head>
 
-<body>
+<body class="indigo lighten-4">
 
     <main>
-        <div class="container">
+    <div class="container">
 
-            <!-- The widget to find companies -->
-            <div class="row">
-                <div class="col s12">
-                    <div class="card-panel">
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <!-- <i class="material-icons prefix">textsms</i> -->
-                                <input type="text" id="autocomplete-input" class="autocomplete">
-                                <label for="autocomplete-input">Business name</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- The About section -->
-            <div class="row">
-                <div class="col s12">
-                    <div class="card-panel">
-                        <h3>About</h3>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam scelerisque, nunc nec lacinia
-
-                    </div>
-                </div>
-            </div>
-
+        
+<!-- The About section -->
+<div class="row">
+    <div class="col s12">
+        <div class="card-panel">
+            <h3>About Company Detective beta</h3>
+            <p>
+                Company Detective is meant for the late stages of an interview process. It helps me
+                prioritize which interviews to prepare for, filter out some companies with red flags,
+                ask better questions of interviewers, and make a more informed decision. Ideally, I hope
+                it will reduce the number of surprises after joining a company.
+            </p>
+            <p>
+                The data is sourced from a variety of places, including Glassdoor, news sources, Reddit, app stores, and the company's own website.
+            </p>
+            <p>
+                It works best for medium-sized tech companies right now, though I'm working on expanding the coverage to different company sizes and different industries.
+            </p>
         </div>
+    </div>
+</div>
+
+<!-- The widget to find companies -->
+<div class="row">
+    <div class="col s12">
+        <div class="card-panel">
+            <div class="row">
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">search</i>
+                    <input type="text" id="autocomplete-input" class="autocomplete">
+                    <label for="autocomplete-input">Enter a business name:</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    </div>
     </main>
 
-    <footer class="page-footer">
+    <footer class="page-footer indigo darken-4">
         <div class="footer-copyright">
             <div class="container">
-                Company Detective (name in progress)
+                Company Detective beta
 
                 <!-- Elements on the right -->
                 <span class="grey-text text-lighten-4 right">
@@ -81,48 +90,39 @@
                 </span>
             </div>
         </div>
-
     </footer>
 
     <!-- materialize css dependencies -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-    <script>
-        // TODO: Build a better way to represent this data
-        var autocompleteData = {
-            "98point6": "companies/98point6_20240917_091623.html",
-            "Kevala": "docs/companies/Kevala_20240917_123232.html",
-            "Akili Interactive": "companies/Akili_Interactive_20240916_154811.html",
-            "Synthesize Bio": "companies/Synthesize_Bio_20240908_192847.html",
-            "Imagine Pediatics": "companies/Imagine_Pediatrics_20240903_155259.html",
-            "Pomelo Care": "companies/Pomelo_Care_20240829_100431.html",
-            "Singularity 6": "companies/Singularity_6_Palia_20240904_181315.html"
-        };
+    
+<script>
+    var autocompleteData = {"98point6": "companies/98point6.html", "Imagine Pediatrics": "companies/Imagine_Pediatrics.html", "Kevala": "companies/Kevala.html", "Pomelo Care": "companies/Pomelo_Care.html", "Rippling": "companies/Rippling.html", "Singularity 6": "companies/Singularity_6_Palia.html"};
 
-        // The automcomplete widget interpret the values as icons, so we need to set them to null
-        var autocompleteDataNovals = {};
-        for (var key in autocompleteData) {
-            if (autocompleteData.hasOwnProperty(key)) {
-                autocompleteDataNovals[key] = null;
-            }
+    // The autocomplete widget interpret the values as icons, so we need to set them to null
+    var autocompleteWidgetData = {};
+    for (var key in autocompleteData) {
+        if (autocompleteData.hasOwnProperty(key)) {
+            autocompleteWidgetData[key] = null;
         }
+    }
 
-        $(document).ready(function () {
-            $('input.autocomplete').autocomplete({
-                minLength: 0,
-                data: autocompleteDataNovals,
-                onAutocomplete: function (val) {
-                    // navigate to the specified URL
-                    window.location.href = autocompleteData[val];
-                },
-                sortFunction: function (a, b, inputString) {
-                    return a.localeCompare(b);
-                }
-            });
+    $(document).ready(function () {
+        $('input.autocomplete').autocomplete({
+            minLength: 0,
+            data: autocompleteWidgetData,
+            onAutocomplete: function (val) {
+                // navigate to the specified URL
+                window.location.href = autocompleteData[val];
+            },
+            sortFunction: function (a, b, inputString) {
+                return a.localeCompare(b);
+            }
         });
-    </script>
+    });
+</script>
 
 
 </body>
