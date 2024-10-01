@@ -30,6 +30,7 @@ numpy = "*"
 scikit-learn = "*"
 eli5 = "*"
 pandas = "*"
+pyairtable = "*"
 
 [dev-packages]
 jupyter = "*"
