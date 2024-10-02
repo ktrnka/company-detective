@@ -17,7 +17,7 @@ from glassdoor.summarizer import summarize
 from glassdoor.models import UrlBuilder, GlassdoorReview, GlassdoorJob, EmployerKey
 
 
-scrapfly_scrapers.glassdoor.BASE_CONFIG["cache"] = False
+scrapfly_scrapers.glassdoor.BASE_CONFIG["cache"] = True
 
 
 @dataclass
