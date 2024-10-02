@@ -3,7 +3,7 @@ Module for scraping the BuiltIn website for company information
 """
 
 from news.scrape import request_article
-from typing import List, Dict
+from typing import List, Dict, Optional
 from bs4 import BeautifulSoup
 import re
 
@@ -54,6 +54,11 @@ def clean_text(text: str) -> str:
     text = re.sub(r"\s+", " ", text)
     return text.strip()
 
+def extract_optional_text(element) -> Optional[str]:
+    """
+    Extract text from an element if it exists, otherwise return None
+    """
+    return clean_text(element.text) if element else None
 
 def parse_company_details(html: str) -> Dict[str, str]:
     """
@@ -69,13 +74,9 @@ def parse_company_details(html: str) -> Dict[str, str]:
     # TODO: local employees: fa-lightbulb-on
     company_info = soup.select_one("div.company-info")
 
-    location_element = company_info.select_one("div:has(i.fa-location-dot)")
-
-    # Some companies don't have a location listed (probably all remote)
-    location = location_element.text.strip() if location_element else None
-
-    employees = clean_text(company_info.select_one("div:has(i.fa-user-group)").text)
-    founded = company_info.select_one("div:has(i.fa-calendar)").text.strip()
+    location = extract_optional_text(company_info.select_one("div:has(i.fa-location-dot)"))
+    employees = extract_optional_text(company_info.select_one("div:has(i.fa-user-group)"))
+    founded = extract_optional_text(company_info.select_one("div:has(i.fa-calendar)"))
 
     website = company_info.select_one("div:has(i.fa-arrow-up-right-from-square) > a")[
         "href"
@@ -130,6 +131,7 @@ def scrape(city: str, num_pages: int):
             else f"{base}/companies?country=USA&page={page}"
         )
 
+        # TODO: Replace with loguru
         print(f"Fetching company list from {url}")
         response = request_article(url)
         if not response or not response.ok:
