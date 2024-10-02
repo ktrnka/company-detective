@@ -56,11 +56,13 @@ def clean_text(text: str) -> str:
     text = re.sub(r"\s+", " ", text)
     return text.strip()
 
+
 def extract_optional_text(element) -> Optional[str]:
     """
     Extract text from an element if it exists, otherwise return None
     """
     return clean_text(element.text) if element else None
+
 
 def parse_company_details(html: str) -> Dict[str, str]:
     """
@@ -76,8 +78,12 @@ def parse_company_details(html: str) -> Dict[str, str]:
     # TODO: local employees: fa-lightbulb-on
     company_info = soup.select_one("div.company-info")
 
-    location = extract_optional_text(company_info.select_one("div:has(i.fa-location-dot)"))
-    employees = extract_optional_text(company_info.select_one("div:has(i.fa-user-group)"))
+    location = extract_optional_text(
+        company_info.select_one("div:has(i.fa-location-dot)")
+    )
+    employees = extract_optional_text(
+        company_info.select_one("div:has(i.fa-user-group)")
+    )
     founded = extract_optional_text(company_info.select_one("div:has(i.fa-calendar)"))
 
     website = company_info.select_one("div:has(i.fa-arrow-up-right-from-square) > a")[
@@ -145,7 +151,9 @@ def scrape(city: str, num_pages: int) -> pd.DataFrame:
         for company in companies:
             company_url = f"{base}{company['link']}"
 
-            logger.info(f"Fetching company details for {company['name']} from {company_url}")
+            logger.info(
+                f"Fetching company details for {company['name']} from {company_url}"
+            )
             detail_response = request_article(company_url)
             if not detail_response or not detail_response.ok:
                 logger.warning(
@@ -159,8 +167,16 @@ def scrape(city: str, num_pages: int) -> pd.DataFrame:
             companies_from_pages.append(company_details)
 
     # TODO: Pandas feels like overkill for this; refactor in the future
-    overviews = pd.DataFrame(companies_from_list).drop_duplicates(subset="name").set_index("name")
-    details = pd.DataFrame(companies_from_pages).drop_duplicates(subset="name").set_index("name")
+    overviews = (
+        pd.DataFrame(companies_from_list)
+        .drop_duplicates(subset="name")
+        .set_index("name")
+    )
+    details = (
+        pd.DataFrame(companies_from_pages)
+        .drop_duplicates(subset="name")
+        .set_index("name")
+    )
 
     company_df = overviews.join(details, how="inner")
 
