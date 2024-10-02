@@ -247,7 +247,7 @@ class Url:
     @staticmethod
     def reviews(employer: str, employer_id: str, region: Optional[Region] = None) -> str:
         employer = employer.replace(" ", "-")
-        url = f"https://www.glassdoor.com/Reviews/{employer}-Reviews-E{employer_id}.htm?"
+        url = f"https://www.glassdoor.com/Reviews/{employer}-Reviews-E{employer_id}.htm"
         if region:
             return url + f"?filter.countryId={region.value}"
         return url
