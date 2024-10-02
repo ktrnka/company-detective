@@ -285,7 +285,6 @@ async def run(
     max_glassdoor_review_pages=1,
     max_glassdoor_job_pages=0,
     max_news_articles=10,
-    glassdoor_url=None,
 ) -> UnifiedResult:
     """
     Search the web for information on the target company and product, then summarize it all.
@@ -322,7 +321,6 @@ async def run(
             target,
             max_review_pages=max_glassdoor_review_pages,
             max_job_pages=max_glassdoor_job_pages,
-            url_override=glassdoor_url,
             langchain_config=langchain_config,
         )
 
