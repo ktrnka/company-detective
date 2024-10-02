@@ -38,6 +38,9 @@ def request_article(
     except requests.exceptions.ConnectionError as e:
         logger.warning(f"Connection error on {url}, usually this means max retries exceeded")
         return None
+    except requests.exceptions.ChunkedEncodingError as e:
+        logger.warning(f"Chunked encoding error on {url}")
+        return None
 
 
 def remove_img_tags(html_str: str) -> str:
