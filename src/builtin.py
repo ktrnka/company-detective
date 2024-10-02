@@ -6,7 +6,7 @@ from news.scrape import request_article
 from typing import List, Dict, Optional
 from bs4 import BeautifulSoup
 import re
-
+import pandas as pd
 
 def parse_companies(html: str) -> List[Dict[str, str]]:
     """Extract company information from a company list page such as https://www.builtinseattle.com/companies"""
@@ -118,7 +118,7 @@ def parse_company_details(html: str) -> Dict[str, str]:
     }
 
 
-def scrape(city: str, num_pages: int):
+def scrape(city: str, num_pages: int) -> pd.DataFrame:
     base = f"https://www.builtin{city}.com"
 
     companies_from_list = []
@@ -157,4 +157,10 @@ def scrape(city: str, num_pages: int):
 
             companies_from_pages.append(company_details)
 
-    return companies_from_list, companies_from_pages
+    # TODO: Pandas feels like overkill for this; refactor in the future
+    overviews = pd.DataFrame(companies_from_list).drop_duplicates(subset="name").set_index("name")
+    details = pd.DataFrame(companies_from_pages).drop_duplicates(subset="name").set_index("name")
+
+    company_df = overviews.join(details, how="inner")
+
+    return company_df
