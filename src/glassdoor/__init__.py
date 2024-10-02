@@ -10,12 +10,11 @@ import scrapfly_scrapers.glassdoor
 from scrapfly_scrapers.glassdoor import scrape_reviews, scrape_jobs
 
 from core import Seed, cache
-from google_search import SearchResult
+from google_search import search
 
 
-from glassdoor.search import find_review
 from glassdoor.summarizer import summarize
-from glassdoor.models import UrlBuilder, GlassdoorReview, GlassdoorJob
+from glassdoor.models import UrlBuilder, GlassdoorReview, GlassdoorJob, EmployerKey
 
 
 scrapfly_scrapers.glassdoor.BASE_CONFIG["cache"] = False
@@ -27,7 +26,7 @@ class GlassdoorResult:
     company: Seed
 
     # intermediate data
-    review_page: SearchResult
+    review_page: str
     raw_reviews: dict
     reviews: List[GlassdoorReview]
 
@@ -42,58 +41,48 @@ class GlassdoorResult:
     @property
     def num_raw_reviews(self):
         return self.raw_reviews.get("allReviewsCount", 0)
-    
+
     @classmethod
     def empty_result(cls, company: Seed):
         return cls(company, None, {}, [], [], "")
 
 
+def find_glassdoor_employer(target: Seed) -> Optional[EmployerKey]:
+    query = f'site:www.glassdoor.com "{target.company}"'
+    urls = list(search(query, num=10))
+    return UrlBuilder.find_employer_key([result.link for result in urls])
+
+
 async def run(
-    target: Seed, max_review_pages=1, max_job_pages=0, url_override=None, langchain_config=None
+    target: Seed, max_review_pages=1, max_job_pages=0, langchain_config=None
 ) -> Optional[GlassdoorResult]:
-
-    # NOTE: This is necessary in rare cases where the Google search results don't contain the overview page at all, like Pomelo Care
-    if url_override:
-        review_page = SearchResult(
-            link=url_override,
-            formattedUrl=url_override,
-            title="Manually-entered Glassdoor URL",
-        )
-    else:
-        review_page = find_review(target)
-
-        # If we don't find a review page, return None
-        if not review_page:
-            logger.warning("No Glassdoor review page found for {}", target)
-            return None
-
-    company, company_id = UrlBuilder.parse_review_url(review_page.link)
+    employer = find_glassdoor_employer(target)
 
     # job results, not 100% used yet
     jobs = []
     if max_job_pages > 0:
         job_results = await scrape_jobs(
-            UrlBuilder.jobs(company, company_id), max_pages=max_job_pages
+            UrlBuilder.jobs(*employer), max_pages=max_job_pages
         )
         jobs = [GlassdoorJob(**result) for result in job_results]
         jobs = sorted(jobs, key=lambda job: job.jobTitleText)
 
-    response = cache.get(review_page.link)
+    reviews_url = UrlBuilder.reviews(*employer)
+    response = cache.get(reviews_url)
     if not response:
-        response = await scrape_reviews(review_page.link, max_pages=max_review_pages)
-        cache.set(review_page.link, response, expire=timedelta(days=10).total_seconds())
+        response = await scrape_reviews(reviews_url, max_pages=max_review_pages)
+        cache.set(reviews_url, response, expire=timedelta(days=10).total_seconds())
 
         logger.debug("Glassdoor response: {}", response)
 
-    reviews = GlassdoorReview.parse_reviews(company, response)
+    reviews = GlassdoorReview.parse_reviews(employer.name, response)
 
     review_summary = summarize(target, reviews, langchain_config)
 
     # TODO: Pull out allReviewsCount from glassdoor_results
     return GlassdoorResult(
-        target, review_page, response, reviews, jobs, review_summary.content
+        target, reviews_url, response, reviews, jobs, review_summary.content
     )
-
 
 
 def summarize_sampling(result: GlassdoorResult, alpha=0.05) -> str:
