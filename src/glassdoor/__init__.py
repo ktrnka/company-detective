@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import List, Optional
+from typing import List, Optional, Union
 from loguru import logger
 import numpy as np
 from scipy import stats
@@ -10,7 +10,7 @@ import scrapfly_scrapers.glassdoor
 from scrapfly_scrapers.glassdoor import scrape_reviews, scrape_jobs
 
 from core import Seed, cache
-from google_search import search
+from google_search import SearchResult, search
 
 
 from glassdoor.summarizer import summarize
@@ -26,7 +26,7 @@ class GlassdoorResult:
     company: Seed
 
     # intermediate data
-    review_page: str
+    review_page: Union[str, SearchResult]
     raw_reviews: dict
     reviews: List[GlassdoorReview]
 
