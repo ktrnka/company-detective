@@ -7,6 +7,8 @@ from typing import List, Dict, Optional
 from bs4 import BeautifulSoup
 import re
 import pandas as pd
+from loguru import logger
+
 
 def parse_companies(html: str) -> List[Dict[str, str]]:
     """Extract company information from a company list page such as https://www.builtinseattle.com/companies"""
@@ -131,11 +133,10 @@ def scrape(city: str, num_pages: int) -> pd.DataFrame:
             else f"{base}/companies?country=USA&page={page}"
         )
 
-        # TODO: Replace with loguru
-        print(f"Fetching company list from {url}")
+        logger.info(f"Fetching company list from {url}")
         response = request_article(url)
         if not response or not response.ok:
-            print(f"Failed to fetch page {page}: {response.status_code}")
+            logger.warning(f"Failed to fetch page {page}: {response.status_code}")
             break
 
         companies = parse_companies(response.content)
@@ -144,10 +145,10 @@ def scrape(city: str, num_pages: int) -> pd.DataFrame:
         for company in companies:
             company_url = f"{base}{company['link']}"
 
-            print(f"Fetching company details for {company['name']} from {company_url}")
+            logger.info(f"Fetching company details for {company['name']} from {company_url}")
             detail_response = request_article(company_url)
             if not detail_response or not detail_response.ok:
-                print(
+                logger.warning(
                     f"Failed to fetch company details for {company['name']}: {detail_response.status_code}"
                 )
                 continue
