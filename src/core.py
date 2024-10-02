@@ -78,7 +78,6 @@ def init_langchain_cache():
 
     return cache_path
 
-
 def init_requests_cache():
     """Initialize the requests cache, which improves the speed of the requests library by caching in SQLite and should reduce risk around getting blocked"""
     cache_dir = get_project_dir(".cache")
@@ -88,6 +87,10 @@ def init_requests_cache():
         cache_path,
         backend="sqlite",
         expire_after=timedelta(days=7),
+        urls_expire_after = {
+            # Don't cache Airtable API requests
+            'api.airtable.com': requests_cache.DO_NOT_CACHE,
+        },
         allowable_codes=[200, 403],
     )
 
