@@ -17,7 +17,7 @@ from glassdoor.summarizer import summarize
 from glassdoor.models import UrlBuilder, GlassdoorReview, GlassdoorJob, EmployerKey
 
 
-scrapfly_scrapers.glassdoor.BASE_CONFIG["cache"] = True
+# scrapfly_scrapers.glassdoor.BASE_CONFIG["cache"] = True
 
 
 @dataclass
@@ -48,7 +48,7 @@ class GlassdoorResult:
 
 
 def find_glassdoor_employer(target: Seed) -> Optional[EmployerKey]:
-    query = f'site:www.glassdoor.com "{target.company}"'
+    query = f'site:www.glassdoor.com {target.company} {target.domain}'
     urls = list(search(query, num=10))
     return UrlBuilder.find_employer_key([result.link for result in urls])
 
@@ -57,6 +57,9 @@ async def run(
     target: Seed, max_review_pages=1, max_job_pages=0, langchain_config=None
 ) -> Optional[GlassdoorResult]:
     employer = find_glassdoor_employer(target)
+    if not employer:
+        logger.warning("No Glassdoor employer found for {}", target.company)
+        return None
 
     # job results, not 100% used yet
     jobs = []
