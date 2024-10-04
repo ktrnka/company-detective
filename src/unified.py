@@ -254,8 +254,12 @@ Note: The report above is an aggregation of all the information below. I like to
         Format the result into an HTML file and return the filename.
         """
         # TODO: Refactor this whole thing to not do the file I/O, so that it's testable, etc
-        urls_to_div_ids = {url: url_to_div_id(url) for url in self.customer_experience_result.url_to_review.keys()}
-        div_ids_to_reviews = {url_to_div_id(url): split_review(markdown_review) for url, markdown_review in self.customer_experience_result.url_to_review.items()}
+        if self.customer_experience_result:
+            urls_to_div_ids = {url: url_to_div_id(url) for url in self.customer_experience_result.url_to_review.keys()}
+            div_ids_to_reviews = {url_to_div_id(url): split_review(markdown_review) for url, markdown_review in self.customer_experience_result.url_to_review.items()}
+        else:
+            urls_to_div_ids = {}
+            div_ids_to_reviews = {}
 
         if not path:
             path = eval_filename(self.target, extension="html")
