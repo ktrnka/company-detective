@@ -1,3 +1,4 @@
+import sys
 from typing import NamedTuple, Set
 import re
 import os
@@ -101,13 +102,16 @@ def init_requests_cache():
     return cache_path
 
 
-def init():
+def init(loguru_level="INFO"):
     """
-    Initialize for regular development: load the .env file, initialize the langchain cache, and initialize the requests cache
+    Initialize for regular development: load the .env file, initialize the langchain cache, initialize the requests cache, and initialize the logging level
     """
     load_dotenv()
     init_langchain_cache()
     init_requests_cache()
+
+    logger.remove()
+    logger.add(sys.stderr, level=loguru_level)
 
 
 def nest_markdown(markdown_doc: str, header_change: int) -> str:
