@@ -13,14 +13,19 @@ from typing import Dict, List, Optional, Tuple, TypedDict
 from urllib.parse import urljoin
 
 from loguru import logger as log
-from scrapfly import ScrapeApiResponse, ScrapeConfig, ScrapflyClient, ScrapflyScrapeError
+from scrapfly import ScrapeApiResponse, ScrapeConfig, ScrapflyClient, ScrapflyScrapeError, ScrapflyError
 
+# TODO: Consider increasing max_concurrency from 1 to 5 here
 SCRAPFLY = ScrapflyClient(key=os.environ["SCRAPFLY_KEY"])
 BASE_CONFIG = {
-    # Glassdoor.com requires Anti Scraping Protection bypass feature.
-    # for more: https://scrapfly.io/docs/scrape-api/anti-scraping-protection
     "asp": True,
-    "country": "US",
+    "country": "us",
+    "proxy_pool": "public_residential_pool",
+    "retry": False,
+    "cache": False,
+    # TO CONSIDER
+    # session = value (this will reuse the same machine for subsequent requests due to sticky_proxy, but disables caching)
+    # render_js = True (this will render the page with a headless browser and might help sometimes)
 }
 
 
@@ -93,11 +98,20 @@ async def scrape_jobs(url: str, max_pages: Optional[int] = None) -> List[Dict]:
     return jobs
 
 
-def parse_reviews(result: ScrapeApiResponse) -> Dict:
+def parse_reviews(result: ScrapeApiResponse) -> Optional[Dict]:
     """parse Glassdoor reviews page for review data"""
-    cache = find_hidden_data(result)
-    reviews = next(v for k, v in cache.items() if k.startswith("employerReviews") and v.get("reviews"))
-    return reviews
+    try:
+        cache = find_hidden_data(result)
+        reviews = next(v for k, v in cache.items() if k.startswith("employerReviews") and v.get("reviews"))
+        return reviews
+    except IndexError:
+        # This happens when something has gone wrong with the page structure
+        log.error("Failed to parse reviews from {}", result.context["url"])
+        # TODO: Include info about the URL in the filename
+        with open("glassdoor_page_parse_reviews_failure.html", "w") as f:
+            f.write(result.content)
+            log.error("Logged content to {}", f.name)
+        return None
 
 
 async def scrape_reviews(url: str, max_pages: Optional[int] = None) -> Dict:
@@ -105,6 +119,7 @@ async def scrape_reviews(url: str, max_pages: Optional[int] = None) -> Dict:
     log.info("scraping reviews from {}", url)
     first_page = await SCRAPFLY.async_scrape(ScrapeConfig(url=url, **BASE_CONFIG))
 
+    # If this is None, the whole thing will break
     reviews = parse_reviews(first_page)
     total_pages = reviews["numberOfPages"]
     if max_pages and max_pages < total_pages:
@@ -112,12 +127,16 @@ async def scrape_reviews(url: str, max_pages: Optional[int] = None) -> Dict:
 
     log.info("scraped first page of reviews of {}, scraping remaining {} pages", url, total_pages - 1)
     other_pages = [
+        # NOTE: Consider adding ?filter.iso3Language=eng like the browser does
         ScrapeConfig(url=Url.change_page(first_page.context["url"], page=page), **BASE_CONFIG)
         for page in range(2, total_pages + 1)
     ]
     async for result in SCRAPFLY.concurrent_scrape(other_pages):
-        if not isinstance(result, ScrapflyScrapeError):
-            reviews["reviews"].extend(parse_reviews(result)["reviews"])
+        # Note: This error will catch a range of subclassed errors like ASP failure, etc
+        if not isinstance(result, ScrapflyError):
+            reviews_obj = parse_reviews(result)
+            if reviews_obj:
+                reviews["reviews"].extend(reviews_obj["reviews"])
         else:
             log.error(f"failed to scrape {result.api_response.config['url']}, got: {result.message}")
     log.info("scraped {} reviews from {} in {} pages", len(reviews["reviews"]), url, total_pages)
