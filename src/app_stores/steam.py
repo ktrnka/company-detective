@@ -44,9 +44,9 @@ class Author(BaseModel):
     last_played: int
     num_games_owned: int
     num_reviews: int
-    playtime_at_review: int
-    playtime_forever: int
-    playtime_last_two_weeks: int
+    playtime_at_review: Optional[int] = None
+    playtime_forever: Optional[int] = None
+    playtime_last_two_weeks: Optional[int] = None
     steamid: str
 
 

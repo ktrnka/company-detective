@@ -1,4 +1,5 @@
-from typing import NamedTuple, Set
+import sys
+from typing import NamedTuple, Optional, Set, List, Tuple, Iterable
 import re
 import os
 from datetime import datetime, timedelta
@@ -17,13 +18,14 @@ class Seed(NamedTuple):
     company: str
     product: str
     domain: str
+    keywords: Optional[Set[str]] = None
     
     @classmethod
-    def init(cls, company: str, product: str = None, domain: str = None):
+    def init(cls, company: str, product: Optional[str] = None, domain: Optional[str] = None, keywords: Optional[Iterable[str]] = None):
         """Helper to initialize with optional fields"""
         if not product:
             product = company
-        return cls(company, product, domain)
+        return cls(company, product, domain, frozenset(keywords) if keywords else None)
 
     def as_path(self) -> str:
         # TODO: Delete this function and merge any callers to the other one
@@ -78,7 +80,6 @@ def init_langchain_cache():
 
     return cache_path
 
-
 def init_requests_cache():
     """Initialize the requests cache, which improves the speed of the requests library by caching in SQLite and should reduce risk around getting blocked"""
     cache_dir = get_project_dir(".cache")
@@ -88,6 +89,10 @@ def init_requests_cache():
         cache_path,
         backend="sqlite",
         expire_after=timedelta(days=7),
+        urls_expire_after = {
+            # Don't cache Airtable API requests
+            'api.airtable.com': requests_cache.DO_NOT_CACHE,
+        },
         allowable_codes=[200, 403],
     )
 
@@ -98,13 +103,16 @@ def init_requests_cache():
     return cache_path
 
 
-def init():
+def init(loguru_level="INFO"):
     """
-    Initialize for regular development: load the .env file, initialize the langchain cache, and initialize the requests cache
+    Initialize for regular development: load the .env file, initialize the langchain cache, initialize the requests cache, and initialize the logging level
     """
     load_dotenv()
     init_langchain_cache()
     init_requests_cache()
+
+    logger.remove()
+    logger.add(sys.stderr, level=loguru_level)
 
 
 def nest_markdown(markdown_doc: str, header_change: int) -> str:
