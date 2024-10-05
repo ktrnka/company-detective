@@ -1,5 +1,5 @@
 import sys
-from typing import NamedTuple, Set
+from typing import NamedTuple, Optional, Set, List, Tuple, Iterable
 import re
 import os
 from datetime import datetime, timedelta
@@ -18,13 +18,14 @@ class Seed(NamedTuple):
     company: str
     product: str
     domain: str
+    keywords: Optional[Set[str]] = None
     
     @classmethod
-    def init(cls, company: str, product: str = None, domain: str = None):
+    def init(cls, company: str, product: Optional[str] = None, domain: Optional[str] = None, keywords: Optional[Iterable[str]] = None):
         """Helper to initialize with optional fields"""
         if not product:
             product = company
-        return cls(company, product, domain)
+        return cls(company, product, domain, frozenset(keywords) if keywords else None)
 
     def as_path(self) -> str:
         # TODO: Delete this function and merge any callers to the other one

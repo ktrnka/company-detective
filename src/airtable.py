@@ -60,6 +60,7 @@ def pandas_to_seeds(df: pd.DataFrame) -> pd.Series:
                 if not pd.isna(row["fields.Key Product Name"])
                 else None
             ),
+            keywords=tuple(row["fields.Keywords"].split()) if not pd.isna(row["fields.Keywords"]) else None,
         ),
         axis=1,
     )
