@@ -1,5 +1,23 @@
 # Experiments done
 
+## Glassdoor and Reddit search optimization 10/4
+
+I ran a bigger batch of companies through, after scraping a list of companies from builtinseattle.com. Then I manually reviewed about 15 outputs and identified the biggest issues.
+
+The biggest two issues:
+1. No Glassdoor page was found, or an incorrect Glassdoor page was found.
+2. Reddit results were not related to the company
+
+### Glassdoor tuning
+
+I iterated on the companies that were failing and made these two changes which fixed all of the examples:
+1. Don't search for the company name in quotes. This fixes issues like searching for "Hiya, Inc." which found nothing
+2. Also include the company's domain name in the search. This fixes issues like Center, which previously returned a page for a medical center. When the domain is included, the correct company page is at the top.
+
+### Reddit tuning
+
+I iterated on this and didn't get it to the same qualit yas 
+
 ## Linkedin data source 9/27
 
 - I tried setting up a Linkedin app and logging into OAuth via Colab + Chrome. That failed with an unknown code about the response URL. I added the response URL but it didn't resolve the issue.
