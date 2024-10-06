@@ -6,7 +6,6 @@ This module produces a unified customer experience summary from multiple differe
 - Steam
 """
 
-from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 from langchain_core.documents import Document
@@ -17,12 +16,12 @@ from loguru import logger
 from pydantic import BaseModel
 
 from core import Seed, URLShortener, extract_urls, extractive_fraction, log_map_reduce_metrics, log_summary_metrics
-import reddit.fetch
-from src.utils.google_search import SearchResult
-import app_stores.steam as steam
-import app_stores.google_play as google_play
-import app_stores.apple as apple_app_store
-from src.utils.llm_utils import pack_documents
+import data_sources.reddit.fetch
+from utils.google_search import SearchResult
+import data_sources.app_stores.steam as steam
+import data_sources.app_stores.google_play as google_play
+import data_sources.app_stores.apple as apple_app_store
+from utils.llm_utils import pack_documents
 
 map_prompt = """
 Please read the following customer comments and extract all opinions and facts relating to the user experience of the PRODUCT {product} by the COMPANY {company} from the perspective of current users.
@@ -148,7 +147,7 @@ def run(
             url_to_review[link] = review
 
     if reddit_urls:
-        reddit_client = reddit.fetch.init()
+        reddit_client = data_sources.reddit.fetch.init()
         reddit_threads = [reddit_client.submission(url=url) for url in reddit_urls]
 
         # only threads with enough comments
@@ -157,7 +156,7 @@ def run(
         ]
 
         review_markdowns.extend(
-            reddit.fetch.submission_to_markdown(thread) for thread in reddit_threads
+            data_sources.reddit.fetch.submission_to_markdown(thread) for thread in reddit_threads
         )
 
     logger.info("Total reviews: {}", len(review_markdowns))

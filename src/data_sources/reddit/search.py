@@ -5,7 +5,7 @@ from functools import lru_cache
 from typing import Iterable, List, Optional
 
 from core import Seed
-from src.utils.google_search import search
+from utils.google_search import search
 
 
 REDDIT_COMMENTS_URL_PATTERN = re.compile(r".*/comments/.+")

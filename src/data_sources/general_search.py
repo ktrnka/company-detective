@@ -1,6 +1,6 @@
 from typing import List
 from core import Seed, cleanse_markdown, URLShortener, log_summary_metrics
-from src.utils.google_search import search, SearchResult
+from utils.google_search import search, SearchResult
 from typing import List
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages.ai import AIMessage

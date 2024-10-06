@@ -1,11 +1,11 @@
 from typing import NamedTuple, List
 
 from core import Seed
-from src.utils.google_search import SearchResult
+from utils.google_search import SearchResult
 
-import news.search
-import news.scrape
-import news.summarize
+from .search import find_news_articles
+from .scrape import request_article, response_to_article, article_to_markdown
+from .summarize import summarize
 
 class NewsSummary(NamedTuple):
     # input
@@ -27,17 +27,17 @@ def run(target: Seed, max_results=30, langchain_config=None) -> NewsSummary:
     3. Extract the core content as text
     4. Summarize the articles 
     """
-    search_results = news.search.find_news_articles(target, num_results=max_results)
+    search_results = find_news_articles(target, num_results=max_results)
 
     # Fetch and filter
-    responses = [news.scrape.request_article(result.link) for result in search_results]
+    responses = [request_article(result.link) for result in search_results]
     responses = [response for response in responses if response and response.ok]
 
     # Parse and format
-    articles = [news.scrape.response_to_article(response) for response in responses]
-    article_markdowns = [news.scrape.article_to_markdown(article) for article in articles]
+    articles = [response_to_article(response) for response in responses]
+    article_markdowns = [article_to_markdown(article) for article in articles]
 
-    llm_result = news.summarize.summarize(target, article_markdowns, langchain_config)
+    llm_result = summarize(target, article_markdowns, langchain_config)
 
     return NewsSummary(
         target=target, 
