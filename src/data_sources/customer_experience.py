@@ -10,7 +10,7 @@ from typing import Dict, List, Optional
 
 from langchain_core.documents import Document
 from langchain.chains.summarize import load_summarize_chain
-from langchain import PromptTemplate
+from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from loguru import logger
 from pydantic import BaseModel
