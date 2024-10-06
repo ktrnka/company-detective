@@ -11,5 +11,7 @@
     ],
     "cSpell.words": [
         "scrapfly"
-    ]
+    ],
+    "python.envFile": "${workspaceFolder}/.env",
+    "jupyter.notebookFileRoot": "${workspaceFolder}/src"
 }
