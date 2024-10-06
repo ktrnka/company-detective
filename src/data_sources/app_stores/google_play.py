@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from loguru import logger
-from google_search import search
+from src.utils.google_search import search
 from core import Seed, cache
 from typing import List, Optional
 from urllib.parse import urlparse, parse_qs

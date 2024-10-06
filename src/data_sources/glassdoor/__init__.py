@@ -10,7 +10,7 @@ import scrapfly_scrapers.glassdoor
 from scrapfly_scrapers.glassdoor import scrape_reviews, scrape_jobs
 
 from core import Seed, cache
-from google_search import SearchResult, search
+from src.utils.google_search import SearchResult, search
 
 
 from glassdoor.summarizer import summarize

@@ -18,11 +18,11 @@ from pydantic import BaseModel
 
 from core import Seed, URLShortener, extract_urls, extractive_fraction, log_map_reduce_metrics, log_summary_metrics
 import reddit.fetch
-from google_search import SearchResult
+from src.utils.google_search import SearchResult
 import app_stores.steam as steam
 import app_stores.google_play as google_play
 import app_stores.apple as apple_app_store
-from llm_utils import pack_documents
+from src.utils.llm_utils import pack_documents
 
 map_prompt = """
 Please read the following customer comments and extract all opinions and facts relating to the user experience of the PRODUCT {product} by the COMPANY {company} from the perspective of current users.

@@ -21,12 +21,12 @@ import reddit.search
 
 import glassdoor
 import news
-import company_webpage
+import src.data_sources.company_webpage as company_webpage
 
-import general_search
+import src.data_sources.general_search as general_search
 from loguru import logger
 
-import customer_experience
+import src.data_sources.customer_experience as customer_experience
 
 templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),

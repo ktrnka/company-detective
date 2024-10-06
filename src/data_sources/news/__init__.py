@@ -1,7 +1,7 @@
 from typing import NamedTuple, List
 
 from core import Seed
-from google_search import SearchResult
+from src.utils.google_search import SearchResult
 
 import news.search
 import news.scrape

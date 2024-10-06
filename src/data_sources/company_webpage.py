@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass
 from typing import List
-from google_search import search
+from src.utils.google_search import search
 from news.scrape import request_article, response_to_article, article_to_markdown
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate

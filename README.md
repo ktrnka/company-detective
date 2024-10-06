@@ -2,7 +2,7 @@
 
 This project summarizes publicly available information about a company. It leverages various APIs to gather and analyze data, providing a comprehensive overview of the target company.
 
-![System diagram](src/system_diagram.png)
+![System diagram](system_diagram.png)
 
 ## Features
 
