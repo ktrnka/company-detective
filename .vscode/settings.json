@@ -10,6 +10,7 @@
         }
     ],
     "cSpell.words": [
+        "airtable",
         "scrapfly"
     ],
     "python.envFile": "${workspaceFolder}/.env",
