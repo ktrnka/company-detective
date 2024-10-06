@@ -6,7 +6,7 @@ import numpy as np
 from scipy import stats
 
 
-from data_sources.scrapfly_scrapers.glassdoor import scrape_reviews, scrape_jobs
+from data_sources.scrapfly_scrapers.scrapfly_glassdoor import scrape_reviews, scrape_jobs
 
 from core import Seed, cache
 from utils.google_search import SearchResult, search
