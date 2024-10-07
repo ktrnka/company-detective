@@ -1,5 +1,13 @@
 # Experiments done
 
+## Domain-limited web crawl instead of Google search on domain 10/7
+
+The motivation for this is that synthesize.bio doesn't show up in Google search results so the summary quality is very poor.
+
+I tried running a scrapy scrape against the domain with a depth limit of 1 and I also included newspaper4k parsing. Findings:
+- If we naively concatenate all results, the results will be dominated by things like terms of service and privacy policy.
+- Newspaper4k doesn't work very well for all of the the synthesize.bio pages; they aren't really articles.
+
 ## Glassdoor and Reddit search optimization 10/4
 
 I ran a bigger batch of companies through, after scraping a list of companies from builtinseattle.com. Then I manually reviewed about 15 outputs and identified the biggest issues.
