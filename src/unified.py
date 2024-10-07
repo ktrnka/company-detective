@@ -5,6 +5,8 @@ from datetime import datetime
 import subprocess
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
+from langchain_core.callbacks.manager import trace_as_chain_group
+
 import markdown
 from pydantic import BaseModel
 
@@ -17,16 +19,16 @@ from core import (
     cleanse_markdown,
 )
 
-import reddit.search
+import data_sources.reddit.search
 
-import glassdoor
-import news
-import company_webpage
+import data_sources.glassdoor as glassdoor
+import data_sources.news as news
+import data_sources.company_webpage as company_webpage
 
-import general_search
+import data_sources.general_search as general_search
 from loguru import logger
 
-import customer_experience
+import data_sources.customer_experience as customer_experience
 
 templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),
@@ -150,7 +152,7 @@ def split_review(markdown_review: str) -> Review:
     # Remove the link from the header
     header = re.sub(r'\[(.*?)\]\(.*?\)', '\\1', header)
         
-    return Review(header=header, body=body)
+    return Review(header=header.strip(), body=body.strip())
 
 def test_split_review():
     example_md = """
@@ -281,7 +283,6 @@ Note: The report above is an aggregation of all the information below. I like to
 
         return f.name
     
-from langchain_core.callbacks.manager import trace_as_chain_group
 
 async def run(
     target: Seed,
@@ -313,7 +314,7 @@ async def run(
         app_store_urls = customer_experience.extract_app_store_urls(general_search_results)
         reddit_urls = [
             result.link
-            for result in reddit.search.find_submissions(
+            for result in data_sources.reddit.search.find_submissions(
                 target, num_results=num_reddit_threads
             )
         ]

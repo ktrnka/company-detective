@@ -10,6 +10,9 @@
         }
     ],
     "cSpell.words": [
+        "airtable",
         "scrapfly"
-    ]
+    ],
+    "python.envFile": "${workspaceFolder}/.env",
+    "jupyter.notebookFileRoot": "${workspaceFolder}/src"
 }

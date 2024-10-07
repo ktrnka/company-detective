@@ -2,7 +2,7 @@
 
 This project summarizes publicly available information about a company. It leverages various APIs to gather and analyze data, providing a comprehensive overview of the target company.
 
-![System diagram](src/system_diagram.png)
+![System diagram](system_diagram.png)
 
 ## Features
 
@@ -41,17 +41,23 @@ Ensure you have obtained the necessary API keys before proceeding with the setup
    pipenv install --dev
    ```
 
-3. Set up your API keys in a `.env` file.
+3. Set up your API keys in a `.env` file in the project root directory.
 
 ## Usage
 
-The main entry point for running the company analysis is the `src/unified_summary.ipynb` Jupyter notebook.
+The main entry points for running the company analysis are:
+
+1. `src/notebooks/entrypoints/refresh_company_data.ipynb`: Use this notebook to refresh company data.
+2. `src/notebooks/entrypoints/build_website.ipynb`: Use this notebook to build the website with analyzed data.
 
 ## Contributing
 
-Talk to Keith! The repo isn't currently setup for open contributions yet.
+Contributions are welcome! Please talk to Keith for more information on how to contribute, as the repo isn't currently set up for open contributions.
 
 ## License
 
-To be determined
+To be determined. Please contact the repository owner for licensing information.
 
+## Note
+
+This project is under active development. Some features or data sources may change or be refactored. 
