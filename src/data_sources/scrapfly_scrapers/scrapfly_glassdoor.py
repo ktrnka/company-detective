@@ -117,6 +117,8 @@ def parse_reviews(result: ScrapeApiResponse) -> Optional[Dict]:
 async def scrape_reviews(url: str, max_pages: Optional[int] = None) -> Dict:
     """Scrape Glassdoor reviews listings from reviews page (with pagination)"""
     log.info("scraping reviews from {}", url)
+
+    # TODO: If this first page fails, the whole pipeline fails, so we should have a more reliable Config here (longer timeout, retry, etc)
     first_page = await SCRAPFLY.async_scrape(ScrapeConfig(url=url, **BASE_CONFIG))
 
     # If this is None, the whole thing will break
