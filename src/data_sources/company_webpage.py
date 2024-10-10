@@ -18,7 +18,12 @@ _prompt = ChatPromptTemplate.from_messages(
             """
 You'll be given several pages from a company website in markdown format.
 Read all the webpages carefully and summarize all the content in markdown format.
-Include a bibliography at the end of the summary.
+
+Include citations where possible, in the format [(Title)](url)
+
+These are guidelines about what information to include:
+More valuable: Company history, services, products, customers, leadership team, culture
+Less valuable: Legal policies
             """,
         ),
         (
