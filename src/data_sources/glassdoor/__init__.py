@@ -34,12 +34,22 @@ class GlassdoorResult:
     summary_markdown: str
 
     @property
-    def num_parsed_reviews(self):
+    def num_parsed_reviews(self) -> int:
         return len(self.reviews)
 
     @property
-    def num_raw_reviews(self):
+    def num_raw_reviews(self) -> int:
         return self.raw_reviews.get("allReviewsCount", 0)
+    
+    @property
+    def html_link(self) -> str:
+        # Figure out the name from the URL
+        link = self.review_page if isinstance(self.review_page, str) else self.review_page.link
+        employer = UrlBuilder.parse_review_url(link)
+        # TODO: What to do if it doesn't parse
+        formatted_name = employer.name.replace("-", " ").title()
+
+        return f"<a href='{link}'>{formatted_name} on Glassdoor</a>"
 
     @classmethod
     def empty_result(cls, company: Seed):
