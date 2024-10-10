@@ -25,7 +25,7 @@
         {% if result.glassdoor_result %}
         <hr/>
         <div class="card-cta">
-            Read all {{ result.glassdoor_result.raw_reviews["allReviewsCount"] }} reviews on <a href="{{ result.glassdoor_result.review_page }}">Glassdoor</a>.
+            Read all {{ result.glassdoor_result.num_raw_reviews }} reviews on <a href="{{ result.glassdoor_result.review_page }}">Glassdoor</a>.
         </div>
         {% endif %}
         </div>
