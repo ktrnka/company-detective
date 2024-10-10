@@ -43,12 +43,27 @@ Ensure you have obtained the necessary API keys before proceeding with the setup
 
 3. Set up your API keys in a `.env` file in the project root directory.
 
+## Project Structure
+
+The project is organized as follows:
+
+- `src/`: Main source code directory
+  - `data_sources/`: Modules for different data sources
+  - `notebooks/`: Jupyter notebooks for various tasks
+    - `entrypoints/`: Main entry point notebooks
+    - `test/`: Test notebooks
+  - `utils/`: Utility functions and helpers
+
 ## Usage
 
 The main entry points for running the company analysis are:
 
 1. `src/notebooks/entrypoints/refresh_company_data.ipynb`: Use this notebook to refresh company data.
 2. `src/notebooks/entrypoints/build_website.ipynb`: Use this notebook to build the website with analyzed data.
+
+### Important Note
+
+Recent changes have moved the generic article scraping functionality into the `utils` module. If you're working with or extending the scraping capabilities, please refer to `src/utils/scrape.py` for the latest implementation.
 
 ## Contributing
 
@@ -60,4 +75,4 @@ To be determined. Please contact the repository owner for licensing information.
 
 ## Note
 
-This project is under active development. Some features or data sources may change or be refactored. 
+This project is under active development. Some features or data sources may change or be refactored. Always refer to the latest documentation and code for the most up-to-date information.
