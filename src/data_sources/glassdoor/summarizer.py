@@ -17,13 +17,14 @@ _prompt = ChatPromptTemplate.from_messages(
         (
             "system",
             """
-
-Please extract a comprehensive list of quotes from Glassdoor reviews for the company {company} and organize the quotes into sections as appropriate.
+Please extract a comprehensive list of quotes from Glassdoor reviews for the company International Community Health Services and organize the quotes into sections as appropriate.
 
 Ensure that all opinions and sentiments are accurately represented.
-Take extra care to find quotes of 1) explanations why employees like or dislike working for the company, 2) key events or changes in the company, and 3) any verifiable facts about working at the company.
+
+Take extra care to find quotes of 1) explanations why employees like or dislike working for the company, 2) key events or changes in the company, and 3) specific details about benefits.
 
 Format the response as Markdown.
+
 Format quotations as: "quote" [(Job title, Glassdoor, Date)](url)
 
 Do not include a top-level header for the overall output, and do not create an overall summary either. 
