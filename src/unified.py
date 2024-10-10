@@ -276,6 +276,7 @@ Note: The report above is an aggregation of all the information below. I like to
                 div_ids_to_reviews=div_ids_to_reviews,
                 urls_to_div_ids=urls_to_div_ids,
                 title=self.target.company,
+                result=self,
             )
             f.write(html)
 

@@ -13,7 +13,14 @@
 <div class="row">
     <div class="col s12">
         <div class="card-panel">
-            {{employee_experience_summary}}
+        {{employee_experience_summary}}
+
+        {% if result.glassdoor_result %}
+        <hr/>
+        <div class="card-cta">
+            Read all {{ result.glassdoor_result.raw_reviews["allReviewsCount"] }} reviews on <a href="{{ result.glassdoor_result.review_page }}">Glassdoor</a>.
+        </div>
+        {% endif %}
         </div>
     </div>
 </div>
