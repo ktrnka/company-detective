@@ -98,6 +98,17 @@ def result_to_markdown(search_result: SearchResult) -> str:
 def results_to_markdown(search_results: List[SearchResult]) -> str:
     return "\n\n".join(result_to_markdown(result) for result in search_results)
 
+def organize_search_results(search_results: List[SearchResult]) -> List[SearchResult]:
+    """Helper to deduplicate and sort the search results to merge sources and hopefully improve the quality of the summary"""
+    # deduplicate
+    urls = dict()
+    for result in search_results:
+        urls[result.link] = result
+
+    # sort by domain
+    results = sorted(urls.values(), key=lambda result: result.link)
+
+    return results
 
 def summarize(
     target: Seed,
@@ -105,7 +116,7 @@ def summarize(
     langchain_config=None,
 ) -> AIMessage:
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-    unified_markdown = results_to_markdown(search_results)
+    unified_markdown = results_to_markdown(organize_search_results(search_results))
 
     assert len(unified_markdown) > 0, "No search results: Maybe there's a typo in the company or product name?"
 

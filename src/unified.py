@@ -106,10 +106,6 @@ Include the names and roles of any key personnel at the company. If possible, pr
 
 This section should include news articles about the company in reverse chronological order, grouped by topic or event as needed.
 
-# Additional reading
-
-This section should organize any additional links that the reader might find useful for further research.
-
 
 Feel free to create subheadings or additional sections as needed to capture all relevant information about the company and its product.
 Format the output as a markdown document, using markdown links for citations.
@@ -306,10 +302,11 @@ async def run(
         dynamic_contexts = {}
 
         webpage_summary = company_webpage.run(target.domain, langchain_config=langchain_config)
+        news_result = news.run(target, max_results=max_news_articles, langchain_config=langchain_config)
 
         general_search_results = general_search.search_web(target)
         general_search_summary = general_search.summarize(
-            target, general_search_results, langchain_config=langchain_config
+            target, general_search_results + news_result.search_results + webpage_summary.search_results, langchain_config=langchain_config
         ).content
 
         app_store_urls = customer_experience.extract_app_store_urls(general_search_results)
@@ -330,7 +327,6 @@ async def run(
             langchain_config=langchain_config,
         )
 
-        news_result = news.run(target, max_results=max_news_articles, langchain_config=langchain_config)
 
         unshortened_context = "\n\n".join(
             [

@@ -4,8 +4,8 @@
 # - More open-ended summary
 
 from dataclasses import dataclass
-from typing import List
-from utils.google_search import search
+from typing import List, Optional
+from utils.google_search import SearchResult, search
 from utils.scrape import request_article, response_to_article, article_to_markdown
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -43,6 +43,7 @@ Summary in markdown format:
 class WebpageResult:
     summary_markdown: str
     page_markdowns: List[str]
+    search_results: Optional[List[SearchResult]] = None
 
 
 def run(website: str, num_pages=30, langchain_config=None) -> WebpageResult:
@@ -73,4 +74,5 @@ def run(website: str, num_pages=30, langchain_config=None) -> WebpageResult:
     return WebpageResult(
         summary_markdown=result.content,
         page_markdowns=article_markdowns,
+        search_results=search_results,
     )
