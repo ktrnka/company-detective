@@ -268,7 +268,7 @@ Note: The report above is an aggregation of all the information below. I like to
 
         with open(path, "w") as f:
 
-            html = templates.get_template("basic_report.html").render(
+            html = templates.get_template("company.html").render(
                 summary=markdown.markdown(self.summary_markdown),
                 customer_experience_summary=markdown.markdown(nest_markdown(self.customer_experience_markdown, 1)),
                 employee_experience_summary=markdown.markdown(nest_markdown(self.glassdoor_markdown, 1)),
