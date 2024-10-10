@@ -6,9 +6,11 @@ import time
 import requests_cache.models.response
 from bs4 import BeautifulSoup
 
-# NOTE: This is newpaper4k not newspaper3k
+# NOTE: This is newspaper4k not newspaper3k
 import newspaper
 from loguru import logger
+
+_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 
 def request_article(
     url: str, delay_seconds=1
@@ -20,7 +22,7 @@ def request_article(
             timeout=5,
             headers={
                 "Accept": "text/html",
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+                "User-Agent": _USER_AGENT,
             },
         )
 
@@ -44,7 +46,7 @@ def request_article(
 
 
 def remove_img_tags(html_str: str) -> str:
-    """Remove all img tags from an HTML string"""
+    """Remove all img tags from an HTML string to help with article parsing"""
     soup = BeautifulSoup(html_str, "html.parser")
     for img in soup.find_all("img"):
         img.decompose()
@@ -58,7 +60,7 @@ def response_to_article(
     article = newspaper.article(
         response.url,
         language="en",
-        # Remove images to prevent downloading them, which crashes
+        # Remove images to prevent downloading them (the downloads sometimes crash, and they slow things down)
         input_html=remove_img_tags(response.text),
         fetch_images=False,
     )
