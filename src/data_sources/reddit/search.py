@@ -29,8 +29,7 @@ def test_build_keywords():
     assert build_keywords(["foo"]) == "foo"
     assert build_keywords(None) == ""
 
-@lru_cache(1000)
-def find_submissions(target: Seed, num_results=10):
+def build_query(target: Seed) -> str:
     # Optimization notes:
     # Quoting the company is helpful to require that in the results BUT if the company name has Inc or something on it, it'll decrease recall
     # Related: this was a slight improvement in testing (maybe 10% better recall)
@@ -38,9 +37,12 @@ def find_submissions(target: Seed, num_results=10):
     query = f'site:reddit.com "{target.company}" related:{target.domain} {build_keywords(target.keywords)}'
     if target.product != target.company:
         query += f' "{target.product}"'
+    return query
 
+@lru_cache(1000)
+def find_submissions(target: Seed, num_results=10):
     return list(
         result
-        for result in search(query, num=num_results)
+        for result in search(build_query(target), num=num_results)
         if REDDIT_COMMENTS_URL_PATTERN.match(result.link)
     )

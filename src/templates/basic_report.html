@@ -35,8 +35,15 @@
 <div class="row">
     <div class="col s12">
         <div class="card-panel">
-            <h1>Customer experience</h1>
-            {{customer_experience_summary}}
+        <h1>Customer experience</h1>
+        {{customer_experience_summary}}
+
+        {% if result.customer_experience_result and result.customer_experience_result.sources %}
+        <hr/>
+        <div class="card-cta">
+            Sources: {{ result.customer_experience_result.sources.to_html()}}
+        </div>
+        {% endif %}
         </div>
     </div>
 </div>

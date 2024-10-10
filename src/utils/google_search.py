@@ -3,6 +3,7 @@ import os
 from typing import Iterable, Optional
 from pydantic import BaseModel
 from loguru import logger
+from urllib.parse import urlencode
 
 _service = build("customsearch", "v1", developerKey=os.getenv("GOOGLE_API_KEY"))
 
@@ -78,3 +79,12 @@ def filter_title_relevance(search_iter: Iterable[SearchResult], query: str, min_
         title_unigrams = set(result.title.split())
         if len(title_unigrams & query_unigrams) / len(query_unigrams) > min_unigram_ratio:
             yield result
+
+def url_from_query(query: str) -> str:
+    query_params = {"q": query}
+    encoded_query = urlencode(query_params)
+    return f"https://www.google.com/search?{encoded_query}"
+
+def test_url_from_query():
+    assert url_from_query("foo bar") == "https://www.google.com/search?q=foo+bar"
+    assert url_from_query("foo") == "https://www.google.com/search?q=foo"

@@ -17,7 +17,8 @@ from pydantic import BaseModel
 
 from core import Seed, URLShortener, extract_urls, extractive_fraction, log_map_reduce_metrics, log_summary_metrics
 import data_sources.reddit.fetch
-from utils.google_search import SearchResult
+from data_sources.reddit.search import build_query
+from utils.google_search import SearchResult, url_from_query
 import data_sources.app_stores.steam as steam
 import data_sources.app_stores.google_play as google_play
 import data_sources.app_stores.apple as apple_app_store
@@ -101,11 +102,34 @@ combine_prompt_template = PromptTemplate(
     template=combine_prompt, input_variables=["text", "company", "product"]
 )
 
+class Sources(BaseModel):
+    steam_url: Optional[str] = None
+    google_play_url: Optional[str] = None
+    apple_store_url: Optional[str] = None
+    reddit_search_url: Optional[str] = None
+
+    def to_html(self):
+        link_data = []
+
+        if self.steam_url:
+            link_data.append(("Steam", self.steam_url))
+        if self.google_play_url:
+            link_data.append(("Google Play", self.google_play_url))
+        if self.apple_store_url:
+            link_data.append(("Apple App Store", self.apple_store_url))
+        if self.reddit_search_url:
+            link_data.append(("Search on Reddit", self.reddit_search_url))
+
+        return " | ".join(
+            f'<a href="{url}">{name}</a>' for name, url in link_data
+        )
+
 class CustomerExperienceResult(BaseModel):
     output_text: str
     intermediate_steps: List[str]
     url_to_review: Dict[str, Optional[str]]
     review_markdowns: List[str]
+    sources: Optional[Sources] = None
 
 
 def run(
@@ -117,6 +141,11 @@ def run(
     langchain_config = None,
 ) -> Optional[CustomerExperienceResult]:
     review_markdowns = []
+    sources = Sources(
+        steam_url=steam_url,
+        google_play_url=google_play_url,
+        apple_store_url=apple_store_url,
+    )
 
     if steam_url:
         steam_id = steam.extract_steam_id(steam_url)
@@ -158,6 +187,8 @@ def run(
         review_markdowns.extend(
             data_sources.reddit.fetch.submission_to_markdown(thread) for thread in reddit_threads
         )
+
+        sources.reddit_search_url = url_from_query(build_query(target))
 
     logger.info("Total reviews: {}", len(review_markdowns))
     if not review_markdowns:
@@ -223,7 +254,7 @@ def run(
 
     result["url_to_review"] = url_to_review
 
-    return CustomerExperienceResult(review_markdowns=review_markdowns, **result)
+    return CustomerExperienceResult(review_markdowns=review_markdowns, sources=sources, **result)
 
 def extract_app_store_urls(search_results: List[SearchResult]) -> Dict[str, Optional[str]]:
     """Helper to extract app store URLs from search results, compatible with the run function"""
