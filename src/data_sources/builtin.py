@@ -2,7 +2,7 @@
 Module for scraping the BuiltIn website for company information
 """
 
-from data_sources.news.scrape import request_article
+from utils.scrape import request_article
 from typing import List, Dict, Optional
 from bs4 import BeautifulSoup
 import re

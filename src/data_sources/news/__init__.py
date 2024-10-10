@@ -2,9 +2,9 @@ from typing import NamedTuple, List
 
 from core import Seed
 from utils.google_search import SearchResult
+from utils.scrape import request_article, response_to_article, article_to_markdown
 
 from .search import find_news_articles
-from .scrape import request_article, response_to_article, article_to_markdown
 from .summarize import summarize
 
 class NewsSummary(NamedTuple):

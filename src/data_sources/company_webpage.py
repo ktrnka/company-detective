@@ -6,7 +6,7 @@
 from dataclasses import dataclass
 from typing import List
 from utils.google_search import search
-from data_sources.news.scrape import request_article, response_to_article, article_to_markdown
+from utils.scrape import request_article, response_to_article, article_to_markdown
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from core import log_summary_metrics
