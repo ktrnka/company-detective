@@ -233,7 +233,7 @@ class URLShortener:
 
         shortened_markdown = re.sub(r"(https?://[^\s)\]]+)", replace_url, markdown)
 
-        logger.info(
+        logger.debug(
             f"{len(markdown):,} -> {len(shortened_markdown):,} chars ({len(shortened_markdown) / len(markdown):.0%} of original)"
         )
 
@@ -252,7 +252,7 @@ class URLShortener:
             return short_url
 
         unshortened_markdown = re.sub(r"cache://[^\s)\]]+", replace_short_url, markdown)
-        logger.info(
+        logger.debug(
             f"{len(markdown):,} -> {len(unshortened_markdown):,} chars ({len(unshortened_markdown) / len(markdown):.0%} of original)"
         )
 
