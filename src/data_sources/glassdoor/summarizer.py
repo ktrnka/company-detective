@@ -27,7 +27,7 @@ Be sure not to miss any common positive or negative sentiments about the company
 
 The reader is expecting a comprehensive overview in which they can click links to understand any identified positive or negative aspects of the employer.
 
-Format the response as Markdown.
+Format the response as Markdown. The highest level headings should be #
 
 Format quotations as: "quote" [(Job title, Glassdoor, Date)](url)
 
