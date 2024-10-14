@@ -1,5 +1,31 @@
 # Experiments done
 
+## Parallel web scraping 10/14
+
+After instrumenting code, I saw that a lot of time was being spent on regular web scraping, whether from the company webpage or news articles. The two most promising options:
+
+### Implement a parallel scraper with aiohttp
+
+Pros: Control, speed
+Cons: More code to maintain, probably I'd get blocked once I have too much concurrency
+
+Also, when it crashes it tends to crash the whole kernel
+
+### Rely more on Scrapfly
+
+Pros: Caching, some concurrency 
+Cons: Cost, speed, I'm not sure they're reliable
+
+I also tried using their webpage to markdown extractor:
+Pros: Faster, and generates headers
+Cons: Sometimes includes navigation headers. Generally more verbose than newspaper4k. It doesn't include the author or date at all, so I'd need to refactor the summarization pipeline to extract that information somehow.
+
+### Also
+
+I tried scrapy briefly, but learned that it's not restartable so that really kills it in my project. It also brings in lots of dependencies.
+
+I considered Tavily but they don't let me search further down the results
+
 ## Glassdoor and Reddit search optimization 10/4
 
 I ran a bigger batch of companies through, after scraping a list of companies from builtinseattle.com. Then I manually reviewed about 15 outputs and identified the biggest issues.
