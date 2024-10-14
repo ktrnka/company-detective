@@ -294,10 +294,6 @@ async def run(
 
     with trace_as_chain_group("Summarize Company", inputs={"seed": target}) as tracing_callback:
         langchain_config = {"callbacks": tracing_callback}
-        # # Use the callback manager for the chain group
-        # res = llm.invoke(llm_input, {"callbacks": manager})
-        # manager.on_chain_end({"output": res})
-
 
         dynamic_contexts = {}
 
@@ -332,7 +328,6 @@ async def run(
             [
                 webpage_summary.summary_markdown,
                 news_result.summary_markdown,
-                # general_search_summary,
             ]
             + list(dynamic_contexts.values())
         )
@@ -351,7 +346,6 @@ async def run(
                     webpage_summary.summary_markdown
                 ),
                 "news_text": url_shortener.shorten_markdown(news_result.summary_markdown),
-                # "search_text": url_shortener.shorten_markdown(general_search_summary),
                 "dynamic_contexts": url_shortener.shorten_markdown(
                     contexts_to_markdown(dynamic_contexts)
                 ),
