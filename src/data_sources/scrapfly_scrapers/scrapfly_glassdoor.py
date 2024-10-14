@@ -118,8 +118,9 @@ async def scrape_reviews(url: str, max_pages: Optional[int] = None) -> Dict:
     """Scrape Glassdoor reviews listings from reviews page (with pagination)"""
     log.info("scraping reviews from {}", url)
 
-    # TODO: If this first page fails, the whole pipeline fails, so we should have a more reliable Config here (longer timeout, retry, etc)
-    first_page = await SCRAPFLY.async_scrape(ScrapeConfig(url=url, **BASE_CONFIG))
+    # Set the first page to retry on failure because otherwise it will crash the pipeline
+    config = override_config(BASE_CONFIG, retry=True)
+    first_page = await SCRAPFLY.async_scrape(ScrapeConfig(url=url, **config))
 
     # If this is None, the whole thing will break
     reviews = parse_reviews(first_page)
@@ -151,6 +152,13 @@ def parse_salaries(result: ScrapeApiResponse) -> Dict:
     salaries = next(v for k, v in cache.items() if k.startswith("salariesByEmployer") and v.get("results"))
     return salaries
 
+def override_config(config: dict, **overrides) -> dict:
+    """Override config values with new values"""
+    return {**config, **overrides}
+
+def test_override_config():
+    assert override_config({"a": 1, "b": 2}, a=3) == {"a": 3, "b": 2}
+    assert override_config({"a": 1, "b": 2}, c=3) == {"a": 1, "b": 2, "c": 3}
 
 async def scrape_salaries(url: str, max_pages: Optional[int] = None) -> Dict:
     """Scrape Glassdoor Salary page for salary listing data (with pagination)"""
