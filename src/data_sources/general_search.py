@@ -11,15 +11,20 @@ from langchain_openai import ChatOpenAI
 from typing import List
 
 
-def search_web(target: Seed) -> List[SearchResult]:
+def search_web(target: Seed, num=40) -> List[SearchResult]:
     with log_runtime("search"):
         # Search for the company
-        search_results = list(search(f'"{target.company}"', num=100))
+        search_results = list(
+            search(f'"{target.company}" related:{target.domain}', num=num)
+        )
 
         # If the product is not the same as the company, search for the product too
         if target.product != target.company:
             search_results += list(
-                search(f'"{target.company}" "{target.product}"', num=100)
+                search(
+                    f'"{target.company}" "{target.product}" related:{target.domain}',
+                    num=num,
+                )
             )
     return search_results
 
@@ -100,6 +105,7 @@ def result_to_markdown(search_result: SearchResult) -> str:
 def results_to_markdown(search_results: List[SearchResult]) -> str:
     return "\n\n".join(result_to_markdown(result) for result in search_results)
 
+
 def organize_search_results(search_results: List[SearchResult]) -> List[SearchResult]:
     """Helper to deduplicate and sort the search results to merge sources and hopefully improve the quality of the summary"""
     # deduplicate
@@ -112,6 +118,7 @@ def organize_search_results(search_results: List[SearchResult]) -> List[SearchRe
 
     return results
 
+
 def summarize(
     target: Seed,
     search_results: List[SearchResult],
@@ -120,13 +127,17 @@ def summarize(
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     unified_markdown = results_to_markdown(organize_search_results(search_results))
 
-    assert len(unified_markdown) > 0, "No search results: Maybe there's a typo in the company or product name?"
+    assert (
+        len(unified_markdown) > 0
+    ), "No search results: Maybe there's a typo in the company or product name?"
 
     url_shortener = URLShortener()
 
     with log_runtime("summarize"):
         runnable = _prompt | llm
-        result = runnable.with_config({"run_name": "Organize General Search Results"}).invoke(
+        result = runnable.with_config(
+            {"run_name": "Organize General Search Results"}
+        ).invoke(
             {
                 "text": url_shortener.shorten_markdown(unified_markdown),
                 "company_name": target.company,
@@ -135,7 +146,9 @@ def summarize(
             langchain_config,
         )
 
-        result.content = url_shortener.unshorten_markdown(cleanse_markdown(result.content))
+        result.content = url_shortener.unshorten_markdown(
+            cleanse_markdown(result.content)
+        )
 
     log_summary_metrics(result.content, unified_markdown)
 
