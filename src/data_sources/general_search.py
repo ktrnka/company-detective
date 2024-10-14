@@ -74,7 +74,7 @@ Useful content guidelines:
 Formatting:
 - Include the publication date after the link, if available.
 - Order the results in each section from most to least relevant unless otherwise specified.
-- Format the output as a markdown document, preserving any links from the input. Preserve the exact URI from the original search result.
+- Format the output as a markdown document, preserving any links from the input. Preserve the exact URI from the original search result. If the URL starts with cache:// leave it like that so that the URL shortener can expand it afterwards.
 
 Use these criteria to effectively filter and organize the search results into the specified headers.
             """,
