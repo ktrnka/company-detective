@@ -237,13 +237,15 @@ def run(
     # Log the map-reduce metrics on the shortened texts
     log_map_reduce_metrics([doc.page_content for doc in documents], result["intermediate_steps"], result["output_text"])
 
+    unexpanded_output_length = len(result["output_text"])
+
     result["output_text"] = shortener.unshorten_markdown(result["output_text"])
     log_summary_metrics(result["output_text"], "\n".join(packed_reviews))
 
     intermediate_length = sum(len(text) for text in result["intermediate_steps"])
-    if intermediate_length == 0 or len(result["output_text"]) / intermediate_length > 1.5:
+    if intermediate_length == 0 or unexpanded_output_length / intermediate_length > 1.5:
         logger.warning(
-            "Summarization expanded too much, which is a sign of hallucination, returning empty result.",
+            "Summarization expanded too much, which is a sign of hallucination, returning empty result. intermediate_length: {}, unexpanded_output_length: {}", intermediate_length, unexpanded_output_length,
         )
         result["output_text"] = ""
     elif extractive_fraction(result["output_text"], "\n".join(packed_reviews)) < 0.05:

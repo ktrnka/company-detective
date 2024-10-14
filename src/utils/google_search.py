@@ -39,6 +39,7 @@ def search(
 
     for start in range(0, num, 10):
         # https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list
+        # fileType is another to consider
         results = (
             _service.cse()
             .list(

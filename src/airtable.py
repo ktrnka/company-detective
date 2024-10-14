@@ -50,17 +50,25 @@ def load_into_pandas(status: Optional[str] = "Approved") -> pd.DataFrame:
     return df
 
 
+def row_to_seed(row: pd.Series) -> Seed:
+    return Seed.init(
+        company=row["fields.Name"],
+        domain=row["domain"],
+        product=(
+            row["fields.Key Product Name"]
+            if not pd.isna(row["fields.Key Product Name"])
+            else None
+        ),
+        keywords=(
+            tuple(row["fields.Keywords"].split())
+            if not pd.isna(row["fields.Keywords"])
+            else None
+        ),
+    )
+
+
 def pandas_to_seeds(df: pd.DataFrame) -> pd.Series:
     return df.apply(
-        lambda row: Seed.init(
-            company=row["fields.Name"],
-            domain=row["domain"],
-            product=(
-                row["fields.Key Product Name"]
-                if not pd.isna(row["fields.Key Product Name"])
-                else None
-            ),
-            keywords=tuple(row["fields.Keywords"].split()) if not pd.isna(row["fields.Keywords"]) else None,
-        ),
+        row_to_seed,
         axis=1,
     )

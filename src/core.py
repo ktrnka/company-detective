@@ -370,15 +370,26 @@ def test_extractive_fraction():
     assert extractive_fraction(example_summary, example_source) < 1.0
 
 
-def extract_urls(markdown: str) -> List[str]:
-    return re.findall(r"\[[^]]+\]\(([^)\]]+)\)", markdown)
+def extract_urls(markdown: str) -> Set[str]:
+    # NOTE: This will extract any markdown URLs like [...](...) regardless of scheme
+    linked_urls = re.findall(r"\[[^]]+\]\(([^)\]]+)\)", markdown)
+
+    # NOTE: This will extract any URLs in general, but only http and https
+    bare_urls = re.findall(r"(https?://[^\s)\]]+)", markdown)
+
+    return set(linked_urls).union(bare_urls)
 
 
 def test_extract_urls():
-    assert extract_urls("[a](b) [c](d)") == ["b", "d"]
+    assert sorted(extract_urls("[a](b) [c](d)")) == ["b", "d"]
 
     # Sometimes the LLM mangles the Markdown and we ignore those
-    assert extract_urls("[a](b) [c](d [e](f)") == ["b", "f"]
+    assert sorted(extract_urls("[a](b) [c](d [e](f)")) == ["b", "f"]
+
+    # TDD for new functionality: Extracting URLs that aren't markdown links
+    assert sorted(extract_urls("https://www.example.com")) == ["https://www.example.com"]
+
+    assert sorted(extract_urls("[a](b) [c](d [e](https://www.example.com)")) == ["b", "https://www.example.com"]
 
 
 def extractive_fraction_urls(summary: str, source: str) -> float:

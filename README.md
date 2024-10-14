@@ -9,6 +9,7 @@ This project summarizes publicly available information about a company. It lever
 - Aggregates information from multiple sources
 - Utilizes AI to summarize and analyze data
 - Provides a unified summary of company information
+- Dynamic rebuild cadence for up-to-date information
 
 ## Prerequisites
 
@@ -50,9 +51,13 @@ The main entry points for running the company analysis are:
 1. `src/notebooks/entrypoints/refresh_company_data.ipynb`: Use this notebook to refresh company data.
 2. `src/notebooks/entrypoints/build_website.ipynb`: Use this notebook to build the website with analyzed data.
 
+## Dynamic Rebuild Cadence
+
+The project now features a dynamic rebuild cadence, allowing for more frequent updates of company information. This ensures that the data remains current and relevant.
+
 ## Contributing
 
-Contributions are welcome! Please talk to Keith for more information on how to contribute, as the repo isn't currently set up for open contributions.
+Contributions are welcome! Please contact Keith for more information on how to contribute, as the repository isn't currently set up for open contributions.
 
 ## License
 
@@ -60,4 +65,4 @@ To be determined. Please contact the repository owner for licensing information.
 
 ## Note
 
-This project is under active development. Some features or data sources may change or be refactored. 
+This project is under active development. Some features or data sources may change or be refactored. Please check for updates regularly.
