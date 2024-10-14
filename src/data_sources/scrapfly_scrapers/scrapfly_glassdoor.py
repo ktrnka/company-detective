@@ -22,7 +22,7 @@ BASE_CONFIG = {
     "country": "us",
     "proxy_pool": "public_residential_pool",
     "retry": False,
-    "cache": False,
+    "cache": True,
     # TO CONSIDER
     # session = value (this will reuse the same machine for subsequent requests due to sticky_proxy, but disables caching)
     # render_js = True (this will render the page with a headless browser and might help sometimes)

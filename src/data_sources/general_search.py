@@ -1,5 +1,6 @@
 from typing import List
 from core import Seed, cleanse_markdown, URLShortener, log_summary_metrics
+from utils.debug import log_runtime
 from utils.google_search import search, SearchResult
 from typing import List
 from langchain_core.prompts import ChatPromptTemplate
@@ -11,14 +12,15 @@ from typing import List
 
 
 def search_web(target: Seed) -> List[SearchResult]:
-    # Search for the company
-    search_results = list(search(f'"{target.company}"', num=100))
+    with log_runtime("search"):
+        # Search for the company
+        search_results = list(search(f'"{target.company}"', num=100))
 
-    # If the product is not the same as the company, search for the product too
-    if target.product != target.company:
-        search_results += list(
-            search(f'"{target.company}" "{target.product}"', num=100)
-        )
+        # If the product is not the same as the company, search for the product too
+        if target.product != target.company:
+            search_results += list(
+                search(f'"{target.company}" "{target.product}"', num=100)
+            )
     return search_results
 
 
@@ -122,17 +124,18 @@ def summarize(
 
     url_shortener = URLShortener()
 
-    runnable = _prompt | llm
-    result = runnable.with_config({"run_name": "Organize General Search Results"}).invoke(
-        {
-            "text": url_shortener.shorten_markdown(unified_markdown),
-            "company_name": target.company,
-            "product_name": target.product,
-        },
-        langchain_config,
-    )
+    with log_runtime("summarize"):
+        runnable = _prompt | llm
+        result = runnable.with_config({"run_name": "Organize General Search Results"}).invoke(
+            {
+                "text": url_shortener.shorten_markdown(unified_markdown),
+                "company_name": target.company,
+                "product_name": target.product,
+            },
+            langchain_config,
+        )
 
-    result.content = url_shortener.unshorten_markdown(cleanse_markdown(result.content))
+        result.content = url_shortener.unshorten_markdown(cleanse_markdown(result.content))
 
     log_summary_metrics(result.content, unified_markdown)
 

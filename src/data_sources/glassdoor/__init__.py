@@ -9,6 +9,7 @@ from scipy import stats
 from data_sources.scrapfly_scrapers.scrapfly_glassdoor import scrape_reviews, scrape_jobs
 
 from core import Seed, cache
+from utils.debug import log_runtime
 from utils.google_search import SearchResult, search
 
 
@@ -65,10 +66,11 @@ def find_glassdoor_employer(target: Seed) -> Optional[EmployerKey]:
 async def run(
     target: Seed, max_review_pages=1, max_job_pages=0, langchain_config=None
 ) -> Optional[GlassdoorResult]:
-    employer = find_glassdoor_employer(target)
-    if not employer:
-        logger.warning("No Glassdoor employer found for {}", target.company)
-        return None
+    with log_runtime("Find employer"):
+        employer = find_glassdoor_employer(target)
+        if not employer:
+            logger.warning("No Glassdoor employer found for {}", target.company)
+            return None
 
     # job results, not 100% used yet
     jobs = []
@@ -79,17 +81,20 @@ async def run(
         jobs = [GlassdoorJob(**result) for result in job_results]
         jobs = sorted(jobs, key=lambda job: job.jobTitleText)
 
-    reviews_url = UrlBuilder.reviews(*employer)
-    response = cache.get(reviews_url)
-    if not response:
-        response = await scrape_reviews(reviews_url, max_pages=max_review_pages)
-        cache.set(reviews_url, response, expire=timedelta(days=10).total_seconds())
+    with log_runtime("Scrape reviews"):
+        reviews_url = UrlBuilder.reviews(*employer)
+        response = cache.get(reviews_url)
+        if not response:
+            response = await scrape_reviews(reviews_url, max_pages=max_review_pages)
+            cache.set(reviews_url, response, expire=timedelta(days=10).total_seconds())
 
-        logger.debug("Glassdoor response: {}", response)
+            logger.debug("Glassdoor response: {}", response)
 
-    reviews = GlassdoorReview.parse_reviews(employer.name, response)
+    with log_runtime("Parse reviews"):
+        reviews = GlassdoorReview.parse_reviews(employer.name, response)
 
-    review_summary = summarize(target, reviews, langchain_config)
+    with log_runtime("Summarize"):
+        review_summary = summarize(target, reviews, langchain_config)
 
     # TODO: Pull out allReviewsCount from glassdoor_results
     return GlassdoorResult(

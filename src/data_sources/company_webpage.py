@@ -5,6 +5,7 @@
 
 from dataclasses import dataclass
 from typing import List, Optional
+from utils.debug import log_runtime
 from utils.google_search import SearchResult, search
 from utils.scrape import request_article, response_to_article, article_to_markdown
 from langchain_openai import ChatOpenAI
@@ -49,25 +50,29 @@ class WebpageResult:
 def run(website: str, num_pages=30, langchain_config=None) -> WebpageResult:
     assert website, "Website must be non-empty"
 
-    search_results = list(search(f"site:{website}", num=num_pages))
+    with log_runtime("search"):
+        search_results = list(search(f"site:{website}", num=num_pages))
 
-    responses = [request_article(result.link) for result in search_results]
-    responses = [response for response in responses if response and response.ok]
+    with log_runtime("scrape"):
+        responses = [request_article(result.link) for result in search_results]
+        responses = [response for response in responses if response and response.ok]
 
-    articles = [response_to_article(response) for response in responses]
-    article_markdowns = [article_to_markdown(article) for article in articles]
+    with log_runtime("parse"):
+        articles = [response_to_article(response) for response in responses]
+        article_markdowns = [article_to_markdown(article) for article in articles]
 
-    joined_markdowns = "\n\n".join(article_markdowns)
+        joined_markdowns = "\n\n".join(article_markdowns)
 
-    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-    runnable = _prompt | llm
-    result = runnable.with_config({"run_name": "Summarize Company Webpage"}).invoke(
-        {
-            # NOTE: I tried the URL shortener initially but had an issue with a dangling cache reference
-            "context": joined_markdowns,
-        },
-        langchain_config
-    )
+    with log_runtime("summarize"):
+        llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+        runnable = _prompt | llm
+        result = runnable.with_config({"run_name": "Summarize Company Webpage"}).invoke(
+            {
+                # NOTE: I tried the URL shortener initially but had an issue with a dangling cache reference
+                "context": joined_markdowns,
+            },
+            langchain_config
+        )
 
     log_summary_metrics(result.content, joined_markdowns, extractive=False)
 
