@@ -5,6 +5,7 @@ https://scrapfly.io/blog/how-to-scrape-glassdoor/
 To run this scraper set env variable $SCRAPFLY_KEY with your scrapfly API key:
 $ export $SCRAPFLY_KEY="your key from https://scrapfly.io/dashboard"
 """
+
 from enum import Enum
 import json
 import os
@@ -13,7 +14,13 @@ from typing import Dict, List, Optional, Tuple, TypedDict
 from urllib.parse import urljoin
 
 from loguru import logger as log
-from scrapfly import ScrapeApiResponse, ScrapeConfig, ScrapflyClient, ScrapflyScrapeError, ScrapflyError
+from scrapfly import (
+    ScrapeApiResponse,
+    ScrapeConfig,
+    ScrapflyClient,
+    ScrapflyScrapeError,
+    ScrapflyError,
+)
 
 # TODO: Consider increasing max_concurrency from 1 to 5 here
 SCRAPFLY = ScrapflyClient(key=os.environ["SCRAPFLY_KEY"])
@@ -24,11 +31,9 @@ BASE_CONFIG = {
     "country": "us",
     "proxy_pool": "public_residential_pool",
     "retry": False,
-
     # Cache for 1 week (max TTL in Scrapfly)
     "cache": True,
     "cache_ttl": 604800,
-
     # TO CONSIDER
     # session = value (this will reuse the same machine for subsequent requests due to sticky_proxy, but disables caching)
     # render_js = True (this will render the page with a headless browser and might help sometimes)
@@ -93,13 +98,19 @@ async def scrape_jobs(url: str, max_pages: Optional[int] = None) -> List[Dict]:
     if max_pages and _total_pages > max_pages:
         other_page_urls = other_page_urls[:max_pages]
 
-    log.info("scraped first page of jobs of {}, scraping remaining {} pages", url, _total_pages - 1)
+    log.info(
+        "scraped first page of jobs of {}, scraping remaining {} pages",
+        url,
+        _total_pages - 1,
+    )
     other_pages = [ScrapeConfig(url, **BASE_CONFIG) for url in other_page_urls]
     async for result in SCRAPFLY.concurrent_scrape(other_pages):
         if not isinstance(result, ScrapflyScrapeError):
             jobs.extend(parse_jobs(result)[0])
         else:
-            log.error(f"failed to scrape {result.api_response.config['url']}, got: {result.message}")
+            log.error(
+                f"failed to scrape {result.api_response.config['url']}, got: {result.message}"
+            )
     log.info("scraped {} jobs from {} in {} pages", len(jobs), url, _total_pages)
     return jobs
 
@@ -108,7 +119,11 @@ def parse_reviews(result: ScrapeApiResponse) -> Optional[Dict]:
     """parse Glassdoor reviews page for review data"""
     try:
         cache = find_hidden_data(result)
-        reviews = next(v for k, v in cache.items() if k.startswith("employerReviews") and v.get("reviews"))
+        reviews = next(
+            v
+            for k, v in cache.items()
+            if k.startswith("employerReviews") and v.get("reviews")
+        )
         return reviews
     except IndexError:
         # This happens when something has gone wrong with the page structure
@@ -134,10 +149,16 @@ async def scrape_reviews(url: str, max_pages: Optional[int] = None) -> Dict:
     if max_pages and max_pages < total_pages:
         total_pages = max_pages
 
-    log.info("scraped first page of reviews of {}, scraping remaining {} pages", url, total_pages - 1)
+    log.info(
+        "scraped first page of reviews of {}, scraping remaining {} pages",
+        url,
+        total_pages - 1,
+    )
     other_pages = [
         # NOTE: Consider adding ?filter.iso3Language=eng like the browser does
-        ScrapeConfig(url=Url.change_page(first_page.context["url"], page=page), **BASE_CONFIG)
+        ScrapeConfig(
+            url=Url.change_page(first_page.context["url"], page=page), **BASE_CONFIG
+        )
         for page in range(2, total_pages + 1)
     ]
     async for result in SCRAPFLY.concurrent_scrape(other_pages):
@@ -147,24 +168,38 @@ async def scrape_reviews(url: str, max_pages: Optional[int] = None) -> Dict:
             if reviews_obj:
                 reviews["reviews"].extend(reviews_obj["reviews"])
         else:
-            log.error(f"failed to scrape {result.api_response.config['url']}, got: {result.message}")
-    log.info("scraped {} reviews from {} in {} pages", len(reviews["reviews"]), url, total_pages)
+            log.error(
+                f"failed to scrape {result.api_response.config['url']}, got: {result.message}"
+            )
+    log.info(
+        "scraped {} reviews from {} in {} pages",
+        len(reviews["reviews"]),
+        url,
+        total_pages,
+    )
     return reviews
 
 
 def parse_salaries(result: ScrapeApiResponse) -> Dict:
     """Parse Glassdoor salaries page for salary data"""
     cache = find_hidden_data(result)
-    salaries = next(v for k, v in cache.items() if k.startswith("salariesByEmployer") and v.get("results"))
+    salaries = next(
+        v
+        for k, v in cache.items()
+        if k.startswith("salariesByEmployer") and v.get("results")
+    )
     return salaries
+
 
 def override_config(config: dict, **overrides) -> dict:
     """Override config values with new values"""
     return {**config, **overrides}
 
+
 def test_override_config():
     assert override_config({"a": 1, "b": 2}, a=3) == {"a": 3, "b": 2}
     assert override_config({"a": 1, "b": 2}, c=3) == {"a": 1, "b": 2, "c": 3}
+
 
 async def scrape_salaries(url: str, max_pages: Optional[int] = None) -> Dict:
     """Scrape Glassdoor Salary page for salary listing data (with pagination)"""
@@ -175,22 +210,36 @@ async def scrape_salaries(url: str, max_pages: Optional[int] = None) -> Dict:
     if max_pages and total_pages > max_pages:
         total_pages = max_pages
 
-    log.info("scraped first page of salaries of {}, scraping remaining {} pages", url, total_pages - 1)
+    log.info(
+        "scraped first page of salaries of {}, scraping remaining {} pages",
+        url,
+        total_pages - 1,
+    )
     other_pages = [
-        ScrapeConfig(url=Url.change_page(first_page.context["url"], page=page), **BASE_CONFIG)
+        ScrapeConfig(
+            url=Url.change_page(first_page.context["url"], page=page), **BASE_CONFIG
+        )
         for page in range(2, total_pages + 1)
     ]
     async for result in SCRAPFLY.concurrent_scrape(other_pages):
         if not isinstance(result, ScrapflyScrapeError):
             salaries["results"].extend(parse_salaries(result)["results"])
         else:
-            log.error(f"failed to scrape {result.api_response.config['url']}, got: {result.message}")
-    log.info("scraped {} salaries from {} in {} pages", len(salaries["results"]), url, total_pages)
+            log.error(
+                f"failed to scrape {result.api_response.config['url']}, got: {result.message}"
+            )
+    log.info(
+        "scraped {} salaries from {} in {} pages",
+        len(salaries["results"]),
+        url,
+        total_pages,
+    )
     return salaries
 
 
 class FoundCompany(TypedDict):
     """type hint for company search result"""
+
     name: str
     id: str
     url_overview: str
@@ -215,10 +264,16 @@ async def find_companies(query: str) -> List[FoundCompany]:
                 {
                     "name": result["suggestion"],
                     "id": result["employerId"],
-                    "url_overview": Url.overview(result["suggestion"], result["employerId"]),
+                    "url_overview": Url.overview(
+                        result["suggestion"], result["employerId"]
+                    ),
                     "url_jobs": Url.jobs(result["suggestion"], result["employerId"]),
-                    "url_reviews": Url.reviews(result["suggestion"], result["employerId"]),
-                    "url_salaries": Url.salaries(result["suggestion"], result["employerId"]),
+                    "url_reviews": Url.reviews(
+                        result["suggestion"], result["employerId"]
+                    ),
+                    "url_salaries": Url.salaries(
+                        result["suggestion"], result["employerId"]
+                    ),
                 }
             )
     return companies
@@ -265,7 +320,9 @@ class Url:
     """
 
     @staticmethod
-    def overview(employer: str, employer_id: str, region: Optional[Region] = None) -> str:
+    def overview(
+        employer: str, employer_id: str, region: Optional[Region] = None
+    ) -> str:
         employer = employer.replace(" ", "-")
         url = f"https://www.glassdoor.com/Overview/Working-at-{employer}-EI_IE{employer_id}"
         # glassdoor is allowing any prefix for employer name and
@@ -280,7 +337,9 @@ class Url:
         return url
 
     @staticmethod
-    def reviews(employer: str, employer_id: str, region: Optional[Region] = None) -> str:
+    def reviews(
+        employer: str, employer_id: str, region: Optional[Region] = None
+    ) -> str:
         employer = employer.replace(" ", "-")
         url = f"https://www.glassdoor.com/Reviews/{employer}-Reviews-E{employer_id}.htm"
         if region:
@@ -288,9 +347,13 @@ class Url:
         return url
 
     @staticmethod
-    def salaries(employer: str, employer_id: str, region: Optional[Region] = None) -> str:
+    def salaries(
+        employer: str, employer_id: str, region: Optional[Region] = None
+    ) -> str:
         employer = employer.replace(" ", "-")
-        url = f"https://www.glassdoor.com/Salary/{employer}-Salaries-E{employer_id}.htm?"
+        url = (
+            f"https://www.glassdoor.com/Salary/{employer}-Salaries-E{employer_id}.htm?"
+        )
         if region:
             return url + f"?filter.countryId={region.value}"
         return url

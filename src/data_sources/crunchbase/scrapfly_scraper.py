@@ -5,6 +5,7 @@ https://scrapfly.io/blog/how-to-scrape-crunchbase/
 To run this scraper set env variable $SCRAPFLY_KEY with your scrapfly API key:
 $ export $SCRAPFLY_KEY="your key from https://scrapfly.io/dashboard"
 """
+
 from datetime import datetime
 import gzip
 import json
@@ -24,7 +25,6 @@ BASE_CONFIG = {
     "asp": True,
     "render_js": True,
     "proxy_pool": "public_residential_pool",
-
     # Cache the response for 1 week (the maximum allowed by Scrapfly)
     "cache": True,
     "cache_ttl": 604800,
@@ -43,7 +43,9 @@ def parse_company(result: ScrapeApiResponse) -> Dict:
     # the app cache data can be in one of two places:
     app_state_data = result.selector.css("script#ng-state::text").get()
     if not app_state_data:
-        app_state_data = _unescape_angular(result.selector.css("script#client-app-state::text").get() or "")
+        app_state_data = _unescape_angular(
+            result.selector.css("script#client-app-state::text").get() or ""
+        )
     app_state_data = json.loads(app_state_data)
     # there are multiple caches:
     cache_keys = list(app_state_data["HttpState"])
@@ -61,7 +63,7 @@ async def scrape_company(url: str, _retries: int = 0) -> Dict:
     """scrape crunchbase company page for organization and employee data"""
     # note: we use /people tab because it contains the most data:
     log.info(f"scraping company: {url}")
-    try:    
+    try:
         result = await SCRAPFLY.async_scrape(ScrapeConfig(url, **BASE_CONFIG))
     except:
         while _retries <= 2:
@@ -78,13 +80,15 @@ async def scrape_person(url: str, _retries: int = 0) -> Dict:
         while _retries <= 2:
             log.debug("retrying failed request")
             return await scrape_person(url, _retries=_retries + 1)
-    return parse_person(result)            
+    return parse_person(result)
 
 
 def parse_person(result: ScrapeApiResponse) -> Dict:
     app_state_data = result.selector.css("script#ng-state::text").get()
     if not app_state_data:
-        app_state_data = _unescape_angular(result.selector.css("script#client-app-state::text").get() or "")
+        app_state_data = _unescape_angular(
+            result.selector.css("script#client-app-state::text").get() or ""
+        )
     app_state_data = json.loads(app_state_data)
     cache_keys = list(app_state_data["HttpState"])
     dataset_key = next(key for key in cache_keys if "data/entities" in key)
@@ -96,7 +100,9 @@ async def _scrape_sitemap_index() -> List[str]:
     """scrape Crunchbase Sitemap index for all sitemap urls"""
     log.info("scraping sitemap index for sitemap urls")
     result = await SCRAPFLY.async_scrape(
-        ScrapeConfig("https://www.crunchbase.com/www-sitemaps/sitemap-index.xml", **BASE_CONFIG)
+        ScrapeConfig(
+            "https://www.crunchbase.com/www-sitemaps/sitemap-index.xml", **BASE_CONFIG
+        )
     )
     urls = result.selector.xpath("//sitemap/loc/text()").getall()
     log.info(f"found {len(urls)} sitemaps")
@@ -110,20 +116,26 @@ def parse_sitemap(result: ScrapeApiResponse) -> Iterator[Tuple[str, datetime]]:
     log.info(f"found {len(urls)} in sitemap {result.context['url']}")
     for url_node in urls:
         url = url_node.xpath("loc/text()").get()
-        last_modified = datetime.fromisoformat(url_node.xpath("lastmod/text()").get().strip("Z"))
+        last_modified = datetime.fromisoformat(
+            url_node.xpath("lastmod/text()").get().strip("Z")
+        )
         yield url, last_modified
 
 
-async def discover_target(target: Literal["organizations", "people"], min_last_modified=None):
+async def discover_target(
+    target: Literal["organizations", "people"], min_last_modified=None
+):
     """
     discover all crunchbase urls for a given target (organizations or people)
     using crunchbase sitemaps.
-    
+
     The min_last_modified field can be used to discover only recently updated targets
     """
     sitemap_urls = await _scrape_sitemap_index()
     urls = [url for url in sitemap_urls if target in url]
-    log.info(f"found {len(urls)} matching sitemap urls (from total of {len(sitemap_urls)})")
+    log.info(
+        f"found {len(urls)} matching sitemap urls (from total of {len(sitemap_urls)})"
+    )
     for url in urls:
         log.info(f"scraping sitemap: {url}")
         result = await SCRAPFLY.async_scrape(ScrapeConfig(url, **BASE_CONFIG))

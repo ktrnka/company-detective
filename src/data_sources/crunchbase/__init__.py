@@ -15,10 +15,12 @@ templates = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"))
 def find_url(target: Seed) -> Optional[str]:
     """Find the Crunchbase people page for a company using Google search"""
 
-    results_iter = search(f'site:www.crunchbase.com/organization {target.company} {target.domain}', num=10)
+    results_iter = search(
+        f"site:www.crunchbase.com/organization {target.company} {target.domain}", num=10
+    )
     results_iter = filter_url(results_iter, "/organization/")
     results_iter = filter_title_relevance(results_iter, target.company)
-    
+
     results = list(results_iter)
 
     if not results:
@@ -45,13 +47,17 @@ async def run(target: Seed) -> Optional[str]:
             crunchbase_raw_response = await scrape_company(url)
 
             # TODO: Scrapfly caches for 1 week max, but this info is pretty static so we could cache much longer
-            cache.set(url, crunchbase_raw_response, expire=timedelta(days=14).total_seconds())
+            cache.set(
+                url, crunchbase_raw_response, expire=timedelta(days=14).total_seconds()
+            )
 
-            logger.debug("Updating cache with Crunchbase response: {}", crunchbase_raw_response)
+            logger.debug(
+                "Updating cache with Crunchbase response: {}", crunchbase_raw_response
+            )
         except ScrapflyError as e:
             logger.warning("Failed to process Crunchbase, skipping: {}", e)
             return None
-        
+
     organization = Organization(**crunchbase_raw_response)
 
     return templates.get_template("crunchbase.md").render(

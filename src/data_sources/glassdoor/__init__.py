@@ -6,7 +6,6 @@ import numpy as np
 from scipy import stats
 
 
-
 from core import Seed, cache
 from utils.debug import log_runtime
 from utils.google_search import SearchResult, search
@@ -38,11 +37,15 @@ class GlassdoorResult:
     @property
     def num_raw_reviews(self) -> int:
         return self.raw_reviews.get("allReviewsCount", 0)
-    
+
     @property
     def html_link(self) -> str:
         # Figure out the name from the URL
-        link = self.review_page if isinstance(self.review_page, str) else self.review_page.link
+        link = (
+            self.review_page
+            if isinstance(self.review_page, str)
+            else self.review_page.link
+        )
         employer = UrlBuilder.parse_review_url(link)
         # TODO: What to do if it doesn't parse
         formatted_name = employer.name.replace("-", " ").title()
@@ -55,7 +58,7 @@ class GlassdoorResult:
 
 
 def find_glassdoor_employer(target: Seed) -> Optional[EmployerKey]:
-    query = f'site:www.glassdoor.com {target.company} {target.domain}'
+    query = f"site:www.glassdoor.com {target.company} {target.domain}"
     urls = list(search(query, num=10))
     return UrlBuilder.find_employer_key([result.link for result in urls])
 
