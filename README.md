@@ -6,7 +6,7 @@ This project summarizes publicly available information about a company. It lever
 
 ## Features
 
-- Aggregates information from multiple sources
+- Aggregates information from multiple sources including Crunchbase, Glassdoor, news articles, and company websites
 - Utilizes AI to summarize and analyze data
 - Provides a unified summary of company information
 - Dynamic rebuild cadence for up-to-date information
@@ -26,6 +26,7 @@ This project requires API keys for the following services:
 - Scrapfly
 - AWS
 - Langsmith (Optional)
+- Crunchbase (via Scrapfly)
 
 Ensure you have obtained the necessary API keys before proceeding with the setup.
 
@@ -53,7 +54,14 @@ The main entry points for running the company analysis are:
 
 ## Dynamic Rebuild Cadence
 
-The project now features a dynamic rebuild cadence, allowing for more frequent updates of company information. This ensures that the data remains current and relevant.
+The project features a dynamic rebuild cadence, allowing for more frequent updates of company information. This ensures that the data remains current and relevant.
+
+## Data Sources
+
+- Crunchbase: Provides detailed company information, funding data, and recent news.
+- Glassdoor: Offers employee reviews and sentiment analysis.
+- News Articles: Gathers recent news about the company.
+- Company Website: Extracts information directly from the company's official website.
 
 ## Contributing
 
