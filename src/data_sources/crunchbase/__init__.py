@@ -1,4 +1,4 @@
-from scrapfly import ScrapflyAspError, ScrapflyScrapeError
+from scrapfly import ScrapflyAspError, ScrapflyError, ScrapflyScrapeError
 from utils.google_search import filter_title_relevance, filter_url, search
 from core import Seed, cache
 from data_sources.scrapfly_scrapers.crunchbase import scrape_company
@@ -54,11 +54,8 @@ async def run(target: Seed) -> Optional[str]:
             cache.set(url, crunchbase_raw_response, expire=timedelta(days=14).total_seconds())
 
             logger.debug("Updating cache with Crunchbase response: {}", crunchbase_raw_response)
-        except ScrapflyAspError as e:
-            logger.warning("Failed to process Crunchbase (ScrapflyAspError), skipping: {}", e)
-            return None
-        except ScrapflyScrapeError as e:
-            logger.warning("Failed to process Crunchbase (ScrapflyScrapeError), skipping: {}", e)
+        except ScrapflyError as e:
+            logger.warning("Failed to process Crunchbase, skipping: {}", e)
             return None
         
     organization = Organization(**crunchbase_raw_response)
