@@ -57,13 +57,3 @@ class Organization(BaseModel):
     def url(self):
         return f"https://www.crunchbase.com/organization/{self.id}"
 
-
-class Employee(BaseModel):
-    """Data model for each employee response from Scrapfly Crunchbase API"""
-    job_departments: Optional[List[str]]
-    job_levels: List[str]
-    linkedin: str
-    name: str
-
-def parse(response: dict) -> Tuple[Organization, List[Employee]]:
-    return Organization(**response["organization"]), [Employee(**emp) for emp in response["employees"]]
