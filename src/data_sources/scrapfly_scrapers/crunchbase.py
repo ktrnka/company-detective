@@ -34,7 +34,7 @@ class CompanyData(TypedDict):
     employees: List[Dict]
 
 
-def parse_company(result: ScrapeApiResponse) -> CompanyData:
+def parse_company(result: ScrapeApiResponse) -> Dict:
     """parse company page for company and employee data"""
     # the app cache data can be in one of two places:
     app_state_data = result.selector.css("script#ng-state::text").get()
@@ -46,17 +46,14 @@ def parse_company(result: ScrapeApiResponse) -> CompanyData:
     # Organization data can be found in this cache:
     data_cache_key = next(key for key in cache_keys if "entities/organizations/" in key)
     # Some employee/contact data can be found in this key:
-    people_cache_key = next(key for key in cache_keys if "/data/searches/contacts" in key)
+    # people_cache_key = next(key for key in cache_keys if "/data/searches/contacts" in key)
 
     organization = app_state_data["HttpState"][data_cache_key]["data"]
-    employees = app_state_data["HttpState"][people_cache_key]["data"]
-    return {
-        "organization": _reduce_organization_dataset(organization),
-        "employees": _reduce_employee_dataset(employees),
-    }
+
+    return _reduce_organization_dataset(organization)
 
 
-async def scrape_company(url: str, _retries: int = 0) -> CompanyData:
+async def scrape_company(url: str, _retries: int = 0) -> Dict:
     """scrape crunchbase company page for organization and employee data"""
     # note: we use /people tab because it contains the most data:
     log.info(f"scraping company: {url}")
