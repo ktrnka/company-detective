@@ -25,12 +25,12 @@ class Organization(BaseModel):
     """Data model for the organization response from Scrapfly Crunchbase API"""
     id: str
     name: str
-    logo: str
+    logo: Optional[str] = None
     description: Optional[str] = ""
-    founded_on: date
-    linkedin: str
-    facebook: Optional[str]
-    twitter: str
+    founded_on: Optional[date] = None
+    linkedin: Optional[str] = None
+    facebook: Optional[str] = None
+    twitter: Optional[str] = None
     email: Optional[str] = None
     website: str
     ipo_status: str
@@ -38,8 +38,8 @@ class Organization(BaseModel):
     semrush_global_rank: Optional[int] = None
     semrush_visits_latest_month: Optional[int] = None
     semrush_id: Optional[str] = None
-    categories: List[str]
-    legal_name: str
+    categories: Optional[List[str]] = []
+    legal_name: Optional[str] = None
     operating_status: str
     funding_rounds: List[FundingRound]
     timeline: List[Article]
