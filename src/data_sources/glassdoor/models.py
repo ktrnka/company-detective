@@ -3,7 +3,7 @@ import re
 from typing import Optional, NamedTuple
 from pydantic import BaseModel
 
-from data_sources.scrapfly_scrapers.scrapfly_glassdoor import Url
+from .scrapfly_scraper import Url
 
 
 class EmployerKey(NamedTuple):

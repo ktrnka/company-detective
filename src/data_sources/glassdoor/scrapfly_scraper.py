@@ -17,14 +17,17 @@ from scrapfly import ScrapeApiResponse, ScrapeConfig, ScrapflyClient, ScrapflySc
 
 # TODO: Consider increasing max_concurrency from 1 to 5 here
 SCRAPFLY = ScrapflyClient(key=os.environ["SCRAPFLY_KEY"])
+
 BASE_CONFIG = {
     "asp": True,
     "render_js": True,
     "country": "us",
     "proxy_pool": "public_residential_pool",
     "retry": False,
+
+    # Cache for 1 week (max TTL in Scrapfly)
     "cache": True,
-    "cache_ttl": 604800, # max TTL, 1 week
+    "cache_ttl": 604800,
 
     # TO CONSIDER
     # session = value (this will reuse the same machine for subsequent requests due to sticky_proxy, but disables caching)

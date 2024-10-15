@@ -25,8 +25,9 @@ BASE_CONFIG = {
     "render_js": True,
     "proxy_pool": "public_residential_pool",
 
+    # Cache the response for 1 week (the maximum allowed by Scrapfly)
     "cache": True,
-    "cache_ttl": 604800, # max TTL, 1 week
+    "cache_ttl": 604800,
 }
 
 

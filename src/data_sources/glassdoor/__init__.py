@@ -6,18 +6,15 @@ import numpy as np
 from scipy import stats
 
 
-from data_sources.scrapfly_scrapers.scrapfly_glassdoor import scrape_reviews, scrape_jobs
 
 from core import Seed, cache
 from utils.debug import log_runtime
 from utils.google_search import SearchResult, search
 
 
+from .scrapfly_scraper import scrape_reviews, scrape_jobs
 from .summarizer import summarize
 from .models import UrlBuilder, GlassdoorReview, GlassdoorJob, EmployerKey
-
-
-# scrapfly_scrapers.glassdoor.BASE_CONFIG["cache"] = True
 
 
 @dataclass

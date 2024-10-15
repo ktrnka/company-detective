@@ -1,19 +1,13 @@
-from scrapfly import ScrapflyAspError, ScrapflyError, ScrapflyScrapeError
+from scrapfly import ScrapflyError
 from utils.google_search import filter_title_relevance, filter_url, search
 from core import Seed, cache
-from data_sources.scrapfly_scrapers.crunchbase import scrape_company
 import jinja2
 from datetime import datetime, timedelta
+
 from .models import *
+from .scrapfly_scraper import scrape_company
 
 from loguru import logger
-
-# CONFIGURE SCRAPFLY
-# scrapfly_scrapers.crunchbase.BASE_CONFIG["cache"] = True
-
-# Cost budget to allow ASP to automatically tweak things to get a response
-# scrapfly_scrapers.crunchbase.BASE_CONFIG["cost_budget"] = 50
-
 
 templates = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"))
 

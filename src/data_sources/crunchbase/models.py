@@ -1,7 +1,7 @@
 from datetime import date
 from pydantic import BaseModel
 
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 class FundingRound(BaseModel):
     announced_on: date
