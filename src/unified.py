@@ -24,6 +24,7 @@ import data_sources.reddit.search
 import data_sources.glassdoor as glassdoor
 import data_sources.news as news
 import data_sources.company_webpage as company_webpage
+import data_sources.crunchbase as crunchbase
 
 import data_sources.general_search as general_search
 from loguru import logger
@@ -297,6 +298,10 @@ async def run(
 
         dynamic_contexts = {}
 
+        crunchbase_markdown = await crunchbase.run(target)
+        if crunchbase_markdown:
+            dynamic_contexts["Crunchbase"] = crunchbase_markdown
+
         webpage_summary = company_webpage.run(target.domain, langchain_config=langchain_config)
         news_result = news.run(target, max_results=max_news_articles, langchain_config=langchain_config)
 
@@ -364,7 +369,7 @@ async def run(
             customer_experience_result=customer_experience_result,
             glassdoor_result=glassdoor_result,
             news_result=news_result,
-            crunchbase_markdown=None,
+            crunchbase_markdown=crunchbase_markdown,
             lineage=Lineage(run_at=datetime.now(), git_sha=git_sha()),
         )
 

@@ -19,10 +19,13 @@ from scrapfly import ScrapeApiResponse, ScrapeConfig, ScrapflyClient, ScrapflySc
 SCRAPFLY = ScrapflyClient(key=os.environ["SCRAPFLY_KEY"])
 BASE_CONFIG = {
     "asp": True,
+    "render_js": True,
     "country": "us",
     "proxy_pool": "public_residential_pool",
     "retry": False,
     "cache": True,
+    "cache_ttl": 604800, # max TTL, 1 week
+
     # TO CONSIDER
     # session = value (this will reuse the same machine for subsequent requests due to sticky_proxy, but disables caching)
     # render_js = True (this will render the page with a headless browser and might help sometimes)
