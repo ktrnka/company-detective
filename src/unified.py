@@ -298,7 +298,7 @@ async def run(
 
         dynamic_contexts = {}
 
-        crunchbase_markdown = crunchbase.run(target)
+        crunchbase_markdown = await crunchbase.run(target)
         if crunchbase_markdown:
             dynamic_contexts["Crunchbase"] = crunchbase_markdown
 
