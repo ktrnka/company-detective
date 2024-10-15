@@ -50,7 +50,7 @@ async def run(target: Seed) -> Optional[str]:
         try:
             crunchbase_raw_response = await scrape_company(url)
 
-            # TODO: Replace this with a scrapfly cache
+            # TODO: Scrapfly caches for 1 week max, but this info is pretty static so we could cache much longer
             cache.set(url, crunchbase_raw_response, expire=timedelta(days=14).total_seconds())
 
             logger.debug("Updating cache with Crunchbase response: {}", crunchbase_raw_response)
