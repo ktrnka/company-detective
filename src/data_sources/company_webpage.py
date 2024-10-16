@@ -20,11 +20,18 @@ _prompt = ChatPromptTemplate.from_messages(
 You'll be given several pages from a company website in markdown format.
 Read all the webpages carefully and summarize all the content in markdown format.
 
-Include citations where possible, in the format [(Title)](url)
-
-These are guidelines about what information to include:
+Guidelines on content:
 More valuable: Company history, services, products, customers, leadership team, culture
 Less valuable: Legal policies
+
+Guidelines on formatting:
+Use markdown format
+Include citations where possible, in the format [(Title)](url)
+When making lists in markdown, include an extra newline before the first list item for compatibility with our formatter, such as:
+
+- item 1
+- item 2
+...
             """,
         ),
         (
