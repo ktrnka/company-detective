@@ -9,7 +9,7 @@ from utils.google_search import search, SearchResult
 def find_news_articles(
     target: Seed, num_results=10, date_restrict="y1"
 ) -> List[SearchResult]:
-    query = f'"{target.company}"'
+    query = f'"{target.company}" related:{target.domain}'
     if target.product != target.company:
         query += f' "{target.product}"'
     query += " news -site:reddit.com -site:twitter.com -site:x.com -site:linkedin.com"
