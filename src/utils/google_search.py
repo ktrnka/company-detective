@@ -5,6 +5,8 @@ from pydantic import BaseModel
 from loguru import logger
 from urllib.parse import urlencode
 
+from core import tokenize
+
 _service = build("customsearch", "v1", developerKey=os.getenv("GOOGLE_API_KEY"))
 
 
@@ -75,11 +77,30 @@ def filter_url(search_iter: Iterable[SearchResult], url_substring: str) -> Itera
 
 def filter_title_relevance(search_iter: Iterable[SearchResult], query: str, min_unigram_ratio=0.5) -> Iterable[SearchResult]:
     """Filter search results by unigram overlap between the title and the query"""
-    query_unigrams = set(query.split())
+    query_unigrams = set(tokenize(query))
     for result in search_iter:
-        title_unigrams = set(result.title.split())
+        title_unigrams = set(tokenize(result.title))
         if len(title_unigrams & query_unigrams) / len(query_unigrams) > min_unigram_ratio:
             yield result
+
+def test_filter_title_relevance():
+    # A basic test
+    search_results = [
+        SearchResult(title="foo bar", link="https://example.com", formattedUrl="example.com"),
+        SearchResult(title="foo", link="https://example.com", formattedUrl="example.com"),
+    ]
+    filtered = list(filter_title_relevance(search_results, "foo"))
+    assert len(filtered) == 2
+
+    # A test of a failure
+    page_title = "GE Current, a Daintree Company"
+    query = "Current"
+
+    search_results = [
+        SearchResult(title=page_title, link="https://example.com", formattedUrl="example.com"),
+    ]
+    filtered = list(filter_title_relevance(search_results, query))
+    assert len(filtered) == 1
 
 def url_from_query(query: str) -> str:
     query_params = {"q": query}
