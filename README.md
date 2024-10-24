@@ -6,7 +6,7 @@ This project summarizes publicly available information about a company. It lever
 
 ## Features
 
-- Aggregates information from multiple sources including Crunchbase, Glassdoor, news articles, and company websites
+- Aggregates information from multiple sources including Crunchbase, Glassdoor, news articles, company websites, and Reddit
 - Utilizes AI to summarize and analyze data
 - Provides a unified summary of company information
 - Dynamic rebuild cadence for up-to-date information
