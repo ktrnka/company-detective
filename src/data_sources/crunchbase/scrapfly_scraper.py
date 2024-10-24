@@ -18,7 +18,7 @@ from typing import Dict, Iterator, List, Literal, Tuple, TypedDict
 from loguru import logger as log
 from scrapfly import ScrapeApiResponse, ScrapeConfig, ScrapflyClient
 
-SCRAPFLY = ScrapflyClient(key=os.environ["SCRAPFLY_KEY"])
+SCRAPFLY = ScrapflyClient(key=os.environ.get("SCRAPFLY_KEY"))
 BASE_CONFIG = {
     # Crunchbase.com requires Anti Scraping Protection bypass feature.
     # for more: https://scrapfly.io/docs/scrape-api/anti-scraping-protection

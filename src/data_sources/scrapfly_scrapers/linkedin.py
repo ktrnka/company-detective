@@ -14,7 +14,7 @@ from parsel import Selector
 from loguru import logger as log
 from scrapfly import ScrapeConfig, ScrapflyClient, ScrapeApiResponse
 
-SCRAPFLY = ScrapflyClient(key=os.environ["SCRAPFLY_KEY"])
+SCRAPFLY = ScrapflyClient(key=os.environ.get("SCRAPFLY_KEY"))
 
 BASE_CONFIG = {
     # bypass linkedin.com web scraping blocking

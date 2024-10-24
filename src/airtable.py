@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 import pandas as pd
 from core import Seed
 
-api = Api(os.environ["AIRTABLE_API_KEY"])
+api = Api(os.environ.get("AIRTABLE_API_KEY"))
 
 company_table = api.table("appxVirwyt5V40t5S", "tbl2VTj1mFjoH4Gsx")
 

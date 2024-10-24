@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 from datetime import datetime
 from praw.models import MoreComments, Submission, Comment
+import pytest
 
 
 DATE_FORMAT = "%Y-%m-%d"
@@ -69,6 +70,7 @@ def submission_to_markdown(submission: Submission, pagination_limit=10) -> str:
     return text.strip()
 
 
+@pytest.mark.skip(reason="Uses network and API key")
 def test_submission():
     """Test that we can connect to Reddit, pull a thread, and format it"""
     reddit_client = init()
