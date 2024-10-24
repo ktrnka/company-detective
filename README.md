@@ -27,8 +27,9 @@ This project requires API keys for the following services:
 - AWS
 - Langsmith (Optional)
 - Crunchbase (via Scrapfly)
+- Airtable
 
-Ensure you have obtained the necessary API keys before proceeding with the setup.
+Ensure you have obtained the necessary API keys before proceeding with the setup. The project is designed to handle missing API keys gracefully, but functionality may be limited without them.
 
 ## Installation
 
@@ -62,10 +63,16 @@ The project features a dynamic rebuild cadence, allowing for more frequent updat
 - Glassdoor: Offers employee reviews and sentiment analysis.
 - News Articles: Gathers recent news about the company.
 - Company Website: Extracts information directly from the company's official website.
+- Reddit: Collects relevant discussions and mentions of the company.
+- LinkedIn: Gathers company profile information (via Scrapfly).
 
 ## Contributing
 
 Contributions are welcome! Please contact Keith for more information on how to contribute, as the repository isn't currently set up for open contributions.
+
+## Testing
+
+The project includes automated tests. Note that some network-based tests may be skipped to avoid dependencies on external services during CI/CD processes.
 
 ## License
 
