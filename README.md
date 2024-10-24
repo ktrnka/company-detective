@@ -64,7 +64,6 @@ The project features a dynamic rebuild cadence, allowing for more frequent updat
 - News Articles: Gathers recent news about the company.
 - Company Website: Extracts information directly from the company's official website.
 - Reddit: Collects relevant discussions and mentions of the company.
-- LinkedIn: Gathers company profile information (via Scrapfly).
 
 ## Contributing
 
