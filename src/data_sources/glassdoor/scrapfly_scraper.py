@@ -23,7 +23,7 @@ from scrapfly import (
 )
 
 # TODO: Consider increasing max_concurrency from 1 to 5 here
-SCRAPFLY = ScrapflyClient(key=os.environ["SCRAPFLY_KEY"])
+SCRAPFLY = ScrapflyClient(key=os.environ.get("SCRAPFLY_KEY"))
 
 BASE_CONFIG = {
     "asp": True,
