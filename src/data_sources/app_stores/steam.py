@@ -6,7 +6,7 @@ from core import Seed, cache
 import re
 from typing import Iterable, List, Optional
 from pydantic import BaseModel
-from scipy.stats import chi2_contingency
+from scipy.stats import chi2_contingency, pearsonr
 import numpy as np
 from collections import Counter
 
@@ -197,6 +197,10 @@ def summarize_sampling(reviews: List[SteamReview], overall: QuerySummary, alpha=
     max_review_date = max(review.timestamp_created for review in reviews)
     max_review_date = datetime.fromtimestamp(max_review_date)
 
+    # date correlation
+    sample_dates = np.array([review.timestamp_created for review in reviews])
+    date_score_correlation, date_score_p_value = pearsonr(sample_dates, [review.voted_up for review in reviews])
+
     return f"""
 Overall
 - {overall.total_positive / overall.total_reviews:.1%} positive
@@ -211,5 +215,8 @@ Sample representativeness
 - Chi-Square Statistic: {chi2:.3f}
 - p-value: {p_value:.3f}
 - The sample distribution is {significance} from the overall distribution
-"""
 
+Date-score correlation
+- Correlation: {date_score_correlation:.3f}
+- p-value: {date_score_p_value:.3f}
+"""

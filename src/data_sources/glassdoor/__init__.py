@@ -104,18 +104,34 @@ async def run(
 
 def summarize_sampling(result: GlassdoorResult, alpha=0.05) -> str:
     """Summarize the review stats compared to the overall distribution"""
-    sample_scores = np.array([review.ratingOverall for review in result.reviews])
+    # deduplicate the reviews and warn if there are duplicates
+    indexed_reviews = dict()
+    for review in result.reviews:
+        indexed_reviews[review.reviewId] = review
+    if len(indexed_reviews) != len(result.reviews):
+        print(f"Warning: {len(result.reviews) - len(indexed_reviews)} duplicate reviews found, deduplicating")
+    reviews = list(indexed_reviews.values())
+
+    sample_scores = np.array([review.ratingOverall for review in reviews])
     population_mean = result.raw_reviews["ratings"]["overallRating"]
     t_statistic, p_value = stats.ttest_1samp(sample_scores, population_mean)
-    min_date = min(review.reviewDateTime for review in result.reviews)
-    max_date = max(review.reviewDateTime for review in result.reviews)
+
+    min_date = min(review.reviewDateTime for review in reviews)
+    max_date = max(review.reviewDateTime for review in reviews)
+
+    # dates as ints
+    sample_dates = np.array([review.reviewDateTime.timestamp() for review in reviews])
+
+    # spearman correlation of dates and scores
+    date_score_correlation, date_score_p_value = stats.pearsonr(sample_dates, sample_scores)
+
     return f"""
 Overall stats
-Mean: {population_mean}
+Mean: {population_mean:.1f}
 Count: {result.raw_reviews["ratings"]["reviewCount"]}
       
 Sample stats
-Mean: {sample_scores.mean()}
+Mean: {sample_scores.mean():.1f}
 Count: {len(sample_scores)}
 Date range: {min_date.strftime('%Y-%m-%d')} to {max_date.strftime('%Y-%m-%d')}
 
@@ -123,4 +139,9 @@ Sample reliability
 T-statistic: {t_statistic:.3f}
 P-value: {p_value:.3f}
 {"Sample is significantly different" if p_value < alpha else "Sample is not significantly different"}
+
+Date-score correlation, from the sample
+Correlation: {date_score_correlation:.3f}
+P-value: {date_score_p_value:.3f}
+{"Correlation is significant" if date_score_p_value < alpha else "Correlation is not significant"}
 """

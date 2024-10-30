@@ -186,6 +186,10 @@ def summarize_sampling(app_info: GooglePlayAppInfo, reviews: List[GooglePlayRevi
     reviews_min_date = min(review.at for review in reviews)
     reviews_max_date = max(review.at for review in reviews)
 
+    # date correlation
+    sample_dates = np.array([review.at.timestamp() for review in reviews])
+    date_score_correlation, date_score_p_value = stats.pearsonr(sample_dates, sample_scores)
+
     return f"""
 # {app_info.title}
 {app_info.summary}
@@ -199,6 +203,7 @@ Sample
 - {sample_mean:.2f}
 - {len(reviews)} reviews
 - Date range {reviews_min_date.strftime('%Y-%m-%d')} to {reviews_max_date.strftime('%Y-%m-%d')}
+- Date-score correlation: P={date_score_p_value:.3f}
 
 Sample representativeness
 - K-S Statistic: {ks_statistic:.3f}
