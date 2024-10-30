@@ -20,13 +20,17 @@
 <div class="row">
     <div class="col s12">
         <div class="card-panel">
-        {{employee_experience_summary}}
-
         {% if result.glassdoor_result %}
+        <h1>Employee experience</h1>
+        {{result.glassdoor_result.html_stats()}}
+
+        {{employee_experience_summary}}
         <hr/>
         <div class="card-cta">
             Read all {{ result.glassdoor_result.num_raw_reviews }} reviews on {{ result.glassdoor_result.html_link }}.
         </div>
+        {% else %}
+        No Glassdoor data found.
         {% endif %}
         </div>
     </div>

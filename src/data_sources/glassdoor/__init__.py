@@ -15,6 +15,12 @@ from .scrapfly_scraper import scrape_reviews, scrape_jobs
 from .summarizer import summarize
 from .models import UrlBuilder, GlassdoorReview, GlassdoorJob, EmployerKey
 
+@dataclass
+class Icon:
+    name: str
+    css_class: str
+    extra_text: Optional[str] = None
+    tooltip: Optional[str] = None
 
 @dataclass
 class GlassdoorResult:
@@ -55,6 +61,62 @@ class GlassdoorResult:
     @classmethod
     def empty_result(cls, company: Seed):
         return cls(company, None, {}, [], [], "")
+
+    def html_stats(self) -> str:
+        """WORK IN PROGRESS: Generate the high-level stats display for the HTML. It's a simplified version of summarize_sampling"""
+        indexed_reviews = dict()
+        for review in self.reviews:
+            indexed_reviews[review.reviewId] = review
+        if len(indexed_reviews) != len(self.reviews):
+            print(f"Warning: {len(self.reviews) - len(indexed_reviews)} duplicate reviews found, deduplicating")
+        reviews = list(indexed_reviews.values())
+
+        population_mean = self.raw_reviews["ratings"]["overallRating"]
+        if population_mean >= 4.68:
+            population_icon = Icon("sentiment_very_satisfied", "green-text")
+        elif population_mean >= 4.0:
+            population_icon = Icon("sentiment_satisfied", "grey-text")
+        elif population_mean >= 3.68:
+            population_icon = Icon("sentiment_neutral", "grey-text")
+        elif population_mean >= 3.5:
+            population_icon = Icon("sentiment_dissatisfied", "grey-text")
+        else:
+            population_icon = Icon("sentiment_very_dissatisfied", "red-text")
+
+        population_icon.tooltip = f"The icon and color represent the approximate quartile of the overall rating compared to companies we reviewed. Note that ratings tend to vary by industry and role, so it's better to gauge the company's rating relative to its peers on Glassdoor."
+
+
+        sample_scores = np.array([review.ratingOverall for review in reviews])
+        t_statistic, p_value = stats.ttest_1samp(sample_scores, population_mean)
+
+        sample_icon = Icon("check", "green-text") if p_value >= 0.05 else Icon("error", "orange-text")
+        sample_icon.tooltip = f"t-statistic={t_statistic:.3f}, p={p_value:.3f} in testing difference between sample and population means"
+
+        min_date = min(review.reviewDateTime for review in reviews).strftime("%Y-%m-%d")
+        max_date = max(review.reviewDateTime for review in reviews).strftime("%Y-%m-%d")
+
+        # dates as ints
+        sample_dates = np.array([review.reviewDateTime.timestamp() for review in reviews])
+
+        # spearman correlation of dates and scores
+        date_score_correlation, date_score_p_value = stats.pearsonr(sample_dates, sample_scores)
+        trending_icon = Icon("trending_flat", "grey-text", "steady")
+        if date_score_p_value < 0.05:
+            if date_score_correlation > 0:
+                trending_icon = Icon("trending_up", "green-text", "up")
+            else:
+                trending_icon = Icon("trending_down", "red-text", "down")
+        trending_icon.tooltip = f"Pearson r={date_score_correlation:.3f}, p={date_score_p_value:.3f} in testing correlation between review datetime and score"
+
+        return f"""
+        <ul>
+            <li title="{population_icon.tooltip}"><span style="display: flex; align-items: center;"><i class="material-icons {population_icon.css_class}">{population_icon.name}</i> Overall rating: {population_mean:.1f} in {self.num_raw_reviews} reviews</span></li>
+            <li title="{sample_icon.tooltip}"><span style="display: flex; align-items: center;"><i class="material-icons {sample_icon.css_class}">{sample_icon.name}</i> Sample rating: {sample_scores.mean():.1f} in {self.num_parsed_reviews} reviews</span></li>
+            <li title="{trending_icon.tooltip}"><span style="display: flex; align-items: center;"><i class="material-icons {trending_icon.css_class}">{trending_icon.name}</i> Trending {trending_icon.extra_text} from {min_date} to {max_date}</span></li>
+        </ul>
+        """
+
+        # return summarize_sampling(self)
 
 
 def find_glassdoor_employer(target: Seed) -> Optional[EmployerKey]:
