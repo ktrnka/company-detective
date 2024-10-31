@@ -64,6 +64,7 @@ class GlassdoorResult:
 
     def html_stats(self) -> str:
         """WORK IN PROGRESS: Generate the high-level stats display for the HTML. It's a simplified version of summarize_sampling"""
+        # TODO: Refactor this whole function. Some of this needs to be moved into the template at least
         indexed_reviews = dict()
         for review in self.reviews:
             indexed_reviews[review.reviewId] = review
@@ -115,8 +116,6 @@ class GlassdoorResult:
             <li title="{trending_icon.tooltip}"><span style="display: flex; align-items: center;"><i class="material-icons {trending_icon.css_class}">{trending_icon.name}</i> Trending {trending_icon.extra_text} from {min_date} to {max_date}</span></li>
         </ul>
         """
-
-        # return summarize_sampling(self)
 
 
 def find_glassdoor_employer(target: Seed) -> Optional[EmployerKey]:
