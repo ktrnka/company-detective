@@ -65,12 +65,7 @@ class GlassdoorResult:
     def html_stats(self) -> str:
         """WORK IN PROGRESS: Generate the high-level stats display for the HTML. It's a simplified version of summarize_sampling"""
         # TODO: Refactor this whole function. Some of this needs to be moved into the template at least
-        indexed_reviews = dict()
-        for review in self.reviews:
-            indexed_reviews[review.reviewId] = review
-        if len(indexed_reviews) != len(self.reviews):
-            print(f"Warning: {len(self.reviews) - len(indexed_reviews)} duplicate reviews found, deduplicating")
-        reviews = list(indexed_reviews.values())
+        reviews = GlassdoorReview.deduplicate(self.reviews)
 
         population_mean = self.raw_reviews["ratings"]["overallRating"]
         if population_mean >= 4.68:

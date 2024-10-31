@@ -1,10 +1,10 @@
 from datetime import datetime
 import re
-from typing import Optional, NamedTuple
+from typing import List, Optional, NamedTuple
 from pydantic import BaseModel
 
 from .scrapfly_scraper import Url
-
+from loguru import logger
 
 class EmployerKey(NamedTuple):
     name: str
@@ -161,11 +161,28 @@ class GlassdoorReview(BaseModel):
             cls(employer_url_part=employer_url_part, **review)
             for review in raw_results["reviews"]
         ]
+        parsed_reviews = cls.deduplicate(parsed_reviews)
         parsed_reviews = sorted(
             parsed_reviews, key=lambda x: x.reviewDateTime, reverse=False
         )
 
         return parsed_reviews
+    
+    @classmethod
+    def deduplicate(cls, reviews: List["GlassdoorReview"]) -> List["GlassdoorReview"]:
+        """Deduplicate a list of GlassdoorReview objects by reviewId, which can happen at times"""
+        deduped = dict()
+        for review in reviews:
+            deduped[review.reviewId] = review
+
+        if len(deduped) != len(reviews):
+            logger.info(
+                "Deduplicated {} reviews to {}",
+                len(reviews),
+                len(deduped),
+            )
+
+        return list(deduped.values())
 
 
 class EmployerRatings(BaseModel):
