@@ -104,8 +104,15 @@ combine_prompt_template = PromptTemplate(
 
 class Sources(BaseModel):
     steam_url: Optional[str] = None
+    steam_reviews: Optional[List[steam.SteamReview]] = None
+
     google_play_url: Optional[str] = None
+    google_play_reviews: Optional[List[google_play.GooglePlayReview]] = None
+
     apple_store_url: Optional[str] = None
+    apple_reviews: Optional[List[apple_app_store.AppReview]] = None
+
+    reddit_urls: Optional[List[str]] = None
     reddit_search_url: Optional[str] = None
 
     def to_html(self):
@@ -145,27 +152,28 @@ def run(
         steam_url=steam_url,
         google_play_url=google_play_url,
         apple_store_url=apple_store_url,
+        reddit_urls=reddit_urls,
     )
 
     if steam_url:
         steam_id = steam.extract_steam_id(steam_url)
-        steam_reviews = steam.get_reviews(steam_id, num_reviews=500)
+        sources.steam_reviews = steam.get_reviews(steam_id, num_reviews=500)
         review_markdowns.extend(
-            steam.review_to_markdown(review) for review in steam_reviews
+            steam.review_to_markdown(review) for review in sources.steam_reviews
         )
 
     if google_play_url:
         google_play_id = google_play.extract_google_play_app_id(google_play_url)
-        google_play_reviews = google_play.scrape_reviews(google_play_id)
+        sources.google_play_reviews = google_play.scrape_reviews(google_play_id)
         review_markdowns.extend(
-            google_play.review_to_markdown(review) for review in google_play_reviews
+            google_play.review_to_markdown(review) for review in sources.google_play_reviews
         )
 
     if apple_store_url:
         apple_app_store_id = apple_app_store.extract_apple_app_store_id(apple_store_url)
-        apple_reviews = apple_app_store.scrape(apple_app_store_id)
+        sources.apple_reviews = apple_app_store.scrape(apple_app_store_id)
         review_markdowns.extend(
-            apple_app_store.review_to_markdown(review) for review in apple_reviews
+            apple_app_store.review_to_markdown(review) for review in sources.apple_reviews
         )
 
     # Index all non-Reddit reviews because their URLs are fake
