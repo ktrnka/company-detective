@@ -1,5 +1,20 @@
 # Experiments done
 
+## Glassdoor rating correlation with job title ngrams 11/1
+
+I did a quick stab at this and found that I could learn some small correlations between job titles and ratings, but not for all companies. As usual, if we don't find reliable correlations that could simply mean that we didn't scrape enough reviews. Or it could mean that there's no correlation.
+
+* A Place for Mom: Anonymous > 0
+* 98point6: No correlation
+* Rippling: Staff, engineer > 0 > Sales > Anonymous
+* Atlassian: Support engineer > 0 > SDE
+* Nordstrom: No correlation
+* Sourcegraph: No correlation
+
+In cases like Sourcegraph, there's a prevailing over-time trend and maybe that makes it tougher to use the job titles to predict?
+
+I'm not sure what to take away from this. It feels like I could pull out many more correlations if I increase the number of Glassdoor reviews we scrape, though that won't help with many smaller companies. 
+
 ## Parallel web scraping 10/14
 
 After instrumenting code, I saw that a lot of time was being spent on regular web scraping, whether from the company webpage or news articles. The two most promising options:
