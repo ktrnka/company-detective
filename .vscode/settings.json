@@ -4,15 +4,15 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "github.copilot.chat.experimental.codeGeneration.instructions": [
-        {
-            "file": "STYLE.md"
-        }
-    ],
     "cSpell.words": [
         "airtable",
         "scrapfly"
     ],
     "python.envFile": "${workspaceFolder}/.env",
-    "jupyter.notebookFileRoot": "${workspaceFolder}/src"
+    "jupyter.notebookFileRoot": "${workspaceFolder}/src",
+    "github.copilot.chat.codeGeneration.instructions": [
+        {
+            "file": "STYLE.md"
+        }
+    ]
 }
