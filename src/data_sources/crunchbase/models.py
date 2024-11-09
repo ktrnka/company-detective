@@ -36,9 +36,9 @@ class Organization(BaseModel):
     facebook: Optional[str] = None
     twitter: Optional[str] = None
     email: Optional[str] = None
-    website: str
-    ipo_status: str
-    rank_org_company: int
+    website: Optional[str] = None
+    ipo_status: Optional[str] = None
+    rank_org_company: Optional[int] = None
     semrush_global_rank: Optional[int] = None
     semrush_visits_latest_month: Optional[int] = None
     semrush_id: Optional[str] = None

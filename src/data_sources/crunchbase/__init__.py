@@ -45,6 +45,8 @@ async def run(target: Seed) -> Optional[str]:
     if not crunchbase_raw_response:
         try:
             crunchbase_raw_response = await scrape_company(url)
+            if not crunchbase_raw_response:
+                return None
 
             # TODO: Scrapfly caches for 1 week max, but this info is pretty static so we could cache much longer
             cache.set(

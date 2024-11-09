@@ -65,11 +65,13 @@ async def scrape_company(url: str, _retries: int = 0) -> Dict:
     log.info(f"scraping company: {url}")
     try:
         result = await SCRAPFLY.async_scrape(ScrapeConfig(url, **BASE_CONFIG))
+        return parse_company(result)
     except:
         while _retries <= 2:
             log.debug("retrying failed request")
             return await scrape_company(url, _retries=_retries + 1)
-    return parse_company(result)
+
+    return None
 
 
 async def scrape_person(url: str, _retries: int = 0) -> Dict:
