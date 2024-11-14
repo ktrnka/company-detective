@@ -1,5 +1,5 @@
 from typing import List
-from core import Seed, cleanse_markdown, URLShortener, log_summary_metrics
+from core import Seed, URLShortener, log_summary_metrics
 from utils.debug import log_runtime
 from utils.google_search import search, SearchResult
 from typing import List
@@ -9,6 +9,8 @@ from langchain_openai import ChatOpenAI
 
 
 from typing import List
+
+from utils.llm_utils import cleanse_markdown
 
 
 def search_web(target: Seed, num=40) -> List[SearchResult]:
