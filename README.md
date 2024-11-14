@@ -41,17 +41,29 @@ Ensure you have obtained the necessary API keys before proceeding with the setup
 
 2. Install dependencies using Pipenv:
    ```
-   pipenv install --dev
+   make install
    ```
 
 3. Set up your API keys in a `.env` file in the project root directory.
 
 ## Usage
 
-The main entry points for running the company analysis are:
+The main commands for running the company analysis are:
 
-1. `src/notebooks/entrypoints/refresh_company_data.ipynb`: Use this notebook to refresh company data.
-2. `src/notebooks/entrypoints/build_website.ipynb`: Use this notebook to build the website with analyzed data.
+1. To refresh company data:
+   ```
+   make refresh-data
+   ```
+
+2. To build the website with analyzed data:
+   ```
+   make build-website
+   ```
+
+3. To perform both operations sequentially:
+   ```
+   make build
+   ```
 
 ## Dynamic Rebuild Cadence
 
