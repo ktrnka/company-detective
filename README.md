@@ -15,6 +15,7 @@ This project summarizes publicly available information about a company. It lever
 
 - Python 3.10 or higher
 - Pipenv
+- Make (for running commands)
 
 ## API Keys Required
 
@@ -84,6 +85,12 @@ Contributions are welcome! Please contact Keith for more information on how to c
 ## Testing
 
 The project includes automated tests. Note that some network-based tests may be skipped to avoid dependencies on external services during CI/CD processes.
+
+## Code Style
+
+- Use the Black formatter for Python code.
+- Use type hints for stable code.
+- Order imports as: built-in modules > third-party dependencies > internal project imports
 
 ## License
 
