@@ -30,6 +30,7 @@ import data_sources.general_search as general_search
 from loguru import logger
 
 import data_sources.customer_experience as customer_experience
+from utils.markdown import strip_cache_links
 
 templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),
@@ -180,6 +181,15 @@ class Lineage(BaseModel):
     run_at: datetime
     git_sha: str
 
+def markdown_to_html(md: str, add_header_levels=0) -> str:
+    if add_header_levels:
+        md = nest_markdown(md, add_header_levels)
+
+    # strip cache links
+    md = strip_cache_links(md)
+
+    return markdown.markdown(md)
+
 class UnifiedResult(BaseModel):
     summary_markdown: str
     target: Seed
@@ -275,10 +285,10 @@ Note: The report above is an aggregation of all the information below. I like to
         with open(path, "w") as f:
 
             html = templates.get_template("company.html").render(
-                summary=markdown.markdown(self.summary_markdown),
-                customer_experience_summary=markdown.markdown(nest_markdown(self.customer_experience_markdown, 1)),
-                employee_experience_summary=markdown.markdown(nest_markdown(self.glassdoor_markdown, 1)),
-                general_search_summary=markdown.markdown(nest_markdown(self.general_search_markdown, 1)),
+                summary=markdown_to_html(self.summary_markdown),
+                customer_experience_summary=markdown_to_html(self.customer_experience_markdown, 1),
+                employee_experience_summary=markdown_to_html(self.glassdoor_markdown, 1),
+                general_search_summary=markdown_to_html(self.general_search_markdown, 1),
                 div_ids_to_reviews=div_ids_to_reviews,
                 urls_to_div_ids=urls_to_div_ids,
                 title=self.target.company,
