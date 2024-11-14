@@ -95,7 +95,11 @@ class GlassdoorResult:
         sample_dates = np.array([review.reviewDateTime.timestamp() for review in reviews])
 
         # spearman correlation of dates and scores
-        date_score_correlation, date_score_p_value = stats.pearsonr(sample_dates, sample_scores)
+        if len(sample_dates) < 2:
+            date_score_correlation = 0
+            date_score_p_value = 1
+        else:
+            date_score_correlation, date_score_p_value = stats.pearsonr(sample_dates, sample_scores)
         trending_icon = Icon("trending_flat", "grey-text", "steady")
         if date_score_p_value < 0.05:
             if date_score_correlation > 0:
