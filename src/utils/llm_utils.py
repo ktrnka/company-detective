@@ -77,3 +77,10 @@ def debug_around(substring: str, documents: List[str], context_chars=300):
             print("----")
             print(doc[start_index:end_index])
             print("----")
+
+
+def cleanse_markdown(llm_markdown_output: str) -> str:
+    """
+    Sometimes LLM tools wrap markdown in a code block, which we need to remove in order to process it with markdown tools.
+    """
+    return llm_markdown_output.strip().strip("```markdown").strip("```").strip()

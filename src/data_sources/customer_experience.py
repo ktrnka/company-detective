@@ -15,7 +15,7 @@ from langchain_openai import ChatOpenAI
 from loguru import logger
 from pydantic import BaseModel
 
-from core import Seed, URLShortener, extract_urls, extractive_fraction, log_map_reduce_metrics, log_summary_metrics
+from core import Seed, URLShortener, extractive_fraction, log_map_reduce_metrics, log_summary_metrics
 import data_sources.reddit.fetch
 from data_sources.reddit.search import build_query
 from utils.google_search import SearchResult, url_from_query
@@ -23,6 +23,7 @@ import data_sources.app_stores.steam as steam
 import data_sources.app_stores.google_play as google_play
 import data_sources.app_stores.apple as apple_app_store
 from utils.llm_utils import pack_documents
+from utils.markdown_utils import extract_urls
 
 map_prompt = """
 Please read the following customer comments and extract all opinions and facts relating to the user experience of the PRODUCT {product} by the COMPANY {company} from the perspective of current users.

@@ -14,9 +14,7 @@ from core import (
     Seed,
     log_summary_metrics,
     eval_filename,
-    nest_markdown,
     URLShortener,
-    cleanse_markdown,
 )
 
 import data_sources.reddit.search
@@ -30,7 +28,8 @@ import data_sources.general_search as general_search
 from loguru import logger
 
 import data_sources.customer_experience as customer_experience
-from utils.markdown_utils import strip_cache_links
+from utils.llm_utils import cleanse_markdown
+from utils.markdown_utils import nest_markdown, strip_cache_links
 
 templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),
