@@ -85,13 +85,6 @@ Contributions are welcome! Please contact Keith for more information on how to c
 
 The project includes automated tests. Note that some network-based tests may be skipped to avoid dependencies on external services during CI/CD processes.
 
-## Code Style
-
-Please refer to the `STYLE.md` file for coding style guidelines. Key points include:
-- Use the Black formatter
-- Use type hints for stable code
-- Order imports as: built-in modules > third-party dependencies > internal project imports
-
 ## License
 
 To be determined. Please contact the repository owner for licensing information.
