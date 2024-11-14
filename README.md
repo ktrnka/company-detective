@@ -10,6 +10,7 @@ This project summarizes publicly available information about a company. It lever
 - Utilizes AI to summarize and analyze data
 - Provides a unified summary of company information
 - Dynamic rebuild cadence for up-to-date information
+- Removes cache links from HTML output for improved readability
 
 ## Prerequisites
 
@@ -72,6 +73,10 @@ Contributions are welcome! Please contact Keith for more information on how to c
 ## Testing
 
 The project includes automated tests. Note that some network-based tests may be skipped to avoid dependencies on external services during CI/CD processes.
+
+## Recent Updates
+
+- Removed cache links from HTML output to improve readability and user experience.
 
 ## License
 
