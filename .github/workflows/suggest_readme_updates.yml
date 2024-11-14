@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ktrnka/update-your-readme@v0.3
+      - uses: ktrnka/update-your-readme@v0.4
         with:
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
           readme-file: README.md
