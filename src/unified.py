@@ -30,7 +30,7 @@ import data_sources.general_search as general_search
 from loguru import logger
 
 import data_sources.customer_experience as customer_experience
-from utils.markdown import strip_cache_links
+from utils.markdown_utils import strip_cache_links
 
 templates = jinja2.Environment(
     loader=jinja2.FileSystemLoader("templates"),
