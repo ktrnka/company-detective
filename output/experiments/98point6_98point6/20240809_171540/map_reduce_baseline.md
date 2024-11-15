@@ -1,5 +1,0 @@
-FrugalChef13 shares a positive experience with the online medical service 98point6, highlighting its $20 membership for unlimited consultations, which helped them manage back pain affordably. They received a prescription for anti-inflammatory medication and cost assistance through GoodRx. The author encourages others to consider online services for non-emergency health issues, despite their limitations for serious conditions. 
-
-In a Reddit thread, users discuss various virtual doctor apps, including Doctor on Demand and CVS Minute Clinic, and share experiences with 98point6 for conditions like PCOS and mental health. Some users express concerns about the service's mental health capabilities and prescription practices. Others share positive experiences with telehealth services for skincare and mental health resources. 
-
-Additionally, a separate discussion highlights the benefits of Costco membership, including various services and savings, with users sharing personal anecdotes about the value and quality of Costco products.

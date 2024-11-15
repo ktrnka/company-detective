@@ -28,10 +28,6 @@ class Seed(NamedTuple):
         if not product:
             product = company
         return cls(company, product, domain, frozenset(keywords) if keywords else None)
-
-    def as_path(self) -> str:
-        # TODO: Delete this function and merge any callers to the other one
-        return re.sub(r"[^a-zA-Z0-9]", "_", f"{self.company} {self.product}")
     
     def as_path_v2(self) -> str:
         if self.company == self.product:
@@ -55,6 +51,9 @@ def get_project_dir(relative_path: str, create_if_needed=True) -> str:
 
 
 def make_experiment_dir(target: Seed) -> str:
+    """
+    Create a directory for the output of an experiment and return it, based on the company and product names. It's meant to provide some consistency for experimentation.
+    """
     folder_name = re.sub(r"[^a-zA-Z0-9]", "_", f"{target.company} {target.product}")
     timestamp = datetime.now().strftime("%Y-%m-%d")
 

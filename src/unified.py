@@ -215,56 +215,6 @@ class UnifiedResult(BaseModel):
             return self.glassdoor_result.summary_markdown
         else:
             return "No Glassdoor information found."
-
-    def to_markdown_file(self) -> str:
-        """
-        Format the result into a markdown file and return the filename.
-        """
-        with open(eval_filename(self.target, extension="md"), "w") as f:
-            f.write(f"""
-{self.summary_markdown}
-
-# Employee sentiment
-
-{nest_markdown(self.glassdoor_markdown, 1)}
-
-# Customer experience
-{nest_markdown(self.customer_experience_markdown, 1)}
-
-{generate_lineage_markdown()}
-
-----
-
-# INTERMEDIATE RESULTS BELOW
-Note: The report above is an aggregation of all the information below. I like to include the intermediate outputs below for debugging and verification. For instance, if the final output has a very brief section on employee sentiment, I can refer to the Glassdoor and Reddit sections below to see if it's a problem in the overall summarization or if the intermediate results were lacking.
-
-----
-
-# Company webpage
-{nest_markdown(self.webpage_result.summary_markdown, 1)}
-
-----
-
-# News
-{nest_markdown(self.news_result.summary_markdown, 1)}
-
-----
-
-# Crunchbase
-
-{nest_markdown(self.crunchbase_markdown or "No Crunchbase info found", 1)}
-
-----
-
-# Additional search results
-{nest_markdown(self.general_search_markdown, 1)}
-
-"""
-        )
-
-        logger.info(f"Written to {f.name}")
-
-        return f.name
     
     def to_html_file(self, path: Optional[str] = None) -> str:
         """

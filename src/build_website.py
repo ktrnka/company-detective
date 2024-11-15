@@ -30,7 +30,7 @@ def main():
             data = json.load(file)
             results[file_path] = UnifiedResult(**data)
 
-    for json_path, result in results.items():
+    for result in results.values():
         result.to_html_file(
             f"{args.output_folder}/companies/{result.target.as_path_v2()}.html"
         )
