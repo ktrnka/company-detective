@@ -6,6 +6,7 @@ This module produces a unified customer experience summary from multiple differe
 - Steam
 """
 
+import asyncio
 from typing import Dict, List, Optional
 
 from langchain_core.documents import Document
@@ -140,7 +141,7 @@ class CustomerExperienceResult(BaseModel):
     sources: Optional[Sources] = None
 
 
-def run(
+async def run(
     target: Seed,
     steam_url: Optional[str] = None,
     google_play_url: Optional[str] = None,
@@ -185,19 +186,19 @@ def run(
             url_to_review[link] = review
 
     if reddit_urls:
-        reddit_client = data_sources.reddit.fetch.init()
-        reddit_threads = [reddit_client.submission(url=url) for url in reddit_urls]
+        async with data_sources.reddit.fetch.init() as reddit_client:
+            reddit_thread_futures = [reddit_client.submission(url=url) for url in reddit_urls]
+            reddit_threads = await asyncio.gather(*reddit_thread_futures)
 
-        # only threads with enough comments
-        reddit_threads = [
-            submission for submission in reddit_threads if submission.num_comments >= 2
-        ]
+            # only threads with enough comments
+            reddit_threads = [
+                submission for submission in reddit_threads if submission.num_comments >= 2
+            ]
 
-        review_markdowns.extend(
-            data_sources.reddit.fetch.submission_to_markdown(thread) for thread in reddit_threads
-        )
+            markdown_futures = [data_sources.reddit.fetch.submission_to_markdown(thread) for thread in reddit_threads]
+            review_markdowns.extend(await asyncio.gather(*markdown_futures))
 
-        sources.reddit_search_url = url_from_query(build_query(target))
+            sources.reddit_search_url = url_from_query(build_query(target))
 
     logger.info("Total reviews: {}", len(review_markdowns))
     if not review_markdowns:

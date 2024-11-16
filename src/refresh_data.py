@@ -36,7 +36,7 @@ def should_rebuild(
     return age > max_age
 
 
-def main():
+async def main():
     parser = argparse.ArgumentParser(description="Refresh the data")
     parser.add_argument(
         "--force-refresh",
@@ -68,15 +68,13 @@ def main():
             logger.info(f"Building {output_json}...")
 
             try:
-                unified_result = asyncio.run(
-                    unified.run(
-                        target,
-                        # TODO: Allow some customization of these parameters
-                        num_reddit_threads=10,
-                        max_glassdoor_review_pages=5,
-                        max_glassdoor_job_pages=0,
-                        max_news_articles=20,
-                    )
+                unified_result = await unified.run(
+                    target,
+                    # TODO: Allow some customization of these parameters
+                    num_reddit_threads=10,
+                    max_glassdoor_review_pages=5,
+                    max_glassdoor_job_pages=0,
+                    max_news_articles=20,
                 )
 
                 with open(output_json, "w") as json_file:
@@ -86,4 +84,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

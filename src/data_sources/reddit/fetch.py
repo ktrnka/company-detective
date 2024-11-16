@@ -1,8 +1,8 @@
-import praw
+import asyncpraw
 from dotenv import load_dotenv
 import os
 from datetime import datetime
-from praw.models import MoreComments, Submission, Comment
+from asyncpraw.models import MoreComments, Submission, Comment
 import pytest
 
 
@@ -13,10 +13,10 @@ def utc_to_date(utc: float):
     return datetime.utcfromtimestamp(utc).strftime(DATE_FORMAT)
 
 
-def init() -> praw.Reddit:
+def init() -> asyncpraw.Reddit:
     load_dotenv()
 
-    return praw.Reddit(
+    return asyncpraw.Reddit(
         client_id=os.environ["REDDIT_CLIENT_ID"],
         client_secret=os.environ["REDDIT_CLIENT_SECRET"],
         user_agent="Comment Extraction (by u/trnka)",
@@ -51,11 +51,11 @@ def comment_forest_to_markdown(comment: Comment, level=1, parent_id=None, max_de
     return text.strip()
 
 
-def submission_to_markdown(submission: Submission, pagination_limit=10) -> str:
+async def submission_to_markdown(submission: Submission, pagination_limit=10) -> str:
     """
     Format a Reddit thread into a markdown-like text with permalinks, basic filtering, and depth control.
     """
-    submission.comments.replace_more(limit=pagination_limit)
+    await submission.comments.replace_more(limit=pagination_limit)
 
     text = f"""
 # Post ID {submission.id}: {submission.title} with {submission.score:+d} score by [({submission.author}, Reddit, {utc_to_date(submission.created_utc)})](https://www.reddit.com{submission.permalink})
