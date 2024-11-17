@@ -285,7 +285,7 @@ async def run(
                 target, num_results=num_reddit_threads
             )
         ]
-        customer_experience_result = customer_experience.run(
+        customer_experience_result = await customer_experience.run(
             target, reddit_urls=reddit_urls, langchain_config=langchain_config, **app_store_urls
         )
 

@@ -84,7 +84,12 @@ class GlassdoorResult:
         population_icon.tooltip = f"The icon and color represent the approximate quartile of the overall rating compared to companies we reviewed. Note that ratings tend to vary by industry and role, so it's better to gauge the company's rating relative to its peers on Glassdoor."
 
         sample_scores = np.array([review.ratingOverall for review in reviews])
-        t_statistic, p_value = stats.ttest_1samp(sample_scores, population_mean)
+        if len(sample_scores) < 2:
+            # Can't do a test with only one sample. Treat it like an unreliable sample
+            t_statistic = np.nan
+            p_value = 0
+        else:
+            t_statistic, p_value = stats.ttest_1samp(sample_scores, population_mean)
 
         sample_icon = (
             Icon("check", "green-text")
@@ -185,6 +190,7 @@ def summarize_sampling(result: GlassdoorResult, alpha=0.05) -> str:
 
     sample_scores = np.array([review.ratingOverall for review in reviews])
     population_mean = result.raw_reviews["ratings"]["overallRating"]
+
     t_statistic, p_value = stats.ttest_1samp(sample_scores, population_mean)
 
     min_date = min(review.reviewDateTime for review in reviews)

@@ -10,11 +10,10 @@ This project summarizes publicly available information about a company. It lever
 - Utilizes AI to summarize and analyze data
 - Provides a unified summary of company information
 - Dynamic rebuild cadence for up-to-date information
-- Improved Glassdoor data handling for small companies
 
 ## Prerequisites
 
-- Python 3.10 or higher
+- Python 3.11 or higher
 - Pipenv
 
 ## API Keys Required
