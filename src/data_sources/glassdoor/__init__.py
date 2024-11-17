@@ -15,12 +15,14 @@ from .scrapfly_scraper import scrape_reviews, scrape_jobs
 from .summarizer import summarize
 from .models import UrlBuilder, GlassdoorReview, GlassdoorJob, EmployerKey
 
+
 @dataclass
 class Icon:
     name: str
     css_class: str
     extra_text: Optional[str] = None
     tooltip: Optional[str] = None
+
 
 @dataclass
 class GlassdoorResult:
@@ -81,25 +83,32 @@ class GlassdoorResult:
 
         population_icon.tooltip = f"The icon and color represent the approximate quartile of the overall rating compared to companies we reviewed. Note that ratings tend to vary by industry and role, so it's better to gauge the company's rating relative to its peers on Glassdoor."
 
-
         sample_scores = np.array([review.ratingOverall for review in reviews])
         t_statistic, p_value = stats.ttest_1samp(sample_scores, population_mean)
 
-        sample_icon = Icon("check", "green-text") if p_value >= 0.05 else Icon("error", "orange-text")
+        sample_icon = (
+            Icon("check", "green-text")
+            if p_value >= 0.05
+            else Icon("error", "orange-text")
+        )
         sample_icon.tooltip = f"t-statistic={t_statistic:.3f}, p={p_value:.3f} in testing difference between sample and population means"
 
         min_date = min(review.reviewDateTime for review in reviews).strftime("%Y-%m-%d")
         max_date = max(review.reviewDateTime for review in reviews).strftime("%Y-%m-%d")
 
         # dates as ints
-        sample_dates = np.array([review.reviewDateTime.timestamp() for review in reviews])
+        sample_dates = np.array(
+            [review.reviewDateTime.timestamp() for review in reviews]
+        )
 
         # spearman correlation of dates and scores
         if len(sample_dates) < 2:
             date_score_correlation = 0
             date_score_p_value = 1
         else:
-            date_score_correlation, date_score_p_value = stats.pearsonr(sample_dates, sample_scores)
+            date_score_correlation, date_score_p_value = stats.pearsonr(
+                sample_dates, sample_scores
+            )
         trending_icon = Icon("trending_flat", "grey-text", "steady")
         if date_score_p_value < 0.05:
             if date_score_correlation > 0:
@@ -118,7 +127,7 @@ class GlassdoorResult:
 
 
 def find_glassdoor_employer(target: Seed) -> Optional[EmployerKey]:
-    query = f"site:www.glassdoor.com {target.company} {target.domain}"
+    query = f'site:www.glassdoor.com {target.company} "{target.domain}"'
     urls = list(search(query, num=10))
     return UrlBuilder.find_employer_key([result.link for result in urls])
 
@@ -169,7 +178,9 @@ def summarize_sampling(result: GlassdoorResult, alpha=0.05) -> str:
     for review in result.reviews:
         indexed_reviews[review.reviewId] = review
     if len(indexed_reviews) != len(result.reviews):
-        print(f"Warning: {len(result.reviews) - len(indexed_reviews)} duplicate reviews found, deduplicating")
+        print(
+            f"Warning: {len(result.reviews) - len(indexed_reviews)} duplicate reviews found, deduplicating"
+        )
     reviews = list(indexed_reviews.values())
 
     sample_scores = np.array([review.ratingOverall for review in reviews])
@@ -183,7 +194,9 @@ def summarize_sampling(result: GlassdoorResult, alpha=0.05) -> str:
     sample_dates = np.array([review.reviewDateTime.timestamp() for review in reviews])
 
     # spearman correlation of dates and scores
-    date_score_correlation, date_score_p_value = stats.pearsonr(sample_dates, sample_scores)
+    date_score_correlation, date_score_p_value = stats.pearsonr(
+        sample_dates, sample_scores
+    )
 
     return f"""
 Overall stats
