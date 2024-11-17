@@ -78,10 +78,6 @@ The project features a dynamic rebuild cadence, allowing for more frequent updat
 - Company Website: Extracts information directly from the company's official website.
 - Reddit: Collects relevant discussions and mentions of the company.
 
-## Asynchronous Processing
-
-The project now utilizes asynchronous programming techniques, particularly for Reddit data fetching and processing, which improves overall performance and efficiency.
-
 ## Contributing
 
 Contributions are welcome! Please contact Keith for more information on how to contribute, as the repository isn't currently set up for open contributions.
