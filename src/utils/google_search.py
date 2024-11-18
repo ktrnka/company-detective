@@ -19,7 +19,7 @@ class SearchResult(BaseModel):
 
 
 def search(
-    query: str, dateRestrict=None, linkSite=None, num: int = 10
+    query: str, dateRestrict=None, linkSite=None, num: int = 10, drop_duplicates=True
 ) -> Iterable[SearchResult]:
     """
     Wrapper for the Google Custom Search API to add parameters, types, and authentication with defaults that are appropriate for this project.
@@ -29,11 +29,13 @@ def search(
         dateRestrict (str, optional): Restricts results to URLs based on date. Possible values are: d[number], w[number], m[number], y[number]. For example, d10 returns URLs indexed by Google in the past 10 days. Defaults to None.
         linkSite (str, optional): Restricts results to URLs from a specified site. Defaults to None.
         num (int, optional): Number of search results to return. Defaults to 10.
+        drop_duplicates (bool, optional): Whether to drop duplicate URLs. Defaults to True.
     """
 
     assert num <= 100, "Google Custom Search API only allows up to 100 results per query"
 
     kwargs = {}
+    urls_yielded = set()
     if dateRestrict:
         kwargs["dateRestrict"] = dateRestrict
     if linkSite:
@@ -65,7 +67,9 @@ def search(
             break
 
         for result in results["items"]:
-            yield SearchResult(**result)
+            if not (drop_duplicates and result["link"] in urls_yielded):
+                yield SearchResult(**result)
+                urls_yielded.add(result["link"])
 
 
 def filter_url(search_iter: Iterable[SearchResult], url_substring: str) -> Iterable[SearchResult]:
