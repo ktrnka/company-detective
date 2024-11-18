@@ -1,5 +1,32 @@
 # Experiments done
 
+## Generating json-ld schema.org from the intermediate data 11/17
+
+I briefly tested this with 98point6. gpt4o did better than gpt4o-mini, but there were many errors in the output:
+
+- Additional fields included that aren't a part of schema.org: product, acquisition, newsArticle
+- Other issues: The `funding` field put a MonetaryAmount but should've been a MonetaryGrant with a nested MonetaryAmount. I think it did this because the summary only had the total funding rather than each individual line item and funder.
+
+Issues with gpt4o-mini:
+
+- It listed all the people as founders (Brad, Tori, Angelo, etc)
+
+General issues:
+
+- The number of employees field doesn't have a date associated with it, so it looks wrong to say 398 employees when the company now has closer to 15
+- It listed Transcarent as the parent org, which isn't correct (though it'd make a funny satire)
+
+I later tried out pydantic_schemaorg to get Pydantic schemas for Schema.org, so that I could use those in Langchain. But those models are Pydantic 1.x and my project uses Pydantic 2.x. Also they're somewhat old so maybe it wouldn't have worked anyway.
+
+### schemaorg package
+
+Using this package allowed me to at least get the property list for Organization and pass that to the LLM. That led to json-ld that passed schema.org validation pretty consistently, even on mini.
+
+Open issues:
+
+- It adds some placeholder values despite my prompting to stop doing that.
+- In included an "aggregateRating" field, but not explanation of 
+
 ## Glassdoor rating correlation with job title ngrams 11/1
 
 I did a quick stab at this and found that I could learn some small correlations between job titles and ratings, but not for all companies. As usual, if we don't find reliable correlations that could simply mean that we didn't scrape enough reviews. Or it could mean that there's no correlation.
