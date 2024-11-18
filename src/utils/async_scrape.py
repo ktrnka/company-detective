@@ -40,18 +40,19 @@ headers = {
 
 async def request_url(session: aiohttp.ClientSession, url: str) -> Response:
     try:
-        async with session.get(url) as response:
+        async with session.get(url) as raw_response:
             response = Response(
                 url=url,
-                status=response.status,
+                status=raw_response.status,
             )
 
             if response.ok:
-                response.content_type = response.headers.get("Content-Type")
+                response.content_type = raw_response.headers.get("Content-Type")
 
-                if response.content_type == "text/html":
+                # TODO: Consider allowing configuration of content types
+                if response.content_type.startswith("text/html"):
                     try:
-                        response.text = await response.text()
+                        response.text = await raw_response.text()
                     except UnicodeDecodeError:
                         logger.error(f"UnicodeDecodeError on {url}")
     except TimeoutError:
