@@ -44,7 +44,7 @@ async def request_url(session: aiohttp.ClientSession, url: str, cache: Optional[
             return response
 
     try:
-        async with session.get(url) as raw_response:
+        async with session.get(url, verify_ssl=False) as raw_response:
             response = Response(
                 url=url,
                 status=raw_response.status,
