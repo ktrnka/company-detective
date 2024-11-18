@@ -10,6 +10,8 @@ This project summarizes publicly available information about a company. It lever
 - Utilizes AI to summarize and analyze data
 - Provides a unified summary of company information
 - Dynamic rebuild cadence for up-to-date information
+- Parallel local scraping for improved performance
+- Asynchronous operations for faster data collection
 
 ## Prerequisites
 
@@ -72,10 +74,15 @@ The project features a dynamic rebuild cadence, allowing for more frequent updat
 ## Data Sources
 
 - Crunchbase: Provides detailed company information, funding data, and recent news.
-- News Articles: Gathers recent news about the company.
-- Company Website: Extracts information directly from the company's official website.
+- News Articles: Gathers recent news about the company using asynchronous scraping.
+- Company Website: Extracts information directly from the company's official website using parallel local scraping.
 - Reddit: Collects relevant discussions and mentions of the company.
 - Glassdoor: Offers employee reviews and sentiment analysis (with improved handling for small companies).
+
+## Performance Improvements
+
+- Parallel Local Scraping: Implemented to improve the speed of data collection from company websites and news articles.
+- Asynchronous Operations: Utilized for faster and more efficient data gathering, particularly for news articles and company webpages.
 
 ## Contributing
 
