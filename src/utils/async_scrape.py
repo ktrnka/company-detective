@@ -71,7 +71,14 @@ async def scrape(
     urls: List[str], connection_limit=10, connection_limit_per_host=1, timeout_seconds=2, cache: Optional[diskcache.Cache] = None
 ) -> List[Response]:
     """
-    Concurrently scrape a list of URLs
+    Concurrently scrape a list of URLs. In early testing, the overall speed is limited by the timeout.
+
+    Args:
+        urls: List of URLs to scrape
+        connection_limit: Maximum number of concurrent connections
+        connection_limit_per_host: Maximum number of concurrent connections per host
+        timeout_seconds: Timeout for each request
+        cache: Optional diskcache.Cache for caching responses
     """
     connector = aiohttp.TCPConnector(
         limit=connection_limit, limit_per_host=connection_limit_per_host
