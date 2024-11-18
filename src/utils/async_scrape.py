@@ -3,11 +3,11 @@ Work in progress async concurrent scraper
 """
 
 from dataclasses import dataclass
-from typing import List, Mapping, Optional
-from collections import defaultdict
-from urllib.parse import urlparse
+from datetime import timedelta
+from typing import List, Optional
 import asyncio
 import aiohttp
+import diskcache
 from loguru import logger
 
 from .scrape import _USER_AGENT
@@ -33,8 +33,16 @@ headers = {
     "Accept": "text/html",
 }
 
+def key(url: str) -> str:
+    return f"async_scrape:{url}"
 
-async def request_url(session: aiohttp.ClientSession, url: str) -> Response:
+async def request_url(session: aiohttp.ClientSession, url: str, cache: Optional[diskcache.Cache] = None) -> Response:
+    # TODO: I dislike this caching design; I'd rather have it be  something that can be composed with the top-level scrape function
+    if cache:
+        response = cache.get(key(url))
+        if response:
+            return response
+
     try:
         async with session.get(url) as raw_response:
             response = Response(
@@ -51,6 +59,8 @@ async def request_url(session: aiohttp.ClientSession, url: str) -> Response:
                         response.text = await raw_response.text()
                     except UnicodeDecodeError:
                         logger.error(f"UnicodeDecodeError on {url}")
+            if cache:
+                cache.set(key(url), response, expire=timedelta(days=20).total_seconds())
     except TimeoutError:
         response = Response(url=url, status=504)
 
@@ -58,7 +68,7 @@ async def request_url(session: aiohttp.ClientSession, url: str) -> Response:
 
 
 async def scrape(
-    urls: List[str], connection_limit=10, connection_limit_per_host=1, timeout_seconds=2
+    urls: List[str], connection_limit=10, connection_limit_per_host=1, timeout_seconds=2, cache: Optional[diskcache.Cache] = None
 ) -> List[Response]:
     """
     Concurrently scrape a list of URLs
@@ -71,7 +81,7 @@ async def scrape(
         headers=headers,
         timeout=aiohttp.ClientTimeout(total=timeout_seconds),
     ) as session:
-        futures = [request_url(session, url) for url in urls]
+        futures = [request_url(session, url, cache=cache) for url in urls]
 
         responses = await asyncio.gather(*futures)
 
