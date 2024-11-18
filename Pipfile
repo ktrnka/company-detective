@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+aiohttp = "*"
 app-store-web-scraper = "*"
 asyncpraw = "*"
 beautifulsoup4 = "*"
