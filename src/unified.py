@@ -270,8 +270,8 @@ async def run(
         if crunchbase_markdown:
             dynamic_contexts["Crunchbase"] = crunchbase_markdown
 
-        webpage_summary = company_webpage.run(target.domain, langchain_config=langchain_config)
-        news_result = news.run(target, max_results=max_news_articles, langchain_config=langchain_config)
+        webpage_summary = await company_webpage.run(target.domain, langchain_config=langchain_config)
+        news_result = await news.run(target, max_results=max_news_articles, langchain_config=langchain_config)
 
         general_search_results = general_search.search_web(target)
         general_search_summary = general_search.summarize(
