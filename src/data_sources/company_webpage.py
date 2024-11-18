@@ -7,7 +7,8 @@ from dataclasses import dataclass
 from typing import List, Optional
 from utils.debug import log_runtime
 from utils.google_search import SearchResult, search
-from utils.scrape import request_article, response_to_article, article_to_markdown
+from utils.scrape import response_to_article, article_to_markdown
+from utils.async_scrape import scrape
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from core import log_summary_metrics
@@ -54,15 +55,15 @@ class WebpageResult:
     search_results: Optional[List[SearchResult]] = None
 
 
-def run(website: str, num_pages=30, langchain_config=None) -> WebpageResult:
+async def run(website: str, num_pages=30, langchain_config=None) -> WebpageResult:
     assert website, "Website must be non-empty"
 
     with log_runtime("search"):
         search_results = list(search(f"site:{website}", num=num_pages))
 
     with log_runtime("scrape"):
-        responses = [request_article(result.link) for result in search_results]
-        responses = [response for response in responses if response and response.ok]
+        responses = await scrape([result.link for result in search_results])
+        responses = [response for response in responses if response and response.ok and response.text]
 
     with log_runtime("parse"):
         articles = [response_to_article(response) for response in responses]

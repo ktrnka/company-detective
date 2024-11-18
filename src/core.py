@@ -23,7 +23,7 @@ class Seed(NamedTuple):
     keywords: Optional[Set[str]] = None
     
     @classmethod
-    def init(cls, company: str, product: Optional[str] = None, domain: Optional[str] = None, keywords: Optional[Iterable[str]] = None):
+    def init(cls, company: str, domain: str, product: Optional[str] = None, keywords: Optional[Iterable[str]] = None):
         """Helper to initialize with optional fields"""
         if not product:
             product = company

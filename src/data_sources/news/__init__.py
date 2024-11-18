@@ -3,7 +3,8 @@ from typing import NamedTuple, List
 from core import Seed
 from utils.debug import log_runtime
 from utils.google_search import SearchResult
-from utils.scrape import request_article, response_to_article, article_to_markdown
+from utils.scrape import response_to_article, article_to_markdown
+from utils.async_scrape import scrape
 
 from .search import find_news_articles
 from .summarize import summarize
@@ -20,7 +21,7 @@ class NewsSummary(NamedTuple):
     summary_markdown: str
 
 
-def run(target: Seed, max_results=30, langchain_config=None) -> NewsSummary:
+async def run(target: Seed, max_results=30, langchain_config=None) -> NewsSummary:
     """
     Run the News pipeline:
     1. Find news articles
@@ -33,8 +34,8 @@ def run(target: Seed, max_results=30, langchain_config=None) -> NewsSummary:
 
     # Fetch and filter
     with log_runtime("scrape"):
-        responses = [request_article(result.link) for result in search_results]
-        responses = [response for response in responses if response and response.ok]
+        responses = await scrape([result.link for result in search_results])
+        responses = [response for response in responses if response and response.ok and response.text]
 
     with log_runtime("parse"):
         # Parse and format
