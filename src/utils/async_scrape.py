@@ -2,15 +2,27 @@
 Work in progress async concurrent scraper
 """
 
-from typing import List, Dict, Mapping
+from dataclasses import dataclass
+from typing import List, Mapping, Optional
 from collections import defaultdict
 from urllib.parse import urlparse
-from itertools import chain
 import asyncio
-from typing import List, Dict, Tuple
 import aiohttp
+from loguru import logger
 
 from .scrape import _USER_AGENT
+
+@dataclass
+class Response:
+    """Minimal response wrapper to work around aiohttp's response object which defers the reading of the response body"""
+    url: str
+    status: int
+    content_type: Optional[str] = None
+    text: Optional[str] = None
+
+    @property
+    def ok(self) -> bool:
+        return 200 <= self.status < 300
 
 def group_urls_by_domain(urls: List[str]) -> Mapping[str, List[str]]:
     grouped_urls = defaultdict(list)
@@ -20,44 +32,41 @@ def group_urls_by_domain(urls: List[str]) -> Mapping[str, List[str]]:
     return grouped_urls
 
 
-async def request_urls(session: aiohttp.ClientSession, urls: List[str]) -> List[Tuple]:
-    responses = []
-    for i, url in enumerate(sorted(urls)):
-        try:
-            async with session.get(url, allow_redirects=False) as response:
-                if response.ok:
-                    try:
-                        # TODO: Replace this with a basic model
-                        responses.append((url, response.status, await response.text()))
-                    except UnicodeDecodeError:
-                        responses.append((url, response.status, None))
-                else:
-                    responses.append((url, response.status, None))
-        except TimeoutError:
-            responses.append((url, 504, None))
-
-    return responses
-
-
 # Example headers
 headers = {
     "User-Agent": _USER_AGENT,
     "Accept": "text/html",
 }
 
+async def request_url(session: aiohttp.ClientSession, url: str) -> Response:
+    try:
+        async with session.get(url) as response:
+            response = Response(
+                url=url,
+                status=response.status,
+            )
 
-async def scrape(urls: List[str]) -> List[str]:
-    # TODO: This is no longer needed due to limit_per_host
-    grouped_urls = group_urls_by_domain(urls)
+            if response.ok:
+                response.content_type = response.headers.get("Content-Type")
 
-    # TODO: Expose the concurrency settings
-    connector = aiohttp.TCPConnector(limit=10, limit_per_host=1)
+                if response.content_type == "text/html":
+                    try:
+                        response.text = await response.text()
+                    except UnicodeDecodeError:
+                        logger.error(f"UnicodeDecodeError on {url}")
+    except TimeoutError:
+        response = Response(url=url, status=504)
+
+    return response
+
+async def scrape(urls: List[str], connection_limit=10, connection_limit_per_host=1, timeout_seconds=2) -> List[Response]:
+    # These connector settings effectively control concurrency
+    connector = aiohttp.TCPConnector(limit=connection_limit, limit_per_host=connection_limit_per_host)
     async with aiohttp.ClientSession(
-        # TODO: Expose the timeout setting
-        connector=connector, headers=headers, timeout=aiohttp.ClientTimeout(total=2)
+        connector=connector, headers=headers, timeout=aiohttp.ClientTimeout(total=timeout_seconds)
     ) as session:
-        futures = [request_urls(session, urls) for urls in grouped_urls.values()]
+        futures = [request_url(session, url) for url in urls]
 
-        domain_responses = await asyncio.gather(*futures)
+        responses = await asyncio.gather(*futures)
 
-    return list(chain(*domain_responses))
+    return responses
