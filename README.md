@@ -7,7 +7,7 @@ This project summarizes publicly available information about a company. It lever
 ## Features
 
 - Multiple information sources including Crunchbase, news articles, and company websites
-- Utilizes AI to analyze abd summarize information
+- Utilizes AI to analyze and summarize information
 - Configured via Airtable
 
 ## Prerequisites
