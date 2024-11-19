@@ -6,11 +6,9 @@ This project summarizes publicly available information about a company. It lever
 
 ## Features
 
-- Aggregates information from multiple sources including Crunchbase, news articles, and company websites
-- Utilizes AI to summarize and analyze data
-- Provides a unified summary of company information
-- Dynamic rebuild cadence for up-to-date information
-- Balanced app review analysis from Google Play and Apple App Store
+- Multiple information sources including Crunchbase, news articles, and company websites
+- Utilizes AI to analyze abd summarize information
+- Configured via Airtable
 
 ## Prerequisites
 
@@ -68,10 +66,6 @@ The main commands for running the company analysis are:
 
 Note: The default goal for the Makefile is now set to `build`, so running `make` without arguments will execute the full build process.
 
-## Dynamic Rebuild Cadence
-
-The project features a dynamic rebuild cadence, allowing for more frequent updates of company information. This ensures that the data remains current and relevant.
-
 ## Data Sources
 
 - Crunchbase: Provides detailed company information, funding data, and recent news.
@@ -85,7 +79,7 @@ The project features a dynamic rebuild cadence, allowing for more frequent updat
 
 ## Contributing
 
-Contributions are welcome! Please contact Keith for more information on how to contribute, as the repository isn't currently set up for open contributions.
+Contributions are welcome but first contact Keith for more information on how to contribute, as the repository isn't currently set up for open contributions.
 
 ## Testing
 
