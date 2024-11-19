@@ -7,6 +7,7 @@ This module produces a unified customer experience summary from multiple differe
 """
 
 import asyncio
+import random
 from typing import Dict, List, Optional
 
 from langchain_core.documents import Document
@@ -166,7 +167,7 @@ async def run(
 
     if google_play_url:
         google_play_id = google_play.extract_google_play_app_id(google_play_url)
-        sources.google_play_reviews = google_play.scrape_reviews(google_play_id)
+        sources.google_play_reviews = google_play.scrape_reviews(google_play_id, num_reviews=100)
         review_markdowns.extend(
             google_play.review_to_markdown(review) for review in sources.google_play_reviews
         )
@@ -174,6 +175,10 @@ async def run(
     if apple_store_url:
         apple_app_store_id = apple_app_store.extract_apple_app_store_id(apple_store_url)
         sources.apple_reviews = apple_app_store.scrape(apple_app_store_id)
+        if len(sources.apple_reviews) > 100:
+            # Downsample to 100 reviews if needed, otherwise the summary will over-represent Apple reviews compared to Google Play reviews
+            # This will also speed up the summarization process
+            sources.apple_reviews = random.sample(sources.apple_reviews, 100)
         review_markdowns.extend(
             apple_app_store.review_to_markdown(review) for review in sources.apple_reviews
         )

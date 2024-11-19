@@ -1,5 +1,7 @@
 SRC=src/
 
+.DEFAULT_GOAL := build
+
 install:
 	pipenv install --dev
 

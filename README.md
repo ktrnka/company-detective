@@ -6,10 +6,9 @@ This project summarizes publicly available information about a company. It lever
 
 ## Features
 
-- Aggregates information from multiple sources including Crunchbase, news articles, and company websites
-- Utilizes AI to summarize and analyze data
-- Provides a unified summary of company information
-- Dynamic rebuild cadence for up-to-date information
+- Multiple information sources including Crunchbase, news articles, and company websites
+- Utilizes AI to analyze abd summarize information
+- Configured via Airtable
 
 ## Prerequisites
 
@@ -65,9 +64,7 @@ The main commands for running the company analysis are:
    make build
    ```
 
-## Dynamic Rebuild Cadence
-
-The project features a dynamic rebuild cadence, allowing for more frequent updates of company information. This ensures that the data remains current and relevant.
+Note: The default goal for the Makefile is now set to `build`, so running `make` without arguments will execute the full build process.
 
 ## Data Sources
 
@@ -76,10 +73,13 @@ The project features a dynamic rebuild cadence, allowing for more frequent updat
 - Company Website: Extracts information directly from the company's official website.
 - Reddit: Collects relevant discussions and mentions of the company.
 - Glassdoor: Offers employee reviews and sentiment analysis (with improved handling for small companies).
+- App Reviews: 
+  - Google Play Store: Scrapes up to 100 recent reviews.
+  - Apple App Store: Scrapes reviews and downsamples to 100 if more are available, ensuring balanced representation with Google Play reviews.
 
 ## Contributing
 
-Contributions are welcome! Please contact Keith for more information on how to contribute, as the repository isn't currently set up for open contributions.
+Contributions are welcome but first contact Keith for more information on how to contribute, as the repository isn't currently set up for open contributions.
 
 ## Testing
 
