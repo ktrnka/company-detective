@@ -7,13 +7,13 @@ This project summarizes publicly available information about a company. It lever
 ## Features
 
 - Multiple information sources including Crunchbase, news articles, and company websites
-- Utilizes AI to analyze abd summarize information
+- Utilizes AI to analyze and summarize information
 - Configured via Airtable
 
 ## Prerequisites
 
 - Python 3.11 or higher
-- Pipenv
+- uv (Astral's Python package installer and resolver)
 
 ## API Keys Required
 
@@ -38,12 +38,17 @@ Ensure you have obtained the necessary API keys before proceeding with the setup
    cd company-detective
    ```
 
-2. Install dependencies using Pipenv:
+2. Install uv (if not already installed):
+   ```
+   make install-uv
+   ```
+
+3. Install dependencies using uv:
    ```
    make install
    ```
 
-3. Set up your API keys in a `.env` file in the project root directory.
+4. Set up your API keys in a `.env` file in the project root directory.
 
 ## Usage
 
@@ -64,7 +69,7 @@ The main commands for running the company analysis are:
    make build
    ```
 
-Note: The default goal for the Makefile is now set to `build`, so running `make` without arguments will execute the full build process.
+Note: The default goal for the Makefile is set to `build`, so running `make` without arguments will execute the full build process.
 
 ## Data Sources
 
@@ -83,7 +88,19 @@ Contributions are welcome but first contact Keith for more information on how to
 
 ## Testing
 
-The project includes automated tests. Note that some network-based tests may be skipped to avoid dependencies on external services during CI/CD processes.
+The project includes automated tests. To run the tests, use:
+```
+make test
+```
+
+Note that some network-based tests may be skipped to avoid dependencies on external services during CI/CD processes.
+
+## Development
+
+To check for dead code, you can use:
+```
+make vulture
+```
 
 ## License
 
