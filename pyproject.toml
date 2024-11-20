@@ -1,0 +1,45 @@
+[project]
+name = "company-detective"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aiohttp",
+    "app-store-web-scraper",
+    "asyncpraw",
+    "beautifulsoup4",
+    "diskcache",
+    "google-api-python-client",
+    "google-play-scraper",
+    "Jinja2",
+    "langchain",
+    "langchain-community",
+    "langchain-openai",
+    "loguru",
+    "markdown",
+    "newspaper4k",
+    "numpy",
+    "pandas",
+    "pyairtable",
+    "python-dotenv",
+    "pytz",
+    "requests-cache",
+    "scipy",
+    "scrapfly-sdk[all]"
+]
+
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "diagrams",
+    "eli5",
+    "haralyzer",
+    "ipykernel",
+    "jupyter",
+    "pipenv-check",
+    "pytest",
+    "scikit-learn",
+    "vulture"
+]

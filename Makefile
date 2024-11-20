@@ -2,13 +2,19 @@ SRC=src/
 
 .DEFAULT_GOAL := build
 
+install-uv:
+	curl -LsSf https://astral.sh/uv/install.sh | sh
+
 install:
-	pipenv install --dev
+	uv sync --extra dev
 
 refresh-data:
-	cd ${SRC} && pipenv run python refresh_data.py ../output/data && cd -
+	cd ${SRC} && uv run --env-file ../.env refresh_data.py ../output/data && cd -
 
 build-website:
-	cd ${SRC} && pipenv run python build_website.py ../output/data ../docs && cd -
+	cd ${SRC} && uv run --env-file ../.env build_website.py ../output/data ../docs && cd -
+
+test:
+	uv run pytest
 
 build: refresh-data build-website
