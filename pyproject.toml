@@ -34,11 +34,13 @@ dependencies = [
 dev = [
     "black",
     "diagrams",
-    "eli5",
-    "haralyzer",
     "ipykernel",
     "jupyter",
     "pytest",
-    "scikit-learn",
     "vulture"
+]
+experimental = [
+    "eli5",
+    "haralyzer",
+    "scikit-learn"
 ]

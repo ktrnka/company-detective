@@ -592,14 +592,15 @@ dependencies = [
 dev = [
     { name = "black" },
     { name = "diagrams" },
-    { name = "eli5" },
-    { name = "haralyzer" },
     { name = "ipykernel" },
     { name = "jupyter" },
-    { name = "pipenv-check" },
     { name = "pytest" },
-    { name = "scikit-learn" },
     { name = "vulture" },
+]
+experimental = [
+    { name = "eli5" },
+    { name = "haralyzer" },
+    { name = "scikit-learn" },
 ]
 
 [package.metadata]
@@ -611,10 +612,10 @@ requires-dist = [
     { name = "black", marker = "extra == 'dev'" },
     { name = "diagrams", marker = "extra == 'dev'" },
     { name = "diskcache" },
-    { name = "eli5", marker = "extra == 'dev'" },
+    { name = "eli5", marker = "extra == 'experimental'" },
     { name = "google-api-python-client" },
     { name = "google-play-scraper" },
-    { name = "haralyzer", marker = "extra == 'dev'" },
+    { name = "haralyzer", marker = "extra == 'experimental'" },
     { name = "ipykernel", marker = "extra == 'dev'" },
     { name = "jinja2" },
     { name = "jupyter", marker = "extra == 'dev'" },
@@ -626,13 +627,12 @@ requires-dist = [
     { name = "newspaper4k" },
     { name = "numpy" },
     { name = "pandas" },
-    { name = "pipenv-check", marker = "extra == 'dev'" },
     { name = "pyairtable" },
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "python-dotenv" },
     { name = "pytz" },
     { name = "requests-cache" },
-    { name = "scikit-learn", marker = "extra == 'dev'" },
+    { name = "scikit-learn", marker = "extra == 'experimental'" },
     { name = "scipy" },
     { name = "scrapfly-sdk", extras = ["all"] },
     { name = "vulture", marker = "extra == 'dev'" },
@@ -2584,12 +2584,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/f4/b1/b422acd212ad7eedd
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ef/7d/500c9ad20238fcfcb4cb9243eede163594d7020ce87bd9610c9e02771876/pip-24.3.1-py3-none-any.whl", hash = "sha256:3790624780082365f47549d032f3770eeb2b1e8bd1f7b2e02dace1afa361b4ed", size = 1822182 },
 ]
-
-[[package]]
-name = "pipenv-check"
-version = "0.0.8"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a2/9c/de8f72836b36a548cb267403d0d6fa65ef1514ad5d17d8eb7676ef817878/pipenv-check-0.0.8.tar.gz", hash = "sha256:c28a7f2190a9fedf053df96f461cac693391b0f9bc712636907590a043751b10", size = 4097 }
 
 [[package]]
 name = "pkginfo"
