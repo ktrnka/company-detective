@@ -15,8 +15,8 @@ jobs:
         with:
           python-version: '3.11'
 
-      - run: pip install pipenv
+      - run: make install-uv
 
-      - run: pipenv install --dev
+      - run: make install
 
-      - run: pipenv run pytest
+      - run: make test
