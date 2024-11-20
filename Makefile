@@ -17,4 +17,7 @@ build-website:
 test:
 	uv run pytest
 
+vulture:
+	uv run vulture --ignore-names 'test_*' src/
+
 build: refresh-data build-website
