@@ -6,7 +6,7 @@ install-uv:
 	curl -LsSf https://astral.sh/uv/install.sh | sh
 
 install:
-	uv sync --all-extras
+	uv sync --all-extras --dev
 
 refresh-data:
 	uv run --directory src/ --env-file ../.env refresh_data.py ../output/data

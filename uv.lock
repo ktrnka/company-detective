@@ -588,19 +588,17 @@ dependencies = [
     { name = "scrapfly-sdk", extra = ["all"] },
 ]
 
-[package.optional-dependencies]
+[package.dev-dependencies]
 dev = [
     { name = "black" },
     { name = "diagrams" },
+    { name = "eli5" },
+    { name = "haralyzer" },
     { name = "ipykernel" },
     { name = "jupyter" },
     { name = "pytest" },
-    { name = "vulture" },
-]
-experimental = [
-    { name = "eli5" },
-    { name = "haralyzer" },
     { name = "scikit-learn" },
+    { name = "vulture" },
 ]
 
 [package.metadata]
@@ -609,16 +607,10 @@ requires-dist = [
     { name = "app-store-web-scraper" },
     { name = "asyncpraw" },
     { name = "beautifulsoup4" },
-    { name = "black", marker = "extra == 'dev'" },
-    { name = "diagrams", marker = "extra == 'dev'" },
     { name = "diskcache" },
-    { name = "eli5", marker = "extra == 'experimental'" },
     { name = "google-api-python-client" },
     { name = "google-play-scraper" },
-    { name = "haralyzer", marker = "extra == 'experimental'" },
-    { name = "ipykernel", marker = "extra == 'dev'" },
     { name = "jinja2" },
-    { name = "jupyter", marker = "extra == 'dev'" },
     { name = "langchain" },
     { name = "langchain-community" },
     { name = "langchain-openai" },
@@ -628,14 +620,24 @@ requires-dist = [
     { name = "numpy" },
     { name = "pandas" },
     { name = "pyairtable" },
-    { name = "pytest", marker = "extra == 'dev'" },
     { name = "python-dotenv" },
     { name = "pytz" },
     { name = "requests-cache" },
-    { name = "scikit-learn", marker = "extra == 'experimental'" },
     { name = "scipy" },
     { name = "scrapfly-sdk", extras = ["all"] },
-    { name = "vulture", marker = "extra == 'dev'" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "black" },
+    { name = "diagrams" },
+    { name = "eli5" },
+    { name = "haralyzer" },
+    { name = "ipykernel" },
+    { name = "jupyter" },
+    { name = "pytest" },
+    { name = "scikit-learn" },
+    { name = "vulture" },
 ]
 
 [[package]]
