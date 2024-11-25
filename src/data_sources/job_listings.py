@@ -8,6 +8,7 @@ from scrapfly import (
 )
 import os
 from markdownify import markdownify
+from loguru import logger
 
 SCRAPFLY = ScrapflyClient(key=os.environ.get("SCRAPFLY_KEY"))
 
@@ -26,14 +27,18 @@ BASE_CONFIG = {
 
 class CareerPage:
     @classmethod
-    async def get_job_listings(cls, careers_url: str):
-        job_urls = await cls.get_job_urls(careers_url)
-        job_responses = await cls.get_job_responses(job_urls)
+    async def crawl_jobs(cls, careers_url: str):
+        job_urls = await cls.scrape_job_links(careers_url)
+        job_responses = await cls.scrape_job_descriptions(job_urls)
 
         return job_responses
 
     @classmethod
-    async def get_job_responses(cls, job_urls):
+    async def scrape_job_links(cls, careers_url: str):
+        raise NotImplementedError
+
+    @classmethod
+    async def scrape_job_descriptions(cls, job_urls):
         job_responses = []
 
         async for result in SCRAPFLY.concurrent_scrape(
@@ -42,8 +47,8 @@ class CareerPage:
             if not isinstance(result, ScrapflyScrapeError):
                 job_responses.append(result)
             else:
-                print(
-                    f"failed to scrape {result.api_response.config['url']}, got: {result.message}"
+                logger.warning(
+                    f"Failed to scrape {result.api_response.config['url']}, got: {result.message}"
                 )
 
         return job_responses
@@ -53,7 +58,7 @@ class Workable(CareerPage):
     url_base = "https://apply.workable.com"
 
     @classmethod
-    async def get_job_urls(cls, careers_url: str):
+    async def scrape_job_links(cls, careers_url: str):
         response = await SCRAPFLY.async_scrape(ScrapeConfig(careers_url, **BASE_CONFIG))
         soup = BeautifulSoup(response.content, "html.parser")
 
@@ -82,7 +87,7 @@ class Ashby(CareerPage):
     url_base = "https://jobs.ashbyhq.com"
 
     @classmethod
-    async def get_job_urls(cls, careers_url: str):
+    async def scrape_job_links(cls, careers_url: str):
         response = await SCRAPFLY.async_scrape(ScrapeConfig(careers_url, **BASE_CONFIG))
         soup = BeautifulSoup(response.content, "html.parser")
 
@@ -109,7 +114,7 @@ class Ashby(CareerPage):
 
 class SmartRecruiters(CareerPage):
     @classmethod
-    async def get_job_urls(cls, careers_url: str):
+    async def scrape_job_links(cls, careers_url: str):
         response = await SCRAPFLY.async_scrape(ScrapeConfig(careers_url, **BASE_CONFIG))
         soup = BeautifulSoup(response.content, "html.parser")
 
