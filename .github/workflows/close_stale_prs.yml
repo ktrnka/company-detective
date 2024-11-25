@@ -1,4 +1,4 @@
-name: 'Close stale issues and PRs'
+name: 'Close stale PRs'
 on:
   schedule:
     - cron: '30 1 * * *'
@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/stale@v9
         with:
-          close-pr-message: 'Closing due to inactivity. Reopen if still relevant.'
+          close-pr-message: 'Closing due to inactivity.'
           days-before-stale: 2
           days-before-close: 3
-          only-labels: 'automated pr'
+          only-labels: 'update-your-readme'
