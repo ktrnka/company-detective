@@ -3,7 +3,6 @@ from scrapfly import (
     ScrapeApiResponse,
     ScrapeConfig,
     ScrapflyClient,
-    ScrapflyScrapeError,
     ScrapflyError,
 )
 import os
@@ -44,7 +43,7 @@ class CareerPage:
         async for result in SCRAPFLY.concurrent_scrape(
             [ScrapeConfig(url, **BASE_CONFIG) for url in job_urls], concurrency=2
         ):
-            if not isinstance(result, ScrapflyScrapeError):
+            if not isinstance(result, ScrapflyError):
                 job_responses.append(result)
             else:
                 logger.warning(
@@ -52,6 +51,21 @@ class CareerPage:
                 )
 
         return job_responses
+    
+    @classmethod
+    def parse_job_response(cls, response: ScrapeApiResponse):
+        soup = BeautifulSoup(response.content, "html.parser")
+        main_element = cls.find_job_description_element(soup)
+        return {
+            "url": response.context["url"],
+            "job_description_text": main_element.text,
+            "job_description_html": main_element.prettify(),
+            "job_description_md": markdownify(main_element.prettify(), heading_style="atx"),
+        }
+    
+    @classmethod
+    def find_job_description_element(cls, soup):
+        raise NotImplementedError
 
 
 class Workable(CareerPage):
@@ -70,17 +84,10 @@ class Workable(CareerPage):
         job_links = [f"{cls.url_base}{job_link['href']}" for job_link in job_links]
 
         return job_links
-
-    @staticmethod
-    def parse_response(response: ScrapeApiResponse):
-        soup = BeautifulSoup(response.content, "html.parser")
-        element = soup.find("main")
-        return {
-            "url": response.context["url"],
-            "job_description_text": element.text,
-            "job_description_html": element.prettify(),
-            "job_description_md": markdownify(element.prettify(), heading_style="atx"),
-        }
+    
+    @classmethod
+    def find_job_description_element(cls, soup):
+        return soup.find("main")
 
 
 class Ashby(CareerPage):
@@ -99,17 +106,10 @@ class Ashby(CareerPage):
         job_links = [f"{cls.url_base}{job_link['href']}" for job_link in job_links]
 
         return job_links
-
-    @staticmethod
-    def parse_response(response: ScrapeApiResponse):
-        soup = BeautifulSoup(response.content, "html.parser")
-        element = soup.find("div", {"id": "overview"})
-        return {
-            "url": response.context["url"],
-            "job_description_text": element.text,
-            "job_description_html": element.prettify(),
-            "job_description_md": markdownify(element.prettify(), heading_style="atx"),
-        }
+    
+    @classmethod
+    def find_job_description_element(cls, soup):
+        return soup.find("div", {"id": "overview"})
 
 
 class SmartRecruiters(CareerPage):
@@ -123,14 +123,7 @@ class SmartRecruiters(CareerPage):
         job_links = [job_link["href"] for job_link in job_links]
 
         return job_links
-
-    @staticmethod
-    def parse_response(response: ScrapeApiResponse):
-        soup = BeautifulSoup(response.content, "html.parser")
-        element = soup.find("main")
-        return {
-            "url": response.context["url"],
-            "job_description_text": element.text,
-            "job_description_html": element.prettify(),
-            "job_description_md": markdownify(element.prettify(), heading_style="atx"),
-        }
+    
+    @classmethod
+    def find_job_description_element(cls, soup):
+        return soup.find("main")
