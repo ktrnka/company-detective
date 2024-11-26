@@ -1,4 +1,5 @@
-from bs4 import BeautifulSoup
+from typing import List, Optional
+from bs4 import BeautifulSoup, Tag
 from scrapfly import (
     ScrapeApiResponse,
     ScrapeConfig,
@@ -26,45 +27,54 @@ BASE_CONFIG = {
 
 class CareerPage:
     @classmethod
-    async def crawl_jobs(cls, careers_url: str):
+    async def crawl_jobs(cls, careers_url: str) -> List[ScrapeApiResponse]:
         job_urls = await cls.scrape_job_links(careers_url)
         job_responses = await cls.scrape_job_descriptions(job_urls)
 
         return job_responses
 
     @classmethod
-    async def scrape_job_links(cls, careers_url: str):
+    async def scrape_job_links(cls, careers_url: str) -> List[str]:
         raise NotImplementedError
 
     @classmethod
-    async def scrape_job_descriptions(cls, job_urls):
+    async def scrape_job_descriptions(
+        cls, job_urls: List[str], concurrency=1
+    ) -> List[ScrapeApiResponse]:
         job_responses = []
 
-        async for result in SCRAPFLY.concurrent_scrape(
-            [ScrapeConfig(url, **BASE_CONFIG) for url in job_urls], concurrency=2
-        ):
-            if not isinstance(result, ScrapflyError):
-                job_responses.append(result)
-            else:
-                logger.warning(
-                    f"Failed to scrape {result.api_response.config['url']}, got: {result.message}"
-                )
+        # Note: If they're all cached, setting concurrency will cause a crash!?
+        try:
+            async for result in SCRAPFLY.concurrent_scrape(
+                [ScrapeConfig(url, **BASE_CONFIG) for url in job_urls],
+                concurrency=concurrency,
+            ):
+                if isinstance(result, ScrapflyError):
+                    logger.warning(
+                        f"Failed to scrape {result.api_response.config['url']}, got: {result.message}"
+                    )
+                elif isinstance(result, ScrapeApiResponse):
+                    job_responses.append(result)
+        except Exception as e:
+            logger.error(f"Failed to scrape job descriptions", exc_info=e)
 
         return job_responses
-    
+
     @classmethod
-    def parse_job_response(cls, response: ScrapeApiResponse):
+    def parse_job(cls, response: ScrapeApiResponse) -> dict:
         soup = BeautifulSoup(response.content, "html.parser")
         main_element = cls.find_job_description_element(soup)
         return {
             "url": response.context["url"],
             "job_description_text": main_element.text,
             "job_description_html": main_element.prettify(),
-            "job_description_md": markdownify(main_element.prettify(), heading_style="atx"),
+            "job_description_md": markdownify(
+                main_element.prettify(), heading_style="atx"
+            ),
         }
-    
+
     @classmethod
-    def find_job_description_element(cls, soup):
+    def find_job_description_element(cls, soup: BeautifulSoup):
         raise NotImplementedError
 
 
@@ -72,8 +82,9 @@ class Workable(CareerPage):
     url_base = "https://apply.workable.com"
 
     @classmethod
-    async def scrape_job_links(cls, careers_url: str):
+    async def scrape_job_links(cls, careers_url: str) -> List[str]:
         response = await SCRAPFLY.async_scrape(ScrapeConfig(careers_url, **BASE_CONFIG))
+
         soup = BeautifulSoup(response.content, "html.parser")
 
         job_list_div = soup.find("ul", {"data-ui": "list"})
@@ -84,9 +95,9 @@ class Workable(CareerPage):
         job_links = [f"{cls.url_base}{job_link['href']}" for job_link in job_links]
 
         return job_links
-    
+
     @classmethod
-    def find_job_description_element(cls, soup):
+    def find_job_description_element(cls, soup: BeautifulSoup) -> Optional[Tag]:
         return soup.find("main")
 
 
@@ -94,7 +105,7 @@ class Ashby(CareerPage):
     url_base = "https://jobs.ashbyhq.com"
 
     @classmethod
-    async def scrape_job_links(cls, careers_url: str):
+    async def scrape_job_links(cls, careers_url: str) -> List[str]:
         response = await SCRAPFLY.async_scrape(ScrapeConfig(careers_url, **BASE_CONFIG))
         soup = BeautifulSoup(response.content, "html.parser")
 
@@ -106,15 +117,15 @@ class Ashby(CareerPage):
         job_links = [f"{cls.url_base}{job_link['href']}" for job_link in job_links]
 
         return job_links
-    
+
     @classmethod
-    def find_job_description_element(cls, soup):
+    def find_job_description_element(cls, soup: BeautifulSoup) -> Optional[Tag]:
         return soup.find("div", {"id": "overview"})
 
 
 class SmartRecruiters(CareerPage):
     @classmethod
-    async def scrape_job_links(cls, careers_url: str):
+    async def scrape_job_links(cls, careers_url: str) -> List[str]:
         response = await SCRAPFLY.async_scrape(ScrapeConfig(careers_url, **BASE_CONFIG))
         soup = BeautifulSoup(response.content, "html.parser")
 
@@ -123,7 +134,7 @@ class SmartRecruiters(CareerPage):
         job_links = [job_link["href"] for job_link in job_links]
 
         return job_links
-    
+
     @classmethod
-    def find_job_description_element(cls, soup):
+    def find_job_description_element(cls, soup: BeautifulSoup) -> Optional[Tag]:
         return soup.find("main")
