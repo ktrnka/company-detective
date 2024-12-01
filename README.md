@@ -2,6 +2,8 @@
 
 This project summarizes publicly available information about a company. It leverages various APIs to gather and analyze data, providing a comprehensive overview of the target company.
 
+Live site: https://ktrnka.github.io/company-detective
+
 ![System diagram](system_diagram.png)
 
 ## Features
