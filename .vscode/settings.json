@@ -14,5 +14,6 @@
         {
             "file": "STYLE.md"
         }
-    ]
+    ],
+    "makefile.configureOnOpen": false
 }
