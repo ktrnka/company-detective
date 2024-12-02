@@ -22,28 +22,20 @@ def find_app_store_page(target: Seed) -> str:
 
 
 def extract_apple_app_store_id(url: str) -> Optional[int]:
-    """Get the Apple App Store ID from an app store URL, or return None if not found."""
+    """
+    Get the Apple App Store ID from an app store URL, or return None if not found.
+
+    Examples:
+    >>> extract_apple_app_store_id("https://apps.apple.com/us/app/98point6/id1157653928")
+    1157653928
+    >>> extract_apple_app_store_id("https://www.98point6.com/press_release/98point6-now-available-nationwide/") is None
+    True
+    """
     match = URL_PATTERN.search(url)
     if match:
         return int(match.group(1))
     else:
         return None
-
-
-def test_extract_apple_app_store_id():
-    assert (
-        extract_apple_app_store_id(
-            "https://apps.apple.com/us/app/98point6/id1157653928"
-        )
-        == 1157653928
-    )
-    assert (
-        extract_apple_app_store_id(
-            "https://www.98point6.com/press_release/98point6-now-available-nationwide/"
-        )
-        == None
-    )
-
 
 @cache.memoize(expire=timedelta(days=5).total_seconds(), tag="apple")
 def scrape(app_store_id: int, country="us") -> List[AppReview]:
