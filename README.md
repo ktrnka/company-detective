@@ -4,6 +4,9 @@ This project summarizes publicly available information about a company. It lever
 
 Live site: https://ktrnka.github.io/company-detective
 
+## System Architecture
+
+The following Mermaid diagram illustrates the system architecture of Company Detective:
 
 ```mermaid
 graph TD;
@@ -42,10 +45,7 @@ graph TD;
    reddit_docs --> cx_summary
    cx_summary --> summary
    summary --> GithubPages
-
-
 ```
-
 
 ## Features
 
