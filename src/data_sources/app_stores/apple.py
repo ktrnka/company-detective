@@ -43,7 +43,11 @@ def scrape(app_store_id: int, country="us") -> List[AppReview]:
 
     # It's a lazy iterator, so list() is needed
     # Max 500 reviews per country
-    reviews = list(app.reviews())
+    try:
+        reviews = list(app.reviews())
+    except TypeError as e:
+        logger.warning("Failed to fetch Apple App Store reviews: {}", e)
+        return []
 
     return reviews
 

@@ -54,7 +54,7 @@ async def request_url(session: aiohttp.ClientSession, url: str, cache: Optional[
                 response.content_type = raw_response.headers.get("Content-Type")
 
                 # TODO: Consider allowing configuration of content types
-                if response.content_type.startswith("text/html"):
+                if response.content_type and response.content_type.startswith("text/html"):
                     try:
                         response.text = await raw_response.text()
                     except UnicodeDecodeError:
@@ -63,6 +63,9 @@ async def request_url(session: aiohttp.ClientSession, url: str, cache: Optional[
                 cache.set(key(url), response, expire=timedelta(days=20).total_seconds())
     except TimeoutError:
         response = Response(url=url, status=504)
+    except aiohttp.ClientResponseError as e:
+        response = Response(url=url, status=e.status)
+        logger.warning(f"ClientResponseError {e.status} on {url}: {e}")
 
     return response
 

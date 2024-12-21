@@ -48,7 +48,11 @@ def find_hidden_data(result: ScrapeApiResponse) -> dict:
     # data can be in __NEXT_DATA__ cache
     data = result.selector.css("script#__NEXT_DATA__::text").get()
     if data:
-        data = json.loads(data)["props"]["pageProps"]["apolloCache"]
+        try:
+            data = json.loads(data)["props"]["pageProps"]["apolloCache"]
+        except json.JSONDecodeError as e:
+            # Make a synthetic ScrapflyError to propagate nicely
+            raise ScrapflyError("Failed to decode hidden JSON data", "JSONDecodeError", 500) from e
     else:  # or in direct apolloState cache
         data = re.findall(r'apolloState":\s*({.+})};', result.content)[0]
         data = json.loads(data)
@@ -164,9 +168,12 @@ async def scrape_reviews(url: str, max_pages: Optional[int] = None) -> Dict:
     async for result in SCRAPFLY.concurrent_scrape(other_pages):
         # Note: This error will catch a range of subclassed errors like ASP failure, etc
         if not isinstance(result, ScrapflyError):
-            reviews_obj = parse_reviews(result)
-            if reviews_obj:
-                reviews["reviews"].extend(reviews_obj["reviews"])
+            try:
+                reviews_obj = parse_reviews(result)
+                if reviews_obj:
+                    reviews["reviews"].extend(reviews_obj["reviews"])
+            except ScrapflyError as e:
+                log.error(f"failed to parse, got: {e}")
         else:
             log.error(
                 f"failed to scrape {result.api_response.config['url']}, got: {result.message}"
