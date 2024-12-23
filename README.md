@@ -21,7 +21,7 @@ Live site: https://ktrnka.github.io/company-detective
 
 This project requires API keys for the following services:
 
-- OpenAI
+- OpenAI (required)
 - Reddit
 - Google Custom Search Engine
 - Scrapfly
@@ -51,6 +51,11 @@ Ensure you have obtained the necessary API keys before proceeding with the setup
    ```
 
 4. Set up your API keys in a `.env` file in the project root directory.
+   
+   Example:
+   ```
+   OPENAI_API_KEY=your_openai_api_key
+   ```
 
 ## Usage
 
