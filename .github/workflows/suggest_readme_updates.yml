@@ -11,8 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ktrnka/update-your-readme@v0.5
+      - uses: ktrnka/update-your-readme@v0.6
         with:
-          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model-provider: "openai"
+          model: gpt-4o-mini-2024-07-18
+          api-key: ${{ secrets.OPENAI_API_KEY }}
           readme-file: README.md
-          debug: "true"
