@@ -11,6 +11,7 @@ Live site: https://ktrnka.github.io/company-detective
 - Multiple information sources including Crunchbase, news articles, and company websites
 - Utilizes AI to analyze and summarize information
 - Configured via Airtable
+- **New**: Google Analytics integration for tracking user interactions and site performance.
 
 ## Prerequisites
 
