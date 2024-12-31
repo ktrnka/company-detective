@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from itertools import chain
 from typing import List, Optional, Union
 from loguru import logger
 import numpy as np
@@ -139,6 +140,16 @@ def find_glassdoor_employer(target: Seed) -> Optional[EmployerKey]:
 FULL_TTL = timedelta(days=60)
 UPDATE_TTL = FULL_TTL / 2
 
+def merge_reviews(old_reviews: List[dict], new_reviews: List[dict]) -> List[dict]:
+    """Merge two lists of reviews, deduplicating by reviewId"""
+    deduped = dict()
+    for review in chain(old_reviews, new_reviews):
+        deduped[review["reviewId"]] = review
+
+    logger.info("Merged {} old reviews with {} new reviews into {} total", len(old_reviews), len(new_reviews), len(deduped))
+
+    return list(deduped.values())
+
 async def run(
     target: Seed, max_review_pages=1, max_job_pages=0, langchain_config=None
 ) -> Optional[GlassdoorResult]:
@@ -168,19 +179,15 @@ async def run(
 
             logger.debug("Glassdoor response: {}", response)
         elif datetime.fromtimestamp(expire_time_seconds) - datetime.now() < UPDATE_TTL:
-            num_cached_reviews = len(response["reviews"])
             updated_data = await scrape_reviews(reviews_url, max_pages=1)
-            num_added_reviews = len(updated_data["reviews"])
 
-            # bare-bones merge of the two responses that relies on parse_reviews to deduplicate below
-            # TODO: This will cause the cached data to add more and more duplicates over time
-            updated_data["reviews"].extend(response["reviews"])
+            # NOTE: I don't like how we're "doing surgery" on the response like this, though it's how Scrapfly works under the hood
+            updated_data["reviews"] = merge_reviews(response["reviews"], updated_data["reviews"])
             response = updated_data
 
-            # TODO: The two cache.set calls should be combined into one so that the configs are consistent
             cache.set(reviews_url, response, expire=FULL_TTL.total_seconds())
 
-            logger.info("Merged {} cached reviews with {} new reviews", num_cached_reviews, num_added_reviews)
+            logger.info("Glassdoor update-merge")
         else:
             logger.info("Using cached reviews")
 
