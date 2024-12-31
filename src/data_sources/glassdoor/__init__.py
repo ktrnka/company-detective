@@ -173,6 +173,7 @@ async def run(
             num_added_reviews = len(updated_data["reviews"])
 
             # bare-bones merge of the two responses that relies on parse_reviews to deduplicate below
+            # TODO: This will cause the cached data to add more and more duplicates over time
             updated_data["reviews"].extend(response["reviews"])
             response = updated_data
 
