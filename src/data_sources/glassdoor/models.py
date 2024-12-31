@@ -154,7 +154,7 @@ class GlassdoorReview(BaseModel):
         return UrlBuilder.review(self.employer_url_part, self.reviewId)
 
     @classmethod
-    def parse_reviews(cls, employer_url_part: str, raw_results: dict):
+    def parse_reviews(cls, employer_url_part: str, raw_results: dict) -> List["GlassdoorReview"]:
         """Parse Glassdoor reviews from the raw API response"""
         # NOTE: I don't feel good about the design of employer_url_part because I'd like to be able to use the raw pydantic parsing
         parsed_reviews = [
