@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from loguru import logger
+from utils.collection_cache import CollectionCache
 from utils.google_search import search
 from core import Seed, cache
 import re
@@ -37,17 +38,31 @@ def extract_apple_app_store_id(url: str) -> Optional[int]:
     else:
         return None
 
-@cache.memoize(expire=timedelta(days=5).total_seconds(), tag="apple")
 def scrape(app_store_id: int, country="us") -> List[AppReview]:
-    app = AppStoreEntry(app_id=app_store_id, country=country)
+    review_cache = CollectionCache(cache, ttl=timedelta(days=30))
+    cache_key = f"apple_reviews:{app_store_id}"
 
-    # It's a lazy iterator, so list() is needed
-    # Max 500 reviews per country
-    try:
-        reviews = list(app.reviews())
-    except TypeError as e:
-        logger.warning("Failed to fetch Apple App Store reviews: {}", e)
-        return []
+    if cache_key in review_cache and review_cache.get_age(cache_key) < timedelta(days=7):
+        reviews = review_cache.get_list(cache_key)
+    else:
+        app = AppStoreEntry(app_id=app_store_id, country=country)
+
+        # It's a lazy iterator, so list() is needed
+        # Max 500 reviews per country
+        try:
+            # It's lazy so we need to list it
+            reviews = list(app.reviews())
+
+            # The cache works in dicts
+            reviews = [review.__dict__ for review in reviews]
+
+            review_cache.upsert_list(cache_key, "id", reviews)
+        except TypeError as e:
+            logger.warning("Failed to fetch Apple App Store reviews, trying to fallback to cache: {}", e)
+            reviews = review_cache.get_list(cache_key) or []
+    
+    # Convert back to AppReview objects
+    reviews = [AppReview(**review) for review in reviews]
 
     return reviews
 
