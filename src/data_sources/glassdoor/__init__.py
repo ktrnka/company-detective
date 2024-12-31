@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import List, Optional, Union
 from loguru import logger
 import numpy as np
@@ -136,6 +136,8 @@ def find_glassdoor_employer(target: Seed) -> Optional[EmployerKey]:
     urls = list(search(query, num=10))
     return UrlBuilder.find_employer_key([result.link for result in urls])
 
+FULL_TTL = timedelta(days=60)
+UPDATE_TTL = FULL_TTL / 2
 
 async def run(
     target: Seed, max_review_pages=1, max_job_pages=0, langchain_config=None
@@ -158,25 +160,28 @@ async def run(
     with log_runtime("Scrape reviews"):
         reviews_url = UrlBuilder.reviews(*employer)
 
-        response = cache.get(reviews_url)
+        response, expire_time_seconds = cache.get(reviews_url, expire_time=True, default=(None, None))
 
         if not response:
             response = await scrape_reviews(reviews_url, max_pages=max_review_pages)
-            cache.set(reviews_url, response, expire=timedelta(days=60).total_seconds())
+            cache.set(reviews_url, response, expire=FULL_TTL.total_seconds())
 
             logger.debug("Glassdoor response: {}", response)
-        # TODO: Get the cache object age and decide whether to update it rather than every time
-        else:
+        elif datetime.fromtimestamp(expire_time_seconds) - datetime.now() < UPDATE_TTL:
+            num_cached_reviews = len(response["reviews"])
             updated_data = await scrape_reviews(reviews_url, max_pages=1)
+            num_added_reviews = len(updated_data["reviews"])
 
             # bare-bones merge of the two responses that relies on parse_reviews to deduplicate below
             updated_data["reviews"].extend(response["reviews"])
             response = updated_data
 
             # TODO: The two cache.set calls should be combined into one so that the configs are consistent
-            cache.set(reviews_url, response, expire=timedelta(days=60).total_seconds())
+            cache.set(reviews_url, response, expire=FULL_TTL.total_seconds())
 
-            logger.debug("Glassdoor response (1-page update/merge): {}", response)
+            logger.info("Merged {} cached reviews with {} new reviews", num_cached_reviews, num_added_reviews)
+        else:
+            logger.info("Using cached reviews")
 
     with log_runtime("Parse reviews"):
         reviews = GlassdoorReview.parse_reviews(employer.name, response)
