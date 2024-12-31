@@ -336,7 +336,15 @@ def extract_suspicious_urls(summary: str, source: str) -> Set[str]:
     summary_urls = set(extract_urls(summary))
     source_urls = set(extract_urls(source))
 
-    return summary_urls.difference(source_urls)
+    suspicious_urls = summary_urls.difference(source_urls)
+
+    # Secondary filter: This handles situations where the URL is in the summary text but not in the set of URLs extracted from the source. This could be due to the URL being slightly altered by the LLM.
+    # Iterate over a copy of the set so that we can modify it
+    for url in list(suspicious_urls):
+        if url in source:
+            suspicious_urls.remove(url)
+
+    return suspicious_urls
 
 
 def citation_density(summary: str) -> float:
