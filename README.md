@@ -12,6 +12,7 @@ Live site: https://ktrnka.github.io/company-detective
 - Utilizes AI to analyze and summarize information
 - Configured via Airtable
 - Google Analytics integration for tracking user interactions and site performance.
+- Improved caching mechanisms for Glassdoor, Google Play, and Apple App Store reviews, allowing for a more complete view over time and robust fallback for API failures.
 
 ## Prerequisites
 
