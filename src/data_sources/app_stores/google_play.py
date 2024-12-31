@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from loguru import logger
+from utils.collection_cache import CollectionCache
 from utils.google_search import search
 from core import Seed, cache
 from typing import List, Optional
@@ -132,20 +133,28 @@ def scrape_app_info(app_id: str) -> GooglePlayAppInfo:
     return GooglePlayAppInfo(**response_data)
 
 
-@cache.memoize(expire=timedelta(days=5).total_seconds(), tag="google_play")
 def scrape_reviews(app_id: str, num_reviews=100) -> List[GooglePlayReview]:
     assert num_reviews <= 100, "Google Play scraping is only implemented to fetch 100 reviews at most"
-    review_data, reviews_continuation_token = google_play_scraper.reviews(
-        app_id,
-        lang="en",
-        country="us",
-        sort=google_play_scraper.Sort.NEWEST,
-        # TODO: See if there's any sort of throttling on this
-        count=num_reviews,
-    )
+
+    review_cache = CollectionCache(cache, ttl=timedelta(days=14))
+
+    cache_key = f"google_play_reviews:{app_id}"
+    if cache_key in review_cache and review_cache.get_remaining_ttl(cache_key) > timedelta(days=7):
+        review_data = review_cache.get_list(cache_key)
+    else:
+        review_data, reviews_continuation_token = google_play_scraper.reviews(
+            app_id,
+            lang="en",
+            country="us",
+            sort=google_play_scraper.Sort.NEWEST,
+            # TODO: See if there's any sort of throttling on this
+            count=num_reviews,
+        )
+        review_cache.upsert_list(cache_key, "reviewId", review_data)
+
+        logger.info(f"Upserted {len(review_data)} reviews for {app_id}, now {len(review_cache.get_list(cache_key))} reviews total")
 
     return [GooglePlayReview(**review) for review in review_data]
-
 
 def review_to_markdown(review: GooglePlayReview) -> str:
     # NOTE: The permalink is fake; it's a placeholder for now
