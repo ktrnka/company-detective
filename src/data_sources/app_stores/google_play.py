@@ -139,7 +139,7 @@ def scrape_reviews(app_id: str, num_reviews=100) -> List[GooglePlayReview]:
     review_cache = CollectionCache(cache, ttl=timedelta(days=14))
 
     cache_key = f"google_play_reviews:{app_id}"
-    if cache_key in review_cache and review_cache.get_remaining_ttl(cache_key) > timedelta(days=7):
+    if cache_key in review_cache and review_cache.get_age(cache_key) < timedelta(days=7):
         review_data = review_cache.get_list(cache_key)
     else:
         review_data, reviews_continuation_token = google_play_scraper.reviews(
@@ -151,8 +151,12 @@ def scrape_reviews(app_id: str, num_reviews=100) -> List[GooglePlayReview]:
             count=num_reviews,
         )
         review_cache.upsert_list(cache_key, "reviewId", review_data)
+        logger.info(f"Upserted {len(review_data)} reviews for {app_id}")
 
-        logger.info(f"Upserted {len(review_data)} reviews for {app_id}, now {len(review_cache.get_list(cache_key))} reviews total")
+        # The merged and deduplicated list
+        review_data = review_cache.get_list(cache_key)
+
+    logger.info(f"Got {len(review_data)} reviews for {app_id}")
 
     return [GooglePlayReview(**review) for review in review_data]
 
