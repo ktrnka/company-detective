@@ -134,8 +134,6 @@ def scrape_app_info(app_id: str) -> GooglePlayAppInfo:
 
 
 def scrape_reviews(app_id: str, num_reviews=100) -> List[GooglePlayReview]:
-    assert num_reviews <= 100, "Google Play scraping is only implemented to fetch 100 reviews at most"
-
     review_cache = CollectionCache(cache, ttl=timedelta(days=14))
 
     cache_key = f"google_play_reviews:{app_id}"
@@ -147,8 +145,8 @@ def scrape_reviews(app_id: str, num_reviews=100) -> List[GooglePlayReview]:
             lang="en",
             country="us",
             sort=google_play_scraper.Sort.NEWEST,
-            # TODO: See if there's any sort of throttling on this
-            count=num_reviews,
+            # The API only supports fetching up to 100 reviews at a time, though possibly more could be done with the continuation token
+            count=min(num_reviews, 100),
         )
         review_cache.upsert_list(cache_key, "reviewId", review_data)
         logger.info(f"Upserted {len(review_data)} reviews for {app_id}")
@@ -158,7 +156,13 @@ def scrape_reviews(app_id: str, num_reviews=100) -> List[GooglePlayReview]:
 
     logger.info(f"Got {len(review_data)} reviews for {app_id}")
 
-    return [GooglePlayReview(**review) for review in review_data]
+    reviews = [GooglePlayReview(**review) for review in review_data]
+    if len(reviews) > num_reviews:
+        # If the cache has more than requested, sort by date and take the most recent
+        reviews = sorted(reviews, key=lambda x: x.at, reverse=True)
+        reviews = reviews[:num_reviews]
+
+    return reviews
 
 def review_to_markdown(review: GooglePlayReview) -> str:
     # NOTE: The permalink is fake; it's a placeholder for now
