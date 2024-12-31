@@ -157,12 +157,26 @@ async def run(
 
     with log_runtime("Scrape reviews"):
         reviews_url = UrlBuilder.reviews(*employer)
+
         response = cache.get(reviews_url)
+
         if not response:
             response = await scrape_reviews(reviews_url, max_pages=max_review_pages)
-            cache.set(reviews_url, response, expire=timedelta(days=10).total_seconds())
+            cache.set(reviews_url, response, expire=timedelta(days=60).total_seconds())
 
             logger.debug("Glassdoor response: {}", response)
+        # TODO: Get the cache object age and decide whether to update it rather than every time
+        else:
+            updated_data = await scrape_reviews(reviews_url, max_pages=1)
+
+            # bare-bones merge of the two responses that relies on parse_reviews to deduplicate below
+            updated_data["reviews"].extend(response["reviews"])
+            response = updated_data
+
+            # TODO: The two cache.set calls should be combined into one so that the configs are consistent
+            cache.set(reviews_url, response, expire=timedelta(days=60).total_seconds())
+
+            logger.debug("Glassdoor response (1-page update/merge): {}", response)
 
     with log_runtime("Parse reviews"):
         reviews = GlassdoorReview.parse_reviews(employer.name, response)
