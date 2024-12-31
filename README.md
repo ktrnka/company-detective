@@ -72,6 +72,11 @@ The main commands for running the company analysis are:
    make build
    ```
 
+4. You can specify the number of reviews to scrape from the Google Play Store (up to 100), for example:
+   ```
+   make scrape-reviews NUM_REVIEWS=50
+   ```
+
 Note: The default goal for the Makefile is set to `build`, so running `make` without arguments will execute the full build process.
 
 ## Data Sources
@@ -81,8 +86,8 @@ Note: The default goal for the Makefile is set to `build`, so running `make` wit
 - Company Website: Extracts information directly from the company's official website.
 - Reddit: Collects relevant discussions and mentions of the company.
 - Glassdoor: Offers employee reviews and sentiment analysis (with improved handling for small companies).
-- App Reviews: 
-  - Google Play Store: Scrapes up to 100 recent reviews.
+- App Reviews:
+  - Google Play Store: Scrapes up to the specified number of recent reviews (up to 100).
   - Apple App Store: Scrapes reviews and downsamples to 100 if more are available, ensuring balanced representation with Google Play reviews.
 
 ## Contributing
