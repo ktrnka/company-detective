@@ -154,6 +154,9 @@ def scrape_reviews(app_id: str, num_reviews=100) -> List[GooglePlayReview]:
         # The merged and deduplicated list
         review_data = review_cache.get_list(cache_key)
 
+    if not review_data:
+        review_data = []
+
     logger.info(f"Got {len(review_data)} reviews for {app_id}")
 
     reviews = [GooglePlayReview(**review) for review in review_data]

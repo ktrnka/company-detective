@@ -66,6 +66,9 @@ async def request_url(session: aiohttp.ClientSession, url: str, cache: Optional[
     except aiohttp.ClientResponseError as e:
         response = Response(url=url, status=e.status)
         logger.warning(f"ClientResponseError {e.status} on {url}: {e}")
+    except aiohttp.ClientOSError as e:
+        response = Response(url=url, status=500)
+        logger.warning(f"ClientOSError on {url}: {e}")
 
     return response
 
