@@ -172,7 +172,6 @@ async def run(
         reviews_url = UrlBuilder.reviews(*employer)
 
         response, expire_time_seconds = cache.get(reviews_url, expire_time=True)
-        logger.info("Glassdoor cache response: {}", response)
         logger.info("Glassdoor cache expire time: {}", expire_time_seconds)
 
         if not response:
