@@ -64,6 +64,7 @@ def row_to_seed(row: pd.Series) -> Seed:
             if not pd.isna(row["fields.Keywords"])
             else None
         ),
+        require_backlinks=row["fields.Require Backlinks"],
     )
 
 

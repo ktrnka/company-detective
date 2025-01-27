@@ -1,4 +1,5 @@
 from typing import NamedTuple, List
+from loguru import logger
 
 from core import Seed
 from utils.debug import log_runtime
@@ -36,6 +37,14 @@ async def run(target: Seed, max_results=30, langchain_config=None) -> NewsSummar
     with log_runtime("scrape"):
         responses = await scrape([result.link for result in search_results])
         responses = [response for response in responses if response and response.ok and response.text]
+
+        if target.require_backlinks:
+            num_before = len(responses)
+            responses = [response for response in responses if target.domain in response.text]
+            num_after = len(responses)
+
+            logger.info(f"Filtered {num_before - num_after} / {num_before} articles without backlinks")
+
 
     with log_runtime("parse"):
         # Parse and format
