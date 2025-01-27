@@ -1,4 +1,4 @@
-from typing import NamedTuple, List
+from typing import NamedTuple, List, Optional
 from loguru import logger
 
 from core import Seed
@@ -22,7 +22,7 @@ class NewsSummary(NamedTuple):
     summary_markdown: str
 
 
-async def run(target: Seed, max_results=30, langchain_config=None) -> NewsSummary:
+async def run(target: Seed, max_results=30, langchain_config=None) -> Optional[NewsSummary]:
     """
     Run the News pipeline:
     1. Find news articles
@@ -45,6 +45,9 @@ async def run(target: Seed, max_results=30, langchain_config=None) -> NewsSummar
 
             logger.info(f"Filtered {num_before - num_after} / {num_before} articles without backlinks")
 
+    if not responses:
+        logger.warning("No articles found")
+        return None
 
     with log_runtime("parse"):
         # Parse and format
