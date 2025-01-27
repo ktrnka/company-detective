@@ -12,6 +12,7 @@ Live site: https://ktrnka.github.io/company-detective
 - Utilizes AI to analyze and summarize information
 - Configured via Airtable
 - Google Analytics integration for tracking user interactions and site performance.
+- **New Feature**: Option to require backlinks in news articles, configurable via Airtable.
 
 ## Prerequisites
 
