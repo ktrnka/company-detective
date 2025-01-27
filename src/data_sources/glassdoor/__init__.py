@@ -176,6 +176,9 @@ async def run(
 
         if not response:
             response = await scrape_reviews(reviews_url, max_pages=max_review_pages)
+            if not response:
+                logger.warning("No reviews found for {}, exiting early", target.company)
+                return None
             cache.set(reviews_url, response, expire=FULL_TTL.total_seconds())
 
             logger.debug("Glassdoor response: {}", response)

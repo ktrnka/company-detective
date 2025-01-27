@@ -137,9 +137,12 @@ def parse_reviews(result: ScrapeApiResponse) -> Optional[Dict]:
             f.write(result.content)
             log.error("Logged content to {}", f.name)
         return None
+    except StopIteration:
+        log.error("Failed to find reviews in {}", result.context["url"])
+        return None
 
 
-async def scrape_reviews(url: str, max_pages: Optional[int] = None) -> Dict:
+async def scrape_reviews(url: str, max_pages: Optional[int] = None) -> Optional[Dict]:
     """Scrape Glassdoor reviews listings from reviews page (with pagination)"""
     log.info("scraping reviews from {}", url)
 
@@ -147,8 +150,11 @@ async def scrape_reviews(url: str, max_pages: Optional[int] = None) -> Dict:
     config = override_config(BASE_CONFIG, retry=True)
     first_page = await SCRAPFLY.async_scrape(ScrapeConfig(url=url, **config))
 
-    # If this is None, the whole thing will break
+    # If this is None, return None. There's nothing we can do if we can't get data from the first page
     reviews = parse_reviews(first_page)
+    if not reviews:
+        return None
+    
     total_pages = reviews["numberOfPages"]
     if max_pages and max_pages < total_pages:
         total_pages = max_pages
