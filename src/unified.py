@@ -198,7 +198,7 @@ class UnifiedResult(BaseModel):
     crunchbase_markdown: Optional[str]
     customer_experience_result: Optional[customer_experience.CustomerExperienceResult]
     glassdoor_result: Optional[glassdoor.GlassdoorResult]
-    news_result: news.NewsSummary
+    news_result: Optional[news.NewsSummary]
 
     lineage: Lineage
 
@@ -274,8 +274,11 @@ async def run(
         news_result = await news.run(target, max_results=max_news_articles, langchain_config=langchain_config)
 
         general_search_results = general_search.search_web(target)
+        search_results = general_search_results + webpage_summary.search_results
+        if news_result:
+            search_results += news_result.search_results
         general_search_summary = general_search.summarize(
-            target, general_search_results + news_result.search_results + webpage_summary.search_results, langchain_config=langchain_config
+            target, search_results, langchain_config=langchain_config
         ).content
 
         app_store_urls = customer_experience.extract_app_store_urls(general_search_results)
@@ -300,7 +303,7 @@ async def run(
         unshortened_context = "\n\n".join(
             [
                 webpage_summary.summary_markdown,
-                news_result.summary_markdown,
+                news_result.summary_markdown if news_result else "",
             ]
             + list(dynamic_contexts.values())
         )
@@ -318,7 +321,7 @@ async def run(
                 "company_webpage_text": url_shortener.shorten_markdown(
                     webpage_summary.summary_markdown
                 ),
-                "news_text": url_shortener.shorten_markdown(news_result.summary_markdown),
+                "news_text": url_shortener.shorten_markdown(news_result.summary_markdown) if news_result else "",
                 "dynamic_contexts": url_shortener.shorten_markdown(
                     contexts_to_markdown(dynamic_contexts)
                 ),
