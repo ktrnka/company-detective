@@ -4,14 +4,16 @@
 # - More open-ended summary
 
 from dataclasses import dataclass
+from functools import reduce
 from typing import List, Optional
 from utils.debug import log_runtime
 from utils.google_search import SearchResult, search
-from utils.scrape import response_to_article, article_to_markdown
+from utils.scrape import extract_links, response_to_article, article_to_markdown, simplify_links
 from utils.async_scrape import scrape
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from core import log_summary_metrics
+from loguru import logger
 
 _prompt = ChatPromptTemplate.from_messages(
     [
@@ -64,6 +66,30 @@ async def run(website: str, num_pages=30, langchain_config=None) -> WebpageResul
     with log_runtime("scrape"):
         responses = await scrape([result.link for result in search_results])
         responses = [response for response in responses if response and response.ok and response.text]
+
+        # Fallback option if we're very light on pages
+        if len(responses) < num_pages // 3:
+            logger.warning(f"Only {len(responses)} pages found, falling back to a broader search")
+            link_sets = [extract_links(response.url, response.text) for response in responses]
+            links = reduce(lambda x, y: x.union(y), link_sets, set())
+
+            # Filter to links from target.domain
+            links = {link for link in links if website in link}
+
+            logger.info(f"Found {len(links)} links to crawl: {links}")
+            
+            # Remove all the pages we've already crawled or attempted to crawl
+            # Also strip trailing slashes from the links
+            links = simplify_links(links) - simplify_links(result.link for result in search_results)
+            logger.info(f"After removing the visited ones: {links}")
+
+            # TODO: Curate this list of links a little better, like removing privacy policies and such
+            queue = sorted(links)[:num_pages - len(responses)]
+            additional_responses = await scrape(queue)
+            additional_responses = [response for response in additional_responses if response and response.ok and response.text]
+            logger.info(f"Found {len(additional_responses)} additional pages")
+            responses.extend(additional_responses)
+
 
     with log_runtime("parse"):
         articles = [response_to_article(response) for response in responses]
