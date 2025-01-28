@@ -21,14 +21,15 @@ class Seed(NamedTuple):
     product: str
     domain: str
     keywords: Optional[Set[str]] = None
-    require_backlinks: bool = False
+    require_news_backlinks: bool = False
+    require_reddit_backlinks: bool = False
     
     @classmethod
-    def init(cls, company: str, domain: str, product: Optional[str] = None, keywords: Optional[Iterable[str]] = None, require_backlinks: bool = False) -> "Seed":
+    def init(cls, company: str, domain: str, product: Optional[str] = None, keywords: Optional[Iterable[str]] = None, require_news_backlinks: bool = False, require_reddit_backlinks: bool = False) -> "Seed":
         """Helper to initialize with optional fields"""
         if not product:
             product = company
-        return cls(company, product, domain, frozenset(keywords) if keywords else None, require_backlinks)
+        return cls(company, product, domain, frozenset(keywords) if keywords else None, require_news_backlinks, require_reddit_backlinks)
     
     def as_path_v2(self) -> str:
         if self.company == self.product:

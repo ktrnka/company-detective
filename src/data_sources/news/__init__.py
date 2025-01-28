@@ -38,13 +38,14 @@ async def run(target: Seed, max_results=30, langchain_config=None) -> Optional[N
         responses = await scrape([result.link for result in search_results])
         responses = [response for response in responses if response and response.ok and response.text]
 
-        if target.require_backlinks:
+        if target.require_news_backlinks:
             num_before = len(responses)
             responses = [response for response in responses if target.domain in response.text]
             num_after = len(responses)
 
             logger.info(f"Filtered {num_before - num_after} / {num_before} articles without backlinks")
 
+    # This typically can happen for small companies if we're requiring backlinks
     if not responses:
         logger.warning("No articles found")
         return None

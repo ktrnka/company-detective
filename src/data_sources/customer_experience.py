@@ -201,7 +201,14 @@ async def run(
             ]
 
             markdown_futures = [data_sources.reddit.fetch.submission_to_markdown(thread) for thread in reddit_threads]
-            review_markdowns.extend(await asyncio.gather(*markdown_futures))
+            markdowns = await asyncio.gather(*markdown_futures)
+
+            if target.require_reddit_backlinks:
+                num_before = len(markdowns)
+                markdowns = [m for m in markdowns if target.domain in m]
+                logger.info(f"Filtered {num_before - len(markdowns)} / {num_before} Reddit threads without backlinks")
+
+            review_markdowns.extend(markdowns)
 
             sources.reddit_search_url = url_from_query(build_query(target))
 

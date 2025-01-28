@@ -47,8 +47,10 @@ def load_into_pandas(status: Optional[str] = "Approved") -> pd.DataFrame:
     # simplify the domain
     df["domain"] = df["fields.Website"].apply(extract_domain)
 
-    return df
+    # Replace NaN values with empty lists. Note that fillna doesn't work for this, nor does testing with pd.isnan nor does .replace work
+    df["fields.Require Backlinks"] = df["fields.Require Backlinks"].apply(lambda val: val if not isinstance(val, float) else [])
 
+    return df
 
 def row_to_seed(row: pd.Series) -> Seed:
     return Seed.init(
@@ -64,7 +66,9 @@ def row_to_seed(row: pd.Series) -> Seed:
             if not pd.isna(row["fields.Keywords"])
             else None
         ),
-        require_backlinks=row["fields.Require Backlinks"],
+        # Require Backlinks is a multi-select field which is represented as a list of strings
+        require_news_backlinks="news" in row["fields.Require Backlinks"],
+        require_reddit_backlinks="reddit" in row["fields.Require Backlinks"],
     )
 
 
