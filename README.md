@@ -11,7 +11,8 @@ Live site: https://ktrnka.github.io/company-detective
 - Multiple information sources including Crunchbase, news articles, and company websites
 - Utilizes AI to analyze and summarize information
 - Configured via Airtable
-- Google Analytics integration for tracking user interactions and site performance.
+- Google Analytics integration for tracking user interactions and site performance
+- **New:** Fallback mechanism for limited web crawling if not enough pages are found.
 
 ## Prerequisites
 
@@ -71,6 +72,8 @@ The main commands for running the company analysis are:
    ```
    make build
    ```
+
+4. To handle limited page retrieval and fallback options during web crawling, ensure the new logic is configured correctly in your settings.
 
 Note: The default goal for the Makefile is set to `build`, so running `make` without arguments will execute the full build process.
 
