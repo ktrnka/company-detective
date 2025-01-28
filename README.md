@@ -12,6 +12,7 @@ Live site: https://ktrnka.github.io/company-detective
 - Utilizes AI to analyze and summarize information
 - Configured via Airtable
 - Google Analytics integration for tracking user interactions and site performance.
+- New option to filter Reddit threads that lack backlinks.
 
 ## Prerequisites
 
@@ -36,17 +37,20 @@ Ensure you have obtained the necessary API keys before proceeding with the setup
 ## Installation
 
 1. Clone the repository:
+   
    ```
    git clone https://github.com/ktrnka/company-detective.git
    cd company-detective
    ```
 
 2. Install uv (if not already installed):
+   
    ```
    make install-uv
    ```
 
 3. Install dependencies using uv:
+   
    ```
    make install
    ```
@@ -58,16 +62,19 @@ Ensure you have obtained the necessary API keys before proceeding with the setup
 The main commands for running the company analysis are:
 
 1. To refresh company data:
+   
    ```
    make refresh-data
    ```
 
 2. To build the website with analyzed data:
+   
    ```
    make build-website
    ```
 
 3. To perform both operations sequentially:
+   
    ```
    make build
    ```
@@ -79,7 +86,7 @@ Note: The default goal for the Makefile is set to `build`, so running `make` wit
 - Crunchbase: Provides detailed company information, funding data, and recent news.
 - News Articles: Gathers recent news about the company.
 - Company Website: Extracts information directly from the company's official website.
-- Reddit: Collects relevant discussions and mentions of the company.
+- Reddit: Collects relevant discussions and mentions of the company, now with an option to filter threads without backlinks.
 - Glassdoor: Offers employee reviews and sentiment analysis (with improved handling for small companies).
 - App Reviews: 
   - Google Play Store: Scrapes up to 100 recent reviews.
