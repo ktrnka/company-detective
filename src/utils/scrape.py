@@ -61,7 +61,9 @@ def extract_links(url: str, html_str: str) -> set[str]:
         href = urljoin(url, a["href"])
         # Remove in-page part if present
         href = href.split("#")[0]
-        links.add(href)
+
+        if href.startswith("http"):
+            links.add(href)
     return links
 
 def simplify_links(links: Iterable[str]) -> set[str]:
