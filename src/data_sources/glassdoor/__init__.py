@@ -107,8 +107,8 @@ class GlassdoorResult:
             [review.reviewDateTime.timestamp() for review in reviews]
         )
 
-        # spearman correlation of dates and scores
-        if len(sample_dates) < 2:
+        # Pearson isn't applicable if one of the variables is constant
+        if len(sample_dates) < 2 or np.std(sample_dates) == 0 or np.std(sample_scores) == 0:
             date_score_correlation = 0
             date_score_p_value = 1
         else:
