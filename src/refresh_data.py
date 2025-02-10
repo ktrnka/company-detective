@@ -57,7 +57,7 @@ async def main():
         output_json = f"{args.output_folder}/{target.as_path_v2()}.json"
 
         # NOTE: Without the dropna, .get returns NaN which then causes the timedelta to fail
-        refresh_days = row.dropna().get("fields.Refresh Days", 21)
+        refresh_days = row.dropna().get("fields.Refresh Days", 30)
 
         if should_rebuild(
             target,
