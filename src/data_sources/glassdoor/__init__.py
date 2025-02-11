@@ -85,7 +85,7 @@ class GlassdoorResult:
         population_icon.tooltip = f"The icon and color represent the approximate quartile of the overall rating compared to companies we reviewed. Note that ratings tend to vary by industry and role, so it's better to gauge the company's rating relative to its peers on Glassdoor."
 
         sample_scores = np.array([review.ratingOverall for review in reviews])
-        if len(sample_scores) < 2:
+        if len(sample_scores) < 2 or np.std(sample_scores) == 0:
             # Can't do a test with only one sample. Treat it like an unreliable sample
             t_statistic = np.nan
             p_value = 0
