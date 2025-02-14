@@ -18,6 +18,7 @@ dependencies = [
     "langchain-openai",
     "loguru",
     "markdown",
+    "matplotlib>=3.10.0",
     "newspaper4k",
     "numpy",
     "pandas",
@@ -26,7 +27,8 @@ dependencies = [
     "pytz",
     "requests-cache",
     "scipy",
-    "scrapfly-sdk[all]"
+    "scrapfly-sdk[all]",
+    "seaborn>=0.13.2",
 ]
 
 
