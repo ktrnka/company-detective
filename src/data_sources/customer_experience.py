@@ -203,7 +203,7 @@ async def run(
             markdown_futures = [data_sources.reddit.fetch.submission_to_markdown(thread) for thread in reddit_threads]
             markdowns = await asyncio.gather(*markdown_futures)
 
-            if target.require_reddit_backlinks:
+            if target.feature_flags and target.feature_flags.require_reddit_backlinks:
                 num_before = len(markdowns)
                 markdowns = [m for m in markdowns if target.domain in m]
                 logger.info(f"Filtered {num_before - len(markdowns)} / {num_before} Reddit threads without backlinks")

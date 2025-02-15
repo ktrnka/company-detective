@@ -69,11 +69,10 @@ class Company(Model):
     status = F.SelectField("Status")
     keywords = F.TextField("Keywords")
     refresh_days = F.NumberField("Refresh Days")
-    require_backlinks = F.MultipleSelectField(
-        "Require Backlinks"
-    )  # Note: This becomes a list[str]
     products = F.LinkField[Product]("Products", Product)
+    feature_flags = F.MultipleSelectField("Feature Flags")
 
+    # TODO: Deprecate this
     key_product_name = F.TextField("Key Product Name")
 
     class Meta:
@@ -88,13 +87,15 @@ class Company(Model):
             domain=extract_domain(self.webpage_url),
             product=self.key_product_name or self.name,
             keywords=tuple(self.keywords.split()) if self.keywords else None,
-            # Require Backlinks is a multi-select field which is represented as a list of strings
-            require_news_backlinks="news" in self.require_backlinks,
-            require_reddit_backlinks="reddit" in self.require_backlinks,
             primary_product=(
                 self.products[0].to_core_product() if self.products else None
             ),
+            feature_flags=self.get_core_feature_flags(),
         )
+    
+    def get_core_feature_flags(self) -> core.FeatureFlags:
+        # This requires that the flags have the same names in the DB and the class
+        return core.FeatureFlags(**{flag: True for flag in self.feature_flags})
     
     @staticmethod
     def all_approved():

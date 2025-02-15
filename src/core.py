@@ -23,6 +23,10 @@ class Product(NamedTuple):
     google_play_url: Optional[str] = None
     apple_app_store_url: Optional[str] = None
 
+class FeatureFlags(NamedTuple):
+    require_news_backlinks: bool = False
+    require_reddit_backlinks: bool = False
+
 class Seed(NamedTuple):
     # TODO: Naming
     company: str
@@ -34,19 +38,23 @@ class Seed(NamedTuple):
 
     keywords: Optional[Set[str]] = None
 
-    # TODO: Refactor this into a feature flag system
-    require_news_backlinks: bool = False
-    require_reddit_backlinks: bool = False
+    # These aren't used anymore, but if we want to load the old result files, we need to keep them around
+    # I'd start them with an underscore but NamedTuple doesn't allow that
+    deprecated_require_news_backlinks: bool = False
+    deprecated_require_reddit_backlinks: bool = False
 
     # New style: Something like this will replace product: str.
     primary_product: Optional[Product] = None
+
+    # New style of feature flags
+    feature_flags: Optional[FeatureFlags] = None
     
     @classmethod
-    def init(cls, company: str, domain: str, product: Optional[str] = None, keywords: Optional[Iterable[str]] = None, require_news_backlinks: bool = False, require_reddit_backlinks: bool = False, primary_product: Optional[Product] = None) -> "Seed":
+    def init(cls, company: str, domain: str, product: Optional[str] = None, keywords: Optional[Iterable[str]] = None, primary_product: Optional[Product] = None, feature_flags: Optional[FeatureFlags] = None) -> "Seed":
         """Helper to initialize with optional fields"""
         if not product:
             product = company
-        return cls(company, product, domain, frozenset(keywords) if keywords else None, require_news_backlinks, require_reddit_backlinks, primary_product)
+        return cls(company, product, domain, frozenset(keywords) if keywords else None, primary_product, feature_flags)
     
     def as_path_v2(self) -> str:
         if self.company == self.product:

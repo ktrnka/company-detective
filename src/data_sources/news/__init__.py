@@ -38,7 +38,7 @@ async def run(target: Seed, max_results=30, langchain_config=None) -> Optional[N
         responses = await scrape([result.link for result in search_results])
         responses = [response for response in responses if response and response.ok and response.text]
 
-        if target.require_news_backlinks:
+        if target.feature_flags and target.feature_flags.require_news_backlinks:
             num_before = len(responses)
             responses = [response for response in responses if target.domain in response.text]
             num_after = len(responses)
