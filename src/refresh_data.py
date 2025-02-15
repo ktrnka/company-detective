@@ -9,7 +9,6 @@ import unified
 from core import Seed, init
 import airtable
 
-
 def get_file_age(file_path: str) -> Optional[timedelta]:
     if os.path.exists(file_path):
         file_mod_time = datetime.fromtimestamp(os.path.getmtime(file_path))
@@ -50,14 +49,11 @@ async def main():
 
     init()
 
-    companies = airtable.load_into_pandas()
-
-    for _, row in companies.sort_values("fields.Name").iterrows():
-        target = airtable.row_to_seed(row)
+    for orm_company in airtable.Company.all_approved():
+        target = orm_company.to_core_company()
         output_json = f"{args.output_folder}/{target.as_path_v2()}.json"
 
-        # NOTE: Without the dropna, .get returns NaN which then causes the timedelta to fail
-        refresh_days = row.dropna().get("fields.Refresh Days", 30)
+        refresh_days = orm_company.refresh_days or 30
 
         if should_rebuild(
             target,

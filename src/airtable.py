@@ -1,17 +1,11 @@
 import os
-from typing import Optional
-from pyairtable import Api
 from urllib.parse import urlparse
-import pandas as pd
-from core import Product, Seed
-
-api = Api(os.environ.get("AIRTABLE_API_KEY"))
+from pyairtable.orm import Model, fields as F
+from pyairtable.formulas import match
+import core
 
 APP_ID = "appxVirwyt5V40t5S"
-company_table = api.table(APP_ID, "tbl2VTj1mFjoH4Gsx")
-product_table = api.table(APP_ID, "tbliM8NuCBrs93x8b")
-
-# TODO: Look into pyairtable ORM
+AIRTABLE_API_KEY = os.environ.get("AIRTABLE_API_KEY")
 
 
 def extract_domain(url: str) -> str:
@@ -40,73 +34,79 @@ def test_extract_domain():
     assert extract_domain("subdomain.example.com/fart") == "subdomain.example.com"
 
 
-def load_into_pandas(status: Optional[str] = "Approved") -> pd.DataFrame:
-    df = pd.DataFrame(pd.json_normalize(company_table.all()))
+class Product(Model):
+    """ORM model for the Products table in Airtable"""
 
-    if status:
-        df = df[df["fields.Status"] == status]
+    name = F.TextField("Name")
+    steam_url = F.UrlField(
+        "Steam"
+    )  # Rather than being none, this will be an empty string
+    google_play_url = F.UrlField("Google Play")
+    apple_app_store_url = F.UrlField("Apple App Store")
+    webpage_url = F.UrlField("Webpage")
 
-    # simplify the domain
-    df["domain"] = df["fields.Website"].apply(extract_domain)
+    class Meta:
+        api_key = AIRTABLE_API_KEY
+        base_id = APP_ID
+        table_name = "Products"
 
-    # Replace NaN values with empty lists. Note that fillna doesn't work for this, nor does testing with pd.isnan nor does .replace work
-    df["fields.Require Backlinks"] = df["fields.Require Backlinks"].apply(lambda val: val if not isinstance(val, float) else [])
+    def to_core_product(self) -> core.Product:
+        """Convert the ORM Product to a core Product"""
+        return core.Product(
+            name=self.name,
+            steam_url=self.steam_url or None,
+            google_play_url=self.google_play_url or None,
+            apple_app_store_url=self.apple_app_store_url or None,
+            webpage_url=self.webpage_url or None,
+        )
 
-    # Join the product table into the company table
-    product_df = pd.DataFrame(pd.json_normalize(product_table.all())).set_index("id")
 
-    def expand_product_ids(product_ids: float | list) -> list[dict]:
-        # Note: pd.isna doesn't work here
-        if isinstance(product_ids, list):
-            return product_df.loc[product_ids].to_dict(orient="records")
+class Company(Model):
+    """ORM model for the Companies table in Airtable"""
 
-        return []
+    name = F.TextField("Name")
+    webpage_url = F.UrlField("Website")
+    status = F.SelectField("Status")
+    keywords = F.TextField("Keywords")
+    refresh_days = F.NumberField("Refresh Days")
+    require_backlinks = F.MultipleSelectField(
+        "Require Backlinks"
+    )  # Note: This becomes a list[str]
+    products = F.LinkField[Product]("Products", Product)
 
-    df["products"] = df["fields.Products"].apply(expand_product_ids)
+    key_product_name = F.TextField("Key Product Name")
 
-    return df
+    class Meta:
+        api_key = AIRTABLE_API_KEY
+        base_id = APP_ID
+        table_name = "Companies"
 
-def value_or_none(val):
-    """Helper for converting NaN to None, though it only works for scalar values"""
-    return val if not pd.isna(val) else None
-
-def row_to_seed(row: pd.Series) -> Seed:
-    return Seed.init(
-        company=row["fields.Name"],
-        domain=row["domain"],
-        product=value_or_none(row["fields.Key Product Name"]),
-        keywords=(
-            tuple(row["fields.Keywords"].split())
-            if not pd.isna(row["fields.Keywords"])
-            else None
-        ),
-        # Require Backlinks is a multi-select field which is represented as a list of strings
-        require_news_backlinks="news" in row["fields.Require Backlinks"],
-        require_reddit_backlinks="reddit" in row["fields.Require Backlinks"],
-        primary_product=to_primary_product(row["products"]),
-    )
-
-def to_primary_product(products: list[dict]) -> Optional[Product]:
-    if not products:
-        return None
+    def to_core_company(self) -> core.Seed:
+        """Convert the ORM Company to a core Seed"""
+        return core.Seed.init(
+            company=self.name,
+            domain=extract_domain(self.webpage_url),
+            product=self.key_product_name or self.name,
+            keywords=tuple(self.keywords.split()) if self.keywords else None,
+            # Require Backlinks is a multi-select field which is represented as a list of strings
+            require_news_backlinks="news" in self.require_backlinks,
+            require_reddit_backlinks="reddit" in self.require_backlinks,
+            primary_product=(
+                self.products[0].to_core_product() if self.products else None
+            ),
+        )
     
-    return to_product(products[0])
-
-def to_product(product: dict) -> Product:
-    
-    return Product(
-        name=product["fields.Name"],
-        # These fields are only present if at least one row in the source table has a non-null value, otherwise some mixture of pyairtable and Pandas drops them
-        # Also, if not present, they're NA not None so we need to convert, otherwise Pydantic validation will fail later on
-        steam_url=value_or_none(product.get("fields.Steam")),
-        google_play_url=value_or_none(product.get("fields.Google Play")),
-        apple_app_store_url=value_or_none(product.get("fields.Apple App Store")),
-        webpage_url=value_or_none(product.get("fields.Webpage")),
-    )
+    @staticmethod
+    def all_approved():
+        # TODO: There's a bug here once we have over 100 records
+        return Company.all(formula=match({"Status": "Approved"}), sort=["Name"])
 
 
-def pandas_to_seeds(df: pd.DataFrame) -> pd.Series:
-    return df.apply(
-        row_to_seed,
-        axis=1,
-    )
+# Examples
+# from pyairtable.formulas import match
+
+# s6 = Company.first(formula=match({"Name": "Singularity 6"}))
+# s6.to_core_company()
+
+# for company in Company.all(formula=match({"Status": status}), sort=["Name"]):
+#     yield company.to_core_company()
