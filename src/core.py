@@ -15,21 +15,38 @@ from loguru import logger
 
 from utils.markdown_utils import extract_urls
 
+class Product(NamedTuple):
+    name: str
+
+    webpage_url: Optional[str] = None
+    steam_url: Optional[str] = None
+    google_play_url: Optional[str] = None
+    apple_app_store_url: Optional[str] = None
 
 class Seed(NamedTuple):
+    # TODO: Naming
     company: str
+
+    # TODO: Merge with Product
     product: str
+
     domain: str
+
     keywords: Optional[Set[str]] = None
+
+    # TODO: Refactor this into a feature flag system
     require_news_backlinks: bool = False
     require_reddit_backlinks: bool = False
+
+    # New style: Something like this will replace product: str.
+    primary_product: Optional[Product] = None
     
     @classmethod
-    def init(cls, company: str, domain: str, product: Optional[str] = None, keywords: Optional[Iterable[str]] = None, require_news_backlinks: bool = False, require_reddit_backlinks: bool = False) -> "Seed":
+    def init(cls, company: str, domain: str, product: Optional[str] = None, keywords: Optional[Iterable[str]] = None, require_news_backlinks: bool = False, require_reddit_backlinks: bool = False, primary_product: Optional[Product] = None) -> "Seed":
         """Helper to initialize with optional fields"""
         if not product:
             product = company
-        return cls(company, product, domain, frozenset(keywords) if keywords else None, require_news_backlinks, require_reddit_backlinks)
+        return cls(company, product, domain, frozenset(keywords) if keywords else None, require_news_backlinks, require_reddit_backlinks, primary_product)
     
     def as_path_v2(self) -> str:
         if self.company == self.product:
