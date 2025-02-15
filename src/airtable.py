@@ -54,19 +54,27 @@ def load_into_pandas(status: Optional[str] = "Approved") -> pd.DataFrame:
 
     # Join the product table into the company table
     product_df = pd.DataFrame(pd.json_normalize(product_table.all())).set_index("id")
-    df["products"] = df["fields.Products"].apply(lambda product_ids: product_df.loc[product_ids].to_dict(orient="records") if not pd.isnull(product_ids) else [])
+
+    def expand_product_ids(product_ids: float | list) -> list[dict]:
+        # Note: pd.isna doesn't work here
+        if isinstance(product_ids, list):
+            return product_df.loc[product_ids].to_dict(orient="records")
+
+        return []
+
+    df["products"] = df["fields.Products"].apply(expand_product_ids)
 
     return df
+
+def value_or_none(val):
+    """Helper for converting NaN to None, though it only works for scalar values"""
+    return val if not pd.isna(val) else None
 
 def row_to_seed(row: pd.Series) -> Seed:
     return Seed.init(
         company=row["fields.Name"],
         domain=row["domain"],
-        product=(
-            row["fields.Key Product Name"]
-            if not pd.isna(row["fields.Key Product Name"])
-            else None
-        ),
+        product=value_or_none(row["fields.Key Product Name"]),
         keywords=(
             tuple(row["fields.Keywords"].split())
             if not pd.isna(row["fields.Keywords"])
@@ -85,13 +93,15 @@ def to_primary_product(products: list[dict]) -> Optional[Product]:
     return to_product(products[0])
 
 def to_product(product: dict) -> Product:
+    
     return Product(
         name=product["fields.Name"],
-        # Optional fields may not be present in the row
-        steam_url=product.get("fields.Steam"),
-        google_play_url=product.get("fields.Google Play"),
-        apple_app_store_url=product.get("fields.Apple App Store"),
-        webpage_url=product.get("fields.Webpage"),
+        # These fields are only present if at least one row in the source table has a non-null value, otherwise some mixture of pyairtable and Pandas drops them
+        # Also, if not present, they're NA not None so we need to convert, otherwise Pydantic validation will fail later on
+        steam_url=value_or_none(product.get("fields.Steam")),
+        google_play_url=value_or_none(product.get("fields.Google Play")),
+        apple_app_store_url=value_or_none(product.get("fields.Apple App Store")),
+        webpage_url=value_or_none(product.get("fields.Webpage")),
     )
 
 
