@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from langchain.globals import set_llm_cache
 from langchain_community.cache import SQLiteCache
+from pydantic import BaseModel
 import requests_cache
 import diskcache
 
@@ -31,8 +32,8 @@ class Seed(NamedTuple):
     # TODO: Naming
     company: str
 
-    # TODO: Merge with Product
-    product: str
+    # The old product field, replaced with a property
+    deprecated_product: str
 
     domain: str
 
@@ -48,13 +49,25 @@ class Seed(NamedTuple):
 
     # New style of feature flags
     feature_flags: Optional[FeatureFlags] = None
+
+    @property
+    def product(self) -> str:
+        if self.primary_product:
+            return self.primary_product.name
+        
+        # Keeping this around just in case of old loaded data
+        if self.deprecated_product:
+            return self.deprecated_product
+        
+        # Fall back to the company name
+        return self.company
     
     @classmethod
     def init(cls, company: str, domain: str, product: Optional[str] = None, keywords: Optional[Iterable[str]] = None, primary_product: Optional[Product] = None, feature_flags: Optional[FeatureFlags] = None) -> "Seed":
         """Helper to initialize with optional fields"""
         if not product:
             product = company
-        return cls(company, product, domain, frozenset(keywords) if keywords else None, primary_product, feature_flags)
+        return cls(company, product, domain, frozenset(keywords) if keywords else None, feature_flags.require_news_backlinks, feature_flags.require_reddit_backlinks, primary_product, feature_flags)
     
     def as_path_v2(self) -> str:
         if self.company == self.product:
@@ -63,7 +76,13 @@ class Seed(NamedTuple):
             unescaped = f"{self.company} {self.product}"
 
         return re.sub(r"[^a-zA-Z0-9]", "_", unescaped)
+    
+class SeedValidator(BaseModel):
+    value: Seed
 
+    @classmethod
+    def validate(cls, seed: Seed):
+        return cls(value=seed)
 
 def get_project_dir(relative_path: str, create_if_needed=True) -> str:
     """Get the path of a file from the project root"""

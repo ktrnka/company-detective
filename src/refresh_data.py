@@ -4,9 +4,10 @@ from datetime import datetime, timedelta
 import os
 from typing import Optional
 from loguru import logger
+from pydantic import ValidationError
 
 import unified
-from core import Seed, init
+from core import Seed, SeedValidator, init
 import airtable
 
 def get_file_age(file_path: str) -> Optional[timedelta]:
@@ -62,6 +63,12 @@ async def main():
             force_refresh_substring=args.force_refresh,
         ):
             logger.info(f"Building {output_json}...")
+
+            try:
+                SeedValidator.validate(target)
+            except ValidationError as e:
+                logger.error(f"Validation error for {target}: {e}")
+                raise e
 
             try:
                 unified_result = await unified.run(
