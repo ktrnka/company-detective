@@ -1,4 +1,5 @@
 import os
+from typing import List
 from urllib.parse import urlparse
 from pyairtable.orm import Model, fields as F
 from pyairtable.formulas import match
@@ -98,9 +99,13 @@ class Company(Model):
         return core.FeatureFlags(**{flag: True for flag in self.feature_flags})
     
     @staticmethod
-    def all_approved():
+    def all_approved() -> List["Company"]:
         # TODO: There's a bug here once we have over 100 records
         return Company.all(formula=match({"Status": "Approved"}), sort=["Name"])
+    
+    @staticmethod
+    def find_first(name: str) -> "Company":
+        return Company.first(formula=match({"Name": name}))
 
 
 # Examples
