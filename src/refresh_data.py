@@ -8,7 +8,7 @@ from pydantic import ValidationError
 
 import unified
 from core import Seed, SeedValidator, init
-import airtable
+import stored_config
 
 def get_file_age(file_path: str) -> Optional[timedelta]:
     if os.path.exists(file_path):
@@ -50,7 +50,7 @@ async def main():
 
     init()
 
-    for orm_company in airtable.Company.all_approved():
+    for orm_company in stored_config.Company.all_approved():
         target = orm_company.to_core_company()
         output_json = f"{args.output_folder}/{target.as_path_v2()}.json"
 
