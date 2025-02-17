@@ -6,7 +6,7 @@ from pyairtable.formulas import match
 import core
 
 APP_ID = "appxVirwyt5V40t5S"
-AIRTABLE_API_KEY = os.environ.get("AIRTABLE_API_KEY")
+AIRTABLE_API_KEY = os.environ.get("AIRTABLE_API_KEY", "default for unit tests")
 
 
 def extract_domain(url: str) -> str:
