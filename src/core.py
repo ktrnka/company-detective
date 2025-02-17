@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from langchain.globals import set_llm_cache
 from langchain_community.cache import SQLiteCache
+from pydantic import BaseModel
 import requests_cache
 import diskcache
 
@@ -15,21 +16,58 @@ from loguru import logger
 
 from utils.markdown_utils import extract_urls
 
+class Product(NamedTuple):
+    name: str
 
-class Seed(NamedTuple):
-    company: str
-    product: str
-    domain: str
-    keywords: Optional[Set[str]] = None
+    webpage_url: Optional[str] = None
+    steam_url: Optional[str] = None
+    google_play_url: Optional[str] = None
+    apple_app_store_url: Optional[str] = None
+
+class FeatureFlags(NamedTuple):
     require_news_backlinks: bool = False
     require_reddit_backlinks: bool = False
+
+class Seed(NamedTuple):
+    # TODO: Naming
+    company: str
+
+    # The old product field, replaced with a property
+    deprecated_product: str
+
+    domain: str
+
+    keywords: Optional[Set[str]] = None
+
+    # These aren't used anymore, but if we want to load the old result files, we need to keep them around
+    # I'd start them with an underscore but NamedTuple doesn't allow that
+    deprecated_require_news_backlinks: bool = False
+    deprecated_require_reddit_backlinks: bool = False
+
+    # New style: Something like this will replace product: str.
+    primary_product: Optional[Product] = None
+
+    # New style of feature flags
+    feature_flags: Optional[FeatureFlags] = None
+
+    @property
+    def product(self) -> str:
+        if self.primary_product:
+            return self.primary_product.name
+        
+        # Keeping this around just in case of old loaded data
+        if self.deprecated_product:
+            return self.deprecated_product
+        
+        # Fall back to the company name
+        return self.company
     
     @classmethod
-    def init(cls, company: str, domain: str, product: Optional[str] = None, keywords: Optional[Iterable[str]] = None, require_news_backlinks: bool = False, require_reddit_backlinks: bool = False) -> "Seed":
+    def init(cls, company: str, domain: str, product: Optional[str] = None, keywords: Optional[Iterable[str]] = None, primary_product: Optional[Product] = None, feature_flags: Optional[FeatureFlags] = None) -> "Seed":
         """Helper to initialize with optional fields"""
         if not product:
             product = company
-        return cls(company, product, domain, frozenset(keywords) if keywords else None, require_news_backlinks, require_reddit_backlinks)
+        return cls(company, product, domain, frozenset(keywords) if keywords else None, feature_flags.require_news_backlinks, feature_flags.require_reddit_backlinks, primary_product, feature_flags)
     
     def as_path_v2(self) -> str:
         if self.company == self.product:
@@ -38,7 +76,13 @@ class Seed(NamedTuple):
             unescaped = f"{self.company} {self.product}"
 
         return re.sub(r"[^a-zA-Z0-9]", "_", unescaped)
+    
+class SeedValidator(BaseModel):
+    value: Seed
 
+    @classmethod
+    def validate(cls, seed: Seed):
+        return cls(value=seed)
 
 def get_project_dir(relative_path: str, create_if_needed=True) -> str:
     """Get the path of a file from the project root"""

@@ -4,6 +4,7 @@ import json
 from typing import Dict
 import jinja2
 from loguru import logger
+from pydantic import ValidationError
 
 from unified import UnifiedResult
 
@@ -28,7 +29,11 @@ def main():
     for file_path in json_files:
         with open(file_path, "r") as file:
             data = json.load(file)
-            results[file_path] = UnifiedResult(**data)
+
+            try:
+                results[file_path] = UnifiedResult(**data)
+            except ValidationError:
+                logger.error(f"Failed to parse {file_path}: target={data['target']}")
 
     for result in results.values():
         result.to_html_file(

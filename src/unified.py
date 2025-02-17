@@ -249,6 +249,15 @@ class UnifiedResult(BaseModel):
 
         return f.name
     
+def override_app_store_urls(target: Seed, app_store_urls: dict):
+    if target.primary_product:
+        # TODO: Refactor so that they have the same names and we can just iterate over the names
+        if target.primary_product.apple_app_store_url:
+            app_store_urls["apple_store_url"] = target.primary_product.apple_app_store_url
+        if target.primary_product.google_play_url:
+            app_store_urls["google_play_url"] = target.primary_product.google_play_url
+        if target.primary_product.steam_url:
+            app_store_urls["steam_url"] = target.primary_product.steam_url
 
 async def run(
     target: Seed,
@@ -282,6 +291,7 @@ async def run(
         ).content
 
         app_store_urls = customer_experience.extract_app_store_urls(general_search_results)
+        override_app_store_urls(target, app_store_urls)
         reddit_urls = [
             result.link
             for result in data_sources.reddit.search.find_submissions(

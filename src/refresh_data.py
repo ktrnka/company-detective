@@ -4,11 +4,11 @@ from datetime import datetime, timedelta
 import os
 from typing import Optional
 from loguru import logger
+from pydantic import ValidationError
 
 import unified
-from core import Seed, init
-import airtable
-
+from core import Seed, SeedValidator, init
+import stored_config
 
 def get_file_age(file_path: str) -> Optional[timedelta]:
     if os.path.exists(file_path):
@@ -50,14 +50,11 @@ async def main():
 
     init()
 
-    companies = airtable.load_into_pandas()
-
-    for _, row in companies.sort_values("fields.Name").iterrows():
-        target = airtable.row_to_seed(row)
+    for orm_company in stored_config.Company.all_approved():
+        target = orm_company.to_core_company()
         output_json = f"{args.output_folder}/{target.as_path_v2()}.json"
 
-        # NOTE: Without the dropna, .get returns NaN which then causes the timedelta to fail
-        refresh_days = row.dropna().get("fields.Refresh Days", 30)
+        refresh_days = orm_company.refresh_days or 30
 
         if should_rebuild(
             target,
@@ -66,6 +63,12 @@ async def main():
             force_refresh_substring=args.force_refresh,
         ):
             logger.info(f"Building {output_json}...")
+
+            try:
+                SeedValidator.validate(target)
+            except ValidationError as e:
+                logger.error(f"Validation error for {target}: {e}")
+                raise e
 
             try:
                 unified_result = await unified.run(

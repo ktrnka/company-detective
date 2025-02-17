@@ -53,12 +53,10 @@ class Author(BaseModel):
 class SteamReview(BaseModel):
     author: Author
     comment_count: int
-    hidden_in_steam_china: bool
     language: str
     received_for_free: bool
     recommendationid: str
     review: str
-    steam_china_location: str
     steam_purchase: bool
     timestamp_created: int
     timestamp_updated: int
