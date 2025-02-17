@@ -10,7 +10,7 @@ Live site: https://ktrnka.github.io/company-detective
 
 - Multiple information sources including Crunchbase, news articles, and company websites
 - Utilizes AI to analyze and summarize information
-- Configured via Airtable
+- Configured via Airtable with enhanced feature flags for improved functionality
 - Google Analytics integration for tracking user interactions and site performance.
 
 ## Prerequisites
@@ -81,9 +81,16 @@ Note: The default goal for the Makefile is set to `build`, so running `make` wit
 - Company Website: Extracts information directly from the company's official website.
 - Reddit: Collects relevant discussions and mentions of the company.
 - Glassdoor: Offers employee reviews and sentiment analysis (with improved handling for small companies).
-- App Reviews: 
+- App Reviews:
   - Google Play Store: Scrapes up to 100 recent reviews.
   - Apple App Store: Scrapes reviews and downsamples to 100 if more are available, ensuring balanced representation with Google Play reviews.
+
+## Feature Flags
+
+The project now includes a feature flag system that allows users to customize their experience based on specific needs:
+
+- `require_news_backlinks`: Determines if news backlinks are required for data analysis.
+- `require_reddit_backlinks`: Indicates if Reddit backlinks are required.
 
 ## Contributing
 
