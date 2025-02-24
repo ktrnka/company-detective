@@ -93,6 +93,9 @@ async def scrape(
         connector=connector,
         headers=headers,
         timeout=aiohttp.ClientTimeout(total=timeout_seconds),
+        # Increasing to prevent Got more than 8190 bytes (XX) when reading Header value is too long., mostly from finance.yahoo.com
+        max_line_size=12000,
+        max_field_size=12000,
     ) as session:
         futures = [request_url(session, url, cache=cache) for url in urls]
 
