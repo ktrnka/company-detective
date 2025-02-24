@@ -8,7 +8,12 @@
       "dataset"
     ],
     true,
-    true
+    true,
+    null,
+    [
+      true,
+      true
+    ]
   ],
   "webpage_result": {
     "summary_markdown": "# Hyperparam Company Overview\n\n## Company History\nHyperparam is focused on enhancing the data science process by providing tools that allow for the exploration and curation of massive machine learning (ML) datasets. The company recognizes the critical role that data quality plays in building advanced AI models and aims to empower teams to create the best training sets.\n\n## Services\nHyperparam offers a highly scalable, browser-based user interface (UI) that enables users to interactively explore and curate large datasets. The platform leverages modern web APIs and innovative machine learning techniques to assist users in evaluating the quality of their data.\n\n## Products\n- **Browser-Based Dataset Tool**: Hyperparam allows users to load and explore datasets with billions of rows directly in the browser using modern data formats like Apache Parquet.\n- **Model-Assisted Data Curation**: The platform employs machine learning models to help users identify high-quality data, facilitating the construction of better training sets.\n\n## Customers\nHyperparam caters to a wide range of users, from mega-scale AI companies to small enterprise teams, all of whom require high-quality datasets for their machine learning models.\n\n## Leadership Team\nWhile specific details about the leadership team are not provided in the available content, the company emphasizes a strong focus on data quality and user experience in its mission.\n\n## Culture\nHyperparam promotes a culture of deep understanding and interaction with data. The company believes that effective data science requires familiarity with training data, and it aims to make this process more intuitive and efficient through its tools.\n\n## Future Vision\nHyperparam envisions a future where dataset-scale inference and interactive, browser-based data exploration redefine how AI models are built and refined. The company is committed to blending human expertise with AI-assisted insights to streamline data cleaning and enhance the effectiveness of advanced AI models.\n\nFor more information, visit [Hyperparam](https://hyperparam.app/) and their [blog](https://blog.hyperparam.app/).",
@@ -31,24 +36,24 @@
       {
         "title": "Hyperparam Blog | The Missing UI for AI Data",
         "link": "https://blog.hyperparam.app/",
-        "snippet": "Jan 21, 2025 ... What is the key to building the most advanced AI models? Data quality. Everyone wants better AI models: smarter, cheaper, and with style. How ...",
+        "snippet": "Jan 21, 2025 ... Current tools often miss three key capabilities: 1) should enable very fast free-form data exploration by the user, which is key to finding insights in your ...",
         "formattedUrl": "https://blog.hyperparam.app/"
       },
       {
         "title": "Privacy - hyperparam",
         "link": "https://hyperparam.app/privacy",
-        "snippet": "Oct 31, 2023 ... By using this application, you agree to the collection and use of your personal information as described in this policy. Data collection. Users ...",
+        "snippet": "Oct 31, 2023 ... We collect personal information including: name and email address. Authenticated users may choose to upload data for processing.",
         "formattedUrl": "https://hyperparam.app/privacy"
       }
     ]
   },
-  "general_search_markdown": "# Official social media\n- [Hyperparam LinkedIn](https://www.linkedin.com/company/hyperparam)\n\n# Job boards\n- [Senior Javascript Engineer at Hyperparam • Seattle | Wellfound](https://wellfound.com/jobs/3185363-senior-javascript-engineer)\n\n# App stores\n- [Hyperparam - Look At Your Data](https://hyperparam.app/)\n\n# Product reviews\n- No relevant product reviews found.\n\n# News articles (most recent first, grouped by event)\n### Hyperparam Company News\n- [T-Mobile names COO; Algorithmia co-founders team up again](https://www.geekwire.com/2025/tech-moves-t-mobile-names-coo-algorithmia-co-founders-team-up-again-and-more/) - Jan 27, 2025. Hyperparam's advisors include Thomas Dohmke, CEO of GitHub; University of Washington Professor Jeffrey Heer; and founder of Hugging Face Clem.\n\n# Key employees (grouped by employee)\n- **Tim Porter**\n  - [Tim Porter on LinkedIn: Hyperparam](https://www.linkedin.com/posts/portertim_hyperparam-activity-7291654454381068290-7QpU) - Feb 1, 2025. Following up from my last post... my new company Hyperparam is hiring its first engineers: JavaScript Hacker - Someone who loves pushing the boundaries of technology.\n\n# Other pages on the company website\n- [Hyperparam Blog | The Missing UI for AI Data](https://blog.hyperparam.app/) - Jan 21, 2025. What is the key to building the most advanced AI models? Data quality. Everyone wants better AI models: smarter, cheaper, and with style.\n- [Privacy - hyperparam](https://hyperparam.app/privacy) - Oct 31, 2023. By using this application, you agree to the collection and use of your personal information as described in this policy. Data collection.\n\n# Other\n- [An Efficient Approach for Assessing Hyperparameter Importance](http://proceedings.mlr.press/v32/hutter14-supp.pdf)\n- [A Hyperparameter Optimization Toolkit for Neural Machine ...](https://aclanthology.org/2023.acl-demo.15.pdf) - Jul 10, 2023.\n- [Improving Unsupervised Video Object Segmentation with Motion ...](https://arxiv.org/abs/2212.08816) - Dec 17, 2022.\n- [Hyperparameter tuning on Google Cloud Platform is now faster and ...](https://cloud.google.com/blog/products/gcp/hyperparameter-tuning-on-google-cloud-platform-is-now-faster-and-smarter) - Mar 14, 2018.\n- [Vertex AI: Hyperparameter Tuning](https://codelabs.developers.google.com/vertex_hyperparameter_tuning) - May 23, 2022.\n- [Kubernetes For AI Hyperparameter Search Experiments | NVIDIA ...](https://developer.nvidia.com/blog/kubernetes-ai-hyperparameter-search-experiments/) - Dec 14, 2018.",
+  "general_search_markdown": "# Official social media\n- [Hyperparam LinkedIn](https://hyperparam.app/.)\n\n# Job boards\n- [Senior Javascript Engineer at Hyperparam • Seattle | Wellfound](https://wellfound.com/jobs/3185363-senior-javascript-engineer)\n\n# App stores\n- No relevant app store links found.\n\n# Product reviews\n- No detailed product reviews found.\n\n# News articles (most recent first, grouped by event)\n- No significant news articles found.\n\n# Key employees (grouped by employee)\n- No specific profiles or articles related to key employees found.\n\n# Other pages on the company website\n- [Hyperparam Blog | The Missing UI for AI Data](https://blog.hyperparam.app/) (Jan 21, 2025)\n- [Hyperparam - Look At Your Data](https://hyperparam.app/)\n- [Privacy - hyperparam](https://hyperparam.app/privacy) (Oct 31, 2023)\n\n# Other\n- [An Efficient Approach for Assessing Hyperparameter Importance](http://proceedings.mlr.press/v32/hutter14-supp.pdf)\n- [Improving Unsupervised Video Object Segmentation with Motion ...](https://arxiv.org/abs/2212.08816) (Dec 17, 2022)\n- [Hyperparameter tuning on Google Cloud Platform is now faster and ...](https://cloud.google.com/blog/products/gcp/hyperparameter-tuning-on-google-cloud-platform-is-now-faster-and-smarter) (Mar 14, 2018)\n- [Vertex AI: Hyperparameter Tuning](https://codelabs.developers.google.com/vertex_hyperparameter_tuning) (May 23, 2022)\n- [Kubernetes For AI Hyperparameter Search Experiments | NVIDIA ...](https://developer.nvidia.com/blog/kubernetes-ai-hyperparameter-search-experiments/) (Dec 14, 2018)\n- [MLOps.community Podcast - Apple Podcasts](https://podcasts.apple.com/us/podcast/mlops-community/id1505372978) (Aug 22, 2023)",
   "crunchbase_markdown": null,
   "customer_experience_result": null,
   "glassdoor_result": null,
   "news_result": null,
   "lineage": {
-    "run_at": "2025-02-10T10:10:30.804552",
-    "git_sha": "19b1670"
+    "run_at": "2025-02-23T21:13:07.622306",
+    "git_sha": "d207093"
   }
 }
