@@ -82,10 +82,22 @@ COMPREHENSIVE ANALYST REPORT, MARKDOWN FORMAT:
     ]
 )
 
+def optional_clip(text: str, max_tokens=128000) -> str:
+    # approximate number of tokens in English
+    max_chars = max_tokens * 4
+
+    # decrease it a little as a buffer
+    max_chars = int(max_chars * 0.8)
+
+    if len(text) > max_chars:
+        return text[:max_chars]
+    else:
+        return text
 
 def summarize(target: Seed, article_markdowns: List[str], langchain_config=None) -> AIMessage:
     """Summarize a list of news articles"""
     unified_markdown = "\n\n".join(article for article in article_markdowns)
+    unified_markdown = optional_clip(unified_markdown)
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
