@@ -3,6 +3,7 @@ import asyncio
 from datetime import datetime, timedelta
 import os
 from typing import Optional
+from zoneinfo import ZoneInfo
 from loguru import logger
 from pydantic import ValidationError
 
@@ -10,10 +11,11 @@ import unified
 from core import Seed, SeedValidator, init
 import stored_config
 
-def get_file_age(file_path: str) -> Optional[timedelta]:
+TIME_ZONE = ZoneInfo("America/Los_Angeles")
+
+def get_file_modified_time(file_path: str) -> Optional[datetime]:
     if os.path.exists(file_path):
-        file_mod_time = datetime.fromtimestamp(os.path.getmtime(file_path))
-        return datetime.now() - file_mod_time
+        return datetime.fromtimestamp(os.path.getmtime(file_path), tz=TIME_ZONE)
     else:
         return None
 
@@ -23,6 +25,7 @@ def should_rebuild(
     file_path: str,
     max_age: timedelta = timedelta(days=7),
     force_refresh_substring: Optional[str] = None,
+    config_last_modified: Optional[datetime] = None,
 ) -> bool:
     if (
         force_refresh_substring
@@ -30,10 +33,16 @@ def should_rebuild(
     ):
         return True
 
-    age = get_file_age(file_path)
-    if age is None:
+    last_modified = get_file_modified_time(file_path)
+    if last_modified is None:
         return True
-    return age > max_age
+    
+    # If the config was modified more recently than the file, use that datetime to check against max_age
+    print(f"Config last modified: {config_last_modified}, File last modified: {last_modified}")
+    if config_last_modified and config_last_modified > last_modified:
+        last_modified = config_last_modified
+
+    return (last_modified - datetime.now(TIME_ZONE)) > max_age
 
 
 async def main():
@@ -61,6 +70,7 @@ async def main():
             output_json,
             max_age=timedelta(days=refresh_days),
             force_refresh_substring=args.force_refresh,
+            config_last_modified=orm_company.last_modified,
         ):
             logger.info(f"Building {output_json}...")
 

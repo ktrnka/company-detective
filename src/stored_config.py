@@ -73,6 +73,8 @@ class Company(Model):
     products = F.LinkField[Product]("Products", Product)
     feature_flags = F.MultipleSelectField("Feature Flags")
 
+    last_modified = F.DatetimeField("Last Modified")
+
     # TODO: Deprecate this
     key_product_name = F.TextField("Key Product Name")
 
