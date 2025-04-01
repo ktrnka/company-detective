@@ -37,10 +37,9 @@ def should_rebuild(
     if last_modified is None:
         return True
     
-    # If the config was modified more recently than the file, use that datetime to check against max_age
-    print(f"Config last modified: {config_last_modified}, File last modified: {last_modified}")
+    # If the config was modified more recently than the file, so the file is stale
     if config_last_modified and config_last_modified > last_modified:
-        last_modified = config_last_modified
+        return True
 
     return (last_modified - datetime.now(TIME_ZONE)) > max_age
 
