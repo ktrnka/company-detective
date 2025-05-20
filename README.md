@@ -4,7 +4,48 @@ This project summarizes publicly available information about a company. It lever
 
 Live site: https://ktrnka.github.io/company-detective
 
-![System diagram](system_diagram.png)
+
+```mermaid
+graph TD;
+   config_source@{shape: doc, label: "Airtable"}
+   source@{shape: docs, label: "Company+Domain"}
+   
+   config_source --> source
+
+   subgraph reddit_pipeline["Reddit Pipeline"]
+      reddit_urls@{shape: docs, label: "Reddit URLs"}
+      reddit_docs@{shape: docs, label: "Markdown docs"}
+
+      reddit_urls -->|Reddit client| reddit_docs
+   end
+
+   source -->|Google search| reddit_urls
+
+   subgraph glassdoor_pipeline["Glassdoor Pipeline"]
+      glassdoor_url@{shape: doc, label: "URL"}
+      glassdoor_data@{shape: docs, label: "Employee reviews"}
+
+      glassdoor_url -->|Scrapfly| glassdoor_data
+
+      glassdoor_docs@{shape: docs, label: "Markdown reviews"}
+      glassdoor_quotes@{shape: docs, label: "Key quotes"}
+
+      glassdoor_data --> glassdoor_docs
+      glassdoor_docs -->|gpt40-mini| glassdoor_quotes
+   end
+
+   source -->|Google search| glassdoor_url
+
+   summary@{shape: doc, label: "HTML"}
+
+   glassdoor_quotes --> summary
+   reddit_docs --> cx_summary
+   cx_summary --> summary
+   summary --> GithubPages
+
+
+```
+
 
 ## Features
 
